@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 //  import Route files 
 const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 dotenv.config();
 connectDB();
@@ -19,6 +20,7 @@ app.use(express.json()); // JSON data
 // Routes register 
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
     res.send('Shop.co API is running...');
