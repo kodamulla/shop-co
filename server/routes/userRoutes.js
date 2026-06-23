@@ -1,18 +1,21 @@
 const express = require('express');
-const { getAllUsers, toggleBlockUser, deleteUser } = require('../controllers/userController');
-
 const router = express.Router();
 
-const User = require('../models/userModel');
+const {
+    signup,
+    signin,
+    getAllUsers,
+    toggleBlockUser,
+    deleteUser
+} = require('../controllers/userController');
 
+// AUTH
+router.post('/signup', signup);
+router.post('/signin', signin);
 
-// Get all users (Manager view)
-router.get('/', getAllUsers);
-
-// Block or Unblock a user
-router.put('/:id/block', toggleBlockUser);
-
-// Delete a user
-router.delete('/:id', deleteUser);
+// ADMIN USER MANAGEMENT
+router.get('/users', getAllUsers);
+router.put('/block/:id', toggleBlockUser);
+router.delete('/delete/:id', deleteUser);
 
 module.exports = router;
