@@ -42,7 +42,7 @@ import {
 
 const data = {
   user: {
-    name: "Adithya", // ඔයාට ඕනේ නමක් දෙන්න
+    name: "Adithya Semina",
     email: "adithya@example.com",
     avatar: "/avatars/shadcn.jpg", // මෙතනට ඔයාගේ පින්තූරයක් දෙන්න පුළුවන්
   },
