@@ -11,12 +11,11 @@ import {
   Menu,
   X
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
-  // Mobile Menu එක ඕපන් වෙලාද නැද්ද කියලා බලාගන්න State එක
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // ලේසියටත් කේතය පිරිසිදුව තියාගන්නත් මෙනු එකේ තියෙන දේවල් Array එකකට ගත්තා
   const navLinks = [
     { name: "New Arrivals", icon: TrendingUp },
     { name: "Clothing", icon: Star },
@@ -26,13 +25,18 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <motion.header 
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+    >
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 relative">
         
         {/* Left Section: Mobile Menu Toggle & Logo */}
         <div className="flex items-center gap-3">
           
-          {/* Mobile Menu Button (පොඩි තිර වලදී විතරක් පෙන්වයි) */}
+          {/* Mobile Menu Button */}
           <button 
             className="lg:hidden p-2 -ml-2 bg-muted/50 hover:bg-muted text-foreground rounded-md transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -46,12 +50,12 @@ export function Navbar() {
 
           {/* Logo */}
           <div className="flex items-center gap-2 font-bold text-xl lg:ml-20">
-            <img src="/Logoicon.svg" alt="ShopCo Logo" className="h-8 w-8" />
+            <img src="/Logoicon.png" alt="ShopCo Logo" className="h-8 w-8" />
             <span>ShopCo</span>
           </div>
         </div>
 
-        {/* Center Navigation (Desktop වලදී විතරක් පෙන්වයි) */}
+        {/* Center Navigation */}
         <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-muted-foreground">
           {navLinks.map((link, index) => (
             <a key={index} href="#" className="flex items-center gap-1.5 hover:text-foreground transition-colors">
@@ -77,25 +81,33 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown (ක්ලික් කළාම එන කොටස) */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden absolute top-22 left-4 z-50 w-64 rounded-xl border bg-background p-2 shadow-lg animate-in slide-in-from-top-2">
-          <nav className="flex flex-col gap-1">
-            {navLinks.map((link, index) => (
-              <a
-                key={index}
-                href="#"
-                className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted transition-colors text-foreground"
-              >
-                <div className="flex items-center gap-2.5">
-                  <link.icon className="h-4 w-4 text-muted-foreground" />
-                  {link.name}
-                </div>
-              </a>
-            ))}
-          </nav>
-        </div>
-      )}
-    </header>
+      {/* Mobile Menu Dropdown */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="lg:hidden absolute top-22 left-4 z-50 w-64 rounded-xl border bg-background p-2 shadow-lg"
+          >
+            <nav className="flex flex-col gap-1">
+              {navLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href="#"
+                  className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted transition-colors text-foreground"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <link.icon className="h-4 w-4 text-muted-foreground" />
+                    {link.name}
+                  </div>
+                </a>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 }
