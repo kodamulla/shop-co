@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/sidebar"
 
 
-export default function ManagerPage() {
+export default function AdminPage() {
   return (
     <TooltipProvider>
     <SidebarProvider
