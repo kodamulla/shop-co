@@ -50,7 +50,7 @@ export function Navbar() {
 
           {/* Logo */}
           <div className="flex items-center gap-2 font-bold text-xl lg:ml-20">
-            <img src="/Logoicon.svg" alt="ShopCo Logo" className="h-8 w-8" />
+            <img src="/Logoicon.png" alt="ShopCo Logo" className="h-8 w-8" />
             <span>ShopCo</span>
           </div>
         </div>
