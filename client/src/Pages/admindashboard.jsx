@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { AppSidebar } from "@/components/admindashboard/app-sidebar"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { SectionCards } from "@/components/section-cards"
@@ -10,6 +12,19 @@ import {
 
 
 export default function AdminPage() {
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/dashboard/stats');
+        setStats(res.data.stats);
+      } catch (err) {
+        console.error("Error fetching stats:", err);
+      }
+    };
+    fetchStats();
+  }, []);
   return (
     <TooltipProvider>
     <SidebarProvider
@@ -24,7 +39,8 @@ export default function AdminPage() {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <SectionCards />
+              <SectionCards stats={stats} />
+              
               <div className="px-4 lg:px-6">
                 <ChartAreaInteractive />
               </div>
