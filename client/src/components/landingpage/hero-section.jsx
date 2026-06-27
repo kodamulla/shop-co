@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 
 export function HeroSection() {
   return (
-    <main className="w-full container mx-auto px-4 md:px-6 overflow-hidden">
+    <main className="w-full container mx-auto px-2 md:px-1 overflow-hidden">
       <div className="grid lg:grid-cols-2 items-center lg:min-h-[calc(100vh-4rem)] mx-2 lg:mx-10 gap-8">
         
         {/* Left Column (Text Content) */}
@@ -105,7 +105,6 @@ export function HeroSection() {
               <motion.div 
                 key={i} 
                 initial={{ opacity: 0, y: 20 }}
-                // කොටු 4 ටත් whileInView දැම්මා 👇
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.4 + (i * 0.1) }}
