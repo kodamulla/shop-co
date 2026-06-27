@@ -93,12 +93,12 @@ export function Navbar() {
 
         {/* Right Section (Cart & Auth) */}
         <div className="flex items-center gap-5 lg:mr-20 relative">
-          <button className="text-muted-foreground hover:text-foreground transition-colors relative">
+          <a href="/cart" className="text-muted-foreground hover:text-foreground transition-colors relative">
             <ShoppingCart className="h-5 w-5" />
             <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
               3
             </span>
-          </button>
+          </a>
           
           {/* Conditional Rendering: ලොග් වෙලාද නැද්ද අනුව වෙනස් වෙනවා */}
           {!isLoggedIn ? (
