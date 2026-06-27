@@ -2,14 +2,15 @@ import { useState, useEffect } from "react";
 import { 
   ShoppingCart, 
   TrendingUp, 
-  Star, 
-  Phone, 
+  Shirt,
+  HelpCircle,
   Menu,
   X,
   LogIn,
   User, 
   LogOut,
-  UserCircle
+  UserCircle,
+  Home
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -49,9 +50,10 @@ export function Navbar() {
   };
 
   const navLinks = [
+    { name: "Home", href: "/#home", icon: Home },
     { name: "New Arrivals", href: "/#new-arrivals", icon: TrendingUp },
-    { name: "Clothing", href: "/products", icon: Star },
-    { name: "Contact Us", href: "/contactus", icon: Phone },
+    { name: "Clothing", href: "/products", icon: Shirt },
+    { name: "Details", href: "/details", icon: HelpCircle },
   ];
 
   return (

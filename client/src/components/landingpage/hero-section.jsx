@@ -7,13 +7,13 @@ import {
   Truck, 
   ShieldCheck, 
   RefreshCw,
-  Star
+  Star,
 } from "lucide-react";
 import { motion } from "framer-motion"; 
 
 export function HeroSection() {
   return (
-    <main id="home" className="w-full mx-auto px-2 md:px-10 overflow-hidden bg-muted">
+    <main id="home" className="w-full mx-auto px-2 md:px-10 overflow-hidden bg-muted scroll-mt-15">
       <div className="grid lg:grid-cols-2 items-center lg:min-h-[calc(100vh-4rem)] mx-2 lg:mx-10 gap-8">
         
         {/* Left Column (Text Content) */}
