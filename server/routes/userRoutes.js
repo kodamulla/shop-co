@@ -9,7 +9,8 @@ const {
     getAllUsers,
     toggleBlockUser,
     deleteUser,
-    updateUserRole
+    updateUserRole,
+    updateProfile
 } = require('../controllers/userController');
 
 // AUTH
@@ -21,5 +22,6 @@ router.get('/users',protect, isAdmin, getAllUsers);
 router.put('/block/:id',protect, isAdmin, toggleBlockUser);
 router.delete('/delete/:id', protect, isAdmin, deleteUser);
 router.patch('/role/:id', protect, isAdmin, updateUserRole);
+router.put('/update-profile/:id', protect, updateProfile);
 
 module.exports = router;

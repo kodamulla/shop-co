@@ -37,6 +37,32 @@ const userSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        // අලුතින් එකතු කරපු Address Fields 👇
+        addressNo: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+        street: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+        city: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+        zipCode: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+        country: {
+            type: String,
+            trim: true,
+            default: "",
+        },
     },
     {
         timestamps: true,
@@ -44,5 +70,4 @@ const userSchema = new mongoose.Schema(
 );
 
 const User = mongoose.model('User', userSchema);
-
 module.exports = User;

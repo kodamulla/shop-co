@@ -5,6 +5,10 @@ import SignupPage from "./Pages/signup";
 import ManagerPage from "./Pages/managerdashboard";
 import AdminPage from "./Pages/admindashboard";
 import HomePage from "./Pages/landing";
+import ProfilePage from "./Pages/accountPage"; 
+import CartPage from "./Pages/cartPage"; 
+import CheckoutPage from "./Pages/checkoutPage";  
+import DetailsPage from "./Pages/details";
 
 function App() {
   return (
@@ -15,6 +19,10 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/managerdashboard" element={<ManagerPage />} />
         <Route path="/admindashboard" element={<AdminPage />} />
+        <Route path="/account" element={<ProfilePage />} /> 
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/details" element={<DetailsPage />} />
       </Routes>
     </BrowserRouter>
   );
