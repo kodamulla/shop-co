@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/landingpage/navbar";
 import { HeroSection } from "@/components/landingpage/hero-section";
 import { Footer } from "@/components/landingpage/footer";
+import { CategorySection } from "@/components/landingpage/category-section";
 
 export default function LandingPage() {
   return (
@@ -10,6 +11,7 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <HeroSection />
+      <CategorySection />
       <Footer />
 
 
