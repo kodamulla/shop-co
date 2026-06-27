@@ -22,7 +22,7 @@ export function TestimonialsSection() {
     { name: "Zara", icon: Box },
   ];
 
-  // ලංකාවට ගැළපෙන Reviews 3ක්
+  // ලංකාවට ගැළපෙන Reviews 6ක් (අලුතින් 3ක් එකතු කළා)
   const testimonials = [
     {
       quote: "The quality of the clothes is simply amazing. The delivery to Kandy was super fast, and the customer service is highly responsive. Definitely my go-to fashion store now!",
@@ -42,9 +42,27 @@ export function TestimonialsSection() {
       title: "Entrepreneur, Galle",
       initials: "DF",
     },
+    {
+      quote: "Absolutely love the fit and fabric! The delivery to Kurunegala was surprisingly quick. The sizing chart is very accurate. Will definitely buy again.",
+      name: "Saduni Bandara",
+      title: "Teacher, Kurunegala",
+      initials: "SB",
+    },
+    {
+      quote: "The streetwear collection is fire. Great prices and the sizes are exactly as mentioned on the site. Best online shopping experience I've had.",
+      name: "Tharindu De Silva",
+      title: "Graphic Designer, Negombo",
+      initials: "TD",
+    },
+    {
+      quote: "Customer support is top-notch. I had to exchange a shirt for a different size, and they handled it perfectly within 2 days with zero hassle.",
+      name: "Amila Perera",
+      title: "Banker, Matara",
+      initials: "AP",
+    },
   ];
 
-  // Animations
+  // Brands වල Animations
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -59,7 +77,7 @@ export function TestimonialsSection() {
   };
 
   return (
-    <section className="w-full py-10 md:py-15 bg-background overflow-hidden">
+    <section className="w-full py-16 md:py-24 bg-background overflow-hidden relative">
       <div className="container mx-auto px-4 md:px-6">
         
         {/* Heading & Subheading */}
@@ -68,7 +86,7 @@ export function TestimonialsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-12 md:mb-12 max-w-3xl mx-auto"
+          className="text-center mb-12 max-w-3xl mx-auto"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4">
             Why Fashion Lovers Choose ShopCo
@@ -84,7 +102,7 @@ export function TestimonialsSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          className="flex flex-wrap justify-center items-center gap-5 md:gap-12 mb-15 transition-all duration-500"
+          className="flex flex-wrap justify-center items-center gap-6 md:gap-12 mb-16 transition-all duration-500"
         >
           {brands.map((brand, index) => {
             const Icon = brand.icon;
@@ -100,49 +118,60 @@ export function TestimonialsSection() {
             );
           })}
         </motion.div>
+      </div>
 
-        {/* Testimonials Grid */}
+      {/* Testimonials Looping Marquee */}
+      <div className="relative w-full overflow-hidden py-4">
+        {/* වම් සහ දකුණු පැතිවල අඳුරු වෙන Gradient Effect එක */}
+        <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"></div>
+
+        {/* පැත්තට යන Animation එක */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="flex gap-6 w-max"
+          // මේකෙන් තමයි Loop වෙන්න හදලා තියෙන්නේ 👇
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{
+            ease: "linear",
+            duration: 35, // වේගය වෙනස් කරන්න ඕනේ නම් මේ ගාණ අඩු/වැඩි කරන්න
+            repeat: Infinity,
+          }}
         >
-          {testimonials.map((testimonial, index) => (
-            <motion.div
+          {/* Reviews ටික නොකඩවා පෙන්නන්න Array එක දෙපාරක් Render කරනවා */}
+          {[...testimonials, ...testimonials].map((testimonial, index) => (
+            <div
               key={index}
-              variants={itemVariants}
-              className="flex flex-col justify-between rounded-2xl border bg-card text-card-foreground p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow"
+              // කාඩ් එකේ පළල Fixed කරලා තියෙන්නේ Squish වෙන්නේ නැති වෙන්න 👇
+              className="w-[280px] md:w-[350px] lg:w-[400px] flex-shrink-0 flex flex-col justify-between rounded-2xl border bg-card text-card-foreground p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow"
             >
               <div>
                 {/* Quote Icon */}
-                <Quote className="w-10 h-10 text-muted-foreground/30 mb-6 rotate-180" />
+                <Quote className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground/30 mb-6 rotate-180" />
                 {/* Review Text */}
-                <p className="text-muted-foreground text-sm md:text-base leading-relaxed mb-8">
+                <p className="text-muted-foreground text-sm md:text-base leading-relaxed mb-8 line-clamp-4">
                   "{testimonial.quote}"
                 </p>
               </div>
               
               {/* User Info */}
               <div className="flex items-center gap-4 mt-auto">
-                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-sm font-bold text-foreground">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted flex items-center justify-center text-xs md:text-sm font-bold text-foreground">
                   {testimonial.initials}
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-semibold text-foreground text-sm md:text-base">
+                  <span className="font-semibold text-foreground text-sm md:text-base line-clamp-1">
                     {testimonial.name}
                   </span>
-                  <span className="text-xs md:text-sm text-muted-foreground">
+                  <span className="text-[11px] md:text-xs text-muted-foreground line-clamp-1">
                     {testimonial.title}
                   </span>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </motion.div>
-
       </div>
+
     </section>
   );
 }

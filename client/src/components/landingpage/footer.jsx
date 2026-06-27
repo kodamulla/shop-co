@@ -127,7 +127,7 @@ export function Footer() {
             {/* Navigation Links 👇 Mobile වලදී Center වෙන්න හැදුවා */}
             <motion.ul variants={itemVariants} className="flex flex-wrap justify-center sm:justify-start gap-x-8 gap-y-4 text-sm font-medium text-zinc-300">
               <li><a href="#home" className="hover:text-white transition-colors">Home</a></li>
-              <li><a href="/products" className="hover:text-white transition-colors">Products</a></li>
+              <li><a href="/products" className="hover:text-white transition-colors">Clothing</a></li>
               <li><a href="/signin" className="hover:text-white transition-colors">Sign in</a></li>
             </motion.ul>
 

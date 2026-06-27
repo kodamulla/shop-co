@@ -96,7 +96,7 @@ export function NewArrivalsSection() {
   };
 
   return (
-    <section className="w-full py-10 md:py-15 bg-muted overflow-hidden">
+    <section id="new-arrivals"  className="w-full py-10 md:py-15 bg-muted overflow-hidden scroll-mt-12">
       {/* bg-muted/30 පාවිච්චි කළේ උඩ Section එකෙන් මේක පොඩ්ඩක් වෙනස් කරලා පෙන්නන්නයි */}
       <div className="container mx-auto px-4 md:px-6">
         
