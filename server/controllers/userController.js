@@ -137,6 +137,45 @@ const deleteUser = async (req, res) => {
     }
 };
 
+// 6. UPDATE USER ROLE (ADMIN ONLY)
+const updateUserRole = async (req, res) => {
+    try {
+        const { role } = req.body; 
+
+        
+        if (!['user', 'manager', 'admin'].includes(role)) {
+            return res.status(400).json({ message: "Invalid role provided" });
+        }
+
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        
+        if (user.role === 'admin' && req.user._id.toString() !== user._id.toString()) {
+             return res.status(403).json({ message: "Cannot change the role of another Admin" });
+        }
+
+        user.role = role;
+        await user.save();
+
+        res.status(200).json({
+            message: `User role updated to ${role} successfully`,
+            user: {
+                id: user._id,
+                name: `${user.firstName} ${user.lastName}`,
+                email: user.email,
+                role: user.role
+            }
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 // EXPORT
 module.exports = {
@@ -144,5 +183,6 @@ module.exports = {
     signin,
     getAllUsers,
     toggleBlockUser,
-    deleteUser
+    deleteUser,
+    updateUserRole
 };
