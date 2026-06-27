@@ -224,7 +224,7 @@ export default function CartPage() {
                 </div>
 
                 {/* Checkout Button */}
-                <Button className="w-full h-14 mt-6 text-base font-semibold gap-2 rounded-xl">
+                <Button onClick={() => window.location.href = "/checkout"} className="w-full h-14 mt-6 text-base font-semibold gap-2 rounded-xl">
                   Go to Checkout <ArrowRight className="h-5 w-5" />
                 </Button>
               </div>
