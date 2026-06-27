@@ -5,6 +5,7 @@ import SignupPage from "./Pages/signup";
 import ManagerPage from "./Pages/managerdashboard";
 import AdminPage from "./Pages/admindashboard";
 import HomePage from "./Pages/landing";
+import ProfilePage from "./Pages/accountPage"; 
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/managerdashboard" element={<ManagerPage />} />
         <Route path="/admindashboard" element={<AdminPage />} />
+        <Route path="/account" element={<ProfilePage />} /> 
       </Routes>
     </BrowserRouter>
   );

@@ -1,3 +1,5 @@
+import { useState } from "react";
+import axios from "axios";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -9,12 +11,47 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
-export function LoginForm({
-  className,
-  ...props
-}) {
+export function LoginForm({ className, ...props }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/users/signin", {
+        email,
+        password,
+      });
+
+      // සාර්ථක වුණාම Token එකයි User විස්තරයි Save කරගන්නවා
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      
+      // Role එක අරගෙන ඒකට අදාළ පිටුවට යවනවා 👇
+      const userRole = response.data.user.role; 
+
+      if (userRole === "manager") {
+        window.location.href = "/managerdashboard"; // Manager ව යවන තැන
+      } else if (userRole === "admin") {
+        window.location.href = "/admindashboard"; // Admin ව යවන තැන (අවශ්‍ය නම්)
+      } else {
+        window.location.href = "/"; // සාමාන්‍ය User ව Home එකට යවනවා
+      }
+      
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form onSubmit={handleLogin} className={cn("flex flex-col gap-6", className)} {...props}>
       <FieldGroup>
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold">Login to your account</h1>
@@ -22,6 +59,9 @@ export function LoginForm({
             Enter your email below to login to your account
           </p>
         </div>
+
+        {error && <div className="text-red-500 text-sm font-medium">{error}</div>}
+
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input 
@@ -29,6 +69,8 @@ export function LoginForm({
             type="email"
             placeholder="kasun@gmail.com"
             required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="bg-background h-10" />
         </Field>
         <Field>
@@ -38,11 +80,21 @@ export function LoginForm({
               Forgot your password?
             </a>
           </div>
-          <Input id="password" type="password" placeholder="********" required className="bg-background h-10" />
+          <Input 
+            id="password" 
+            type="password" 
+            placeholder="********" 
+            required 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="bg-background h-10" />
         </Field>
         <Field>
-          <Button className="h-10" type="submit">Login</Button>
+          <Button disabled={loading} className="h-10" type="submit">
+            {loading ? "Logging in..." : "Login"}
+          </Button>
         </Field>
+        
         <FieldSeparator>Or continue with</FieldSeparator>
         <Field>
           <Button variant="outline" type="button" className="gap-2 h-10">

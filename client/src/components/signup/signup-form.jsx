@@ -1,3 +1,5 @@
+import { useState } from "react";
+import axios from "axios";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -9,12 +11,57 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
-export function SignupForm({
-  className,
-  ...props
-}) {
+export function SignupForm({ className, ...props }) {
+  // 1. Form Data සඳහා States
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    confirmPassword: ""
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // 2. Input වෙනස් වෙද්දී State එක අප්ඩේට් කිරීම
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  // 3. Form Submit කිරීම
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (formData.password !== formData.confirmPassword) {
+      return setError("Passwords do not match!");
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.post("http://localhost:5000/api/users/signup", {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        password: formData.password,
+      });
+
+      if (response.status === 201) {
+        alert("Account created successfully!");
+        window.location.href = "/signin"; // සාර්ථක වුණාම Login පිටුවට යවනවා
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    // Form එක Submit වෙද්දී handleSubmit function එක වැඩ කරන්න හැදුවා 👇
+    <form onSubmit={handleSubmit} className={cn("flex flex-col gap-6", className)} {...props}>
       <FieldGroup>
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold">Create your account</h1>
@@ -23,23 +70,30 @@ export function SignupForm({
           </p>
         </div>
 
+        {/* Error Message පෙන්වීම 👇 */}
+        {error && <div className="text-red-500 text-sm text-center font-medium">{error}</div>}
+
         <div className="grid grid-cols-2 gap-3">
           <Field>
-            <FieldLabel htmlFor="first-name">First Name</FieldLabel>
+            <FieldLabel htmlFor="firstName">First Name</FieldLabel>
             <Input
-              id="first-name"
+              id="firstName"
               type="text"
               placeholder="Adithya"
               required
+              value={formData.firstName}
+              onChange={handleChange}
               className="bg-background h-10" />
           </Field>
           <Field>
-            <FieldLabel htmlFor="last-name">Last Name</FieldLabel>
+            <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
             <Input
-              id="last-name"
+              id="lastName"
               type="text"
               placeholder="Semina"
               required
+              value={formData.lastName}
+              onChange={handleChange}
               className="bg-background h-10" />
           </Field>
         </div>
@@ -51,32 +105,52 @@ export function SignupForm({
             type="email"
             placeholder="adithya@gmail.com"
             required
+            value={formData.email}
+            onChange={handleChange}
             className="bg-background h-10" />
         </Field>
         <Field>
-          <FieldLabel htmlFor="contact-number">Contact Number</FieldLabel>
+          <FieldLabel htmlFor="phoneNumber">Contact Number</FieldLabel>
           <Input
-            id="contact-number"
+            id="phoneNumber" // Backend එකට ගැළපෙන්න ID එක වෙනස් කළා
             type="tel"
-            placeholder="123-456-7890"
+            placeholder="0771234567"
             required
+            value={formData.phoneNumber}
+            onChange={handleChange}
             className="bg-background h-10" />
         </Field>
         <div className="grid grid-cols-2 gap-3">
-        <Field>
-          <FieldLabel htmlFor="password">Password</FieldLabel>
-          <Input id="password" placeholder="********" type="password" required className="bg-background h-10" />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
-          <Input id="confirm-password" placeholder="********" type="password" required className="bg-background h-10" />
-        </Field>
+          <Field>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Input 
+              id="password" 
+              placeholder="********" 
+              type="password" 
+              required 
+              value={formData.password}
+              onChange={handleChange}
+              className="bg-background h-10" />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
+            <Input 
+              id="confirmPassword" 
+              placeholder="********" 
+              type="password" 
+              required 
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="bg-background h-10" />
+          </Field>
         </div>
         <Field>
-          <Button type="submit" className=" h-10">
-            Create Account
+          <Button type="submit" disabled={loading} className=" h-10">
+            {loading ? "Creating Account..." : "Create Account"}
           </Button>
         </Field>
+        
+        {/* ... (Google Login & Bottom text අර විදිහටම තියෙනවා) ... */}
         <FieldSeparator>Or continue with</FieldSeparator>
         <Field>
           <Button variant="outline" type="button" className="gap-2 h-10">
