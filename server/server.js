@@ -27,6 +27,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/settings', require('./routes/settingsRoutes'));
+app.use('/api/logs', require('./routes/logRoutes'));
 
 app.get('/', (req, res) => {
     res.send('Shop.co API is running...');
