@@ -38,7 +38,7 @@ export function SignupForm({
             <Input
               id="last-name"
               type="text"
-              placeholder="Doe"
+              placeholder="Semina"
               required
               className="bg-background h-10" />
           </Field>
