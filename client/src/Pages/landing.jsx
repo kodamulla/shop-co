@@ -4,6 +4,7 @@ import { Footer } from "@/components/landingpage/footer";
 import { CategorySection } from "@/components/landingpage/category-section";
 import { ProductSection } from "@/components/landingpage/product-section";
 import { NewArrivalsSection } from "@/components/landingpage/new-arrivals-section";
+import { TestimonialsSection } from "@/components/landingpage/testimonials-section";
 
 export default function LandingPage() {
   return (
@@ -16,6 +17,7 @@ export default function LandingPage() {
       <CategorySection />
       <NewArrivalsSection />
       <ProductSection />
+      <TestimonialsSection />
       <Footer />
 
 

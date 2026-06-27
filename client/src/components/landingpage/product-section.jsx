@@ -1,18 +1,15 @@
 import { motion } from "framer-motion";
-import { Flame, Trophy, Sparkles, Star, Heart, Copy, ArrowRight } from "lucide-react";
-import { useState } from "react"; // අලුතින් useState import කළා 👇
+import { Flame, Trophy, Sparkles, Star, Heart, Copy, ArrowRight, ChevronRight } from "lucide-react";
+import { useState } from "react"; 
+import { Button } from "@/components/ui/button"; // Button එක import කළා 👇
 
 export function ProductSection() {
-  // Swipe Indicator එක පෙන්වන්න සහ හංගන්න State එකක් 👇
   const [showSwipe, setShowSwipe] = useState(true);
 
-  // Scroll කරද්දී වැඩ කරන Function එක 👇
   const handleScroll = (e) => {
-    // Scroll කරලා තියෙන දුර 10px ට වඩා වැඩි නම් Swipe එක හංගන්න (false)
     if (e.currentTarget.scrollLeft > 10) {
       setShowSwipe(false);
     } else {
-      // ආයෙත් මුලටම ආවම (scroll දුර 0 වුණාම) Swipe එක පෙන්නන්න (true)
       setShowSwipe(true);
     }
   };
@@ -92,7 +89,6 @@ export function ProductSection() {
     }
   ];
 
-  // Animations සැකසුම්
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -109,7 +105,7 @@ export function ProductSection() {
   };
 
   return (
-    <section className="w-full -mt-10 md:-mt-10 py-10 md:py-15 bg-muted overflow-hidden">
+    <section className="w-full -mt-10 md:-mt-20 py-10 md:py-10 bg-muted overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
         
         {/* Heading සහ Paragraph */}
@@ -128,11 +124,11 @@ export function ProductSection() {
           </p>
         </motion.div>
 
-        {/* Swipe Indicator එක (Fade in/out වෙන විදිහට හැදුවා) 👇 */}
+        {/* Swipe Indicator */}
         <motion.div 
           className="hidden lg:flex w-full justify-end mb-4 pr-2"
-          animate={{ opacity: showSwipe ? 1 : 0 }} // scroll එක අනුව පේනවා/නොපෙනෙනවා
-          transition={{ duration: 0.3 }} // මෘදුව මැකිලා යන වේගය
+          animate={{ opacity: showSwipe ? 1 : 0 }} 
+          transition={{ duration: 0.3 }} 
         >
           <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5 animate-pulse cursor-default">
             Swipe <ArrowRight className="w-4 h-4" />
@@ -141,7 +137,7 @@ export function ProductSection() {
 
         {/* Product Grid / Carousel */}
         <motion.div
-          onScroll={handleScroll} // Scroll කරද්දී අර function එක වැඩ කරන්න මෙතනට දැම්මා 👇
+          onScroll={handleScroll} 
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -210,6 +206,21 @@ export function ProductSection() {
               </motion.div>
             );
           })}
+        </motion.div>
+
+        {/* Explore More Button එක 👇 */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="flex justify-center"
+        >
+          <a href="/products">
+            <Button variant="outline" size="lg" className="rounded-lg px-8 h-12 text-sm font-medium hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+              Want Explore More? <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </a>
         </motion.div>
 
       </div>
