@@ -68,7 +68,7 @@ export function TestimonialsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-12 md:mb-16 max-w-3xl mx-auto"
+          className="text-center mb-12 md:mb-12 max-w-3xl mx-auto"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4">
             Why Fashion Lovers Choose ShopCo
@@ -84,7 +84,7 @@ export function TestimonialsSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          className="flex flex-wrap justify-center items-center gap-8 md:gap-12 mb-15 transition-all duration-500"
+          className="flex flex-wrap justify-center items-center gap-5 md:gap-12 mb-15 transition-all duration-500"
         >
           {brands.map((brand, index) => {
             const Icon = brand.icon;
