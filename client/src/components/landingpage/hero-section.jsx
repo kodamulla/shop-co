@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 
 export function HeroSection() {
   return (
-    <main className="w-full container mx-auto px-2 md:px-1 overflow-hidden bg-muted">
+    <main id="home" className="w-full container mx-auto px-2 md:px-1 overflow-hidden bg-muted">
       <div className="grid lg:grid-cols-2 items-center lg:min-h-[calc(100vh-4rem)] mx-2 lg:mx-10 gap-8">
         
         {/* Left Column (Text Content) */}
@@ -38,9 +38,12 @@ export function HeroSection() {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" className="h-12 px-8 text-base font-medium rounded-lg hover:scale-105 transition-transform">
-              Shop Now <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
+            {/* Button එක <a> ටැග් එකකින් කවර් කරලා ලින්ක් එක දුන්නා 👇 */}
+            <a href="/product">
+              <Button size="lg" className="h-12 px-8 text-base font-medium rounded-lg hover:bg-white hover:text-black transition-all shadow-sm">
+                Shop Now <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </a>
           </div>
 
           {/* Social Proof */}
