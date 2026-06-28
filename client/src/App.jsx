@@ -13,6 +13,7 @@ import AdminLayout from "./Pages/admin/AdminLayout";
 import AdminDashboard from "./Pages/admin/AdminDashboard";
 import ManagerManagement from "./Pages/admin/ManagerManagement";
 import UserManagement from "./Pages/admin/UserManagement";
+import ProductManagement from "./Pages/admin/ProductManagement";
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route index element={<AdminDashboard />} />
         <Route path="managers" element={<ManagerManagement />} />
         <Route path="users" element={<UserManagement />} />
+        <Route path="products" element={<ProductManagement />} />
         </Route>
       </Routes>
     </BrowserRouter>
