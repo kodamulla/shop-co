@@ -7,13 +7,13 @@ import {
   Truck, 
   ShieldCheck, 
   RefreshCw,
-  Star
+  Star,
 } from "lucide-react";
 import { motion } from "framer-motion"; 
 
 export function HeroSection() {
   return (
-    <main className="w-full container mx-auto px-4 md:px-6 overflow-hidden">
+    <main id="home" className="w-full mx-auto px-2 md:px-10 overflow-hidden bg-muted scroll-mt-15">
       <div className="grid lg:grid-cols-2 items-center lg:min-h-[calc(100vh-4rem)] mx-2 lg:mx-10 gap-8">
         
         {/* Left Column (Text Content) */}
@@ -38,9 +38,12 @@ export function HeroSection() {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" className="h-12 px-8 text-base font-medium rounded-lg hover:scale-105 transition-transform">
-              Shop Now <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
+            {/* Button එක <a> ටැග් එකකින් කවර් කරලා ලින්ක් එක දුන්නා 👇 */}
+            <a href="/products">
+              <Button size="lg" className="h-12 px-8 text-base font-medium rounded-lg hover:bg-white hover:text-black transition-all shadow-sm">
+                Shop Now <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </a>
           </div>
 
           {/* Social Proof */}
@@ -105,7 +108,6 @@ export function HeroSection() {
               <motion.div 
                 key={i} 
                 initial={{ opacity: 0, y: 20 }}
-                // කොටු 4 ටත් whileInView දැම්මා 👇
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.4 + (i * 0.1) }}

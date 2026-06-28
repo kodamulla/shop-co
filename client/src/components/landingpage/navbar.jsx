@@ -1,27 +1,59 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   ShoppingCart, 
-  Heart, 
   TrendingUp, 
-  Star, 
-  Clock, 
-  Gem, 
-  Tag,
-  UserCircle,
+  Shirt,
+  HelpCircle,
   Menu,
-  X
+  X,
+  LogIn,
+  User, 
+  LogOut,
+  UserCircle,
+  Home
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false); 
+  
+  // Component එක ලෝඩ් වෙද්දීම localStorage එක චෙක් කරලා State එක හදාගන්නවා
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return !!localStorage.getItem("token"); 
+  });
+
+  // Scroll කරද්දී Menus වහන්න
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+      if (isUserDropdownOpen) setIsUserDropdownOpen(false);
+    };
+
+    if (isMobileMenuOpen || isUserDropdownOpen) {
+      window.addEventListener("scroll", handleScroll, { passive: true });
+    }
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isMobileMenuOpen, isUserDropdownOpen]);
+
+  // Logout Function එක
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    setIsUserDropdownOpen(false);
+    setIsMobileMenuOpen(false);
+    window.location.href = "/"; // මුල් පිටුවට යවනවා
+  };
 
   const navLinks = [
-    { name: "New Arrivals", icon: TrendingUp },
-    { name: "Clothing", icon: Star },
-    { name: "Footwear", icon: Clock },
-    { name: "Accessories", icon: Gem },
-    { name: "Sale", icon: Tag },
+    { name: "Home", href: "/#home", icon: Home },
+    { name: "New Arrivals", href: "/#new-arrivals", icon: TrendingUp },
+    { name: "Clothing", href: "/products", icon: Shirt },
+    { name: "Details", href: "/details", icon: HelpCircle },
   ];
 
   return (
@@ -35,8 +67,6 @@ export function Navbar() {
         
         {/* Left Section: Mobile Menu Toggle & Logo */}
         <div className="flex items-center gap-3">
-          
-          {/* Mobile Menu Button */}
           <button 
             className="lg:hidden p-2 -ml-2 bg-muted/50 hover:bg-muted text-foreground rounded-md transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -48,7 +78,6 @@ export function Navbar() {
             )}
           </button>
 
-          {/* Logo */}
           <div className="flex items-center gap-2 font-bold text-xl lg:ml-20">
             <img src="/Logoicon.png" alt="ShopCo Logo" className="h-8 w-8" />
             <span>ShopCo</span>
@@ -56,28 +85,76 @@ export function Navbar() {
         </div>
 
         {/* Center Navigation */}
-        <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-muted-foreground">
+        <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-black">
           {navLinks.map((link, index) => (
-            <a key={index} href="#" className="flex items-center gap-1.5 hover:text-foreground transition-colors">
+            <a key={index} href={link.href} className="flex items-center gap-1.5 hover:text-foreground transition-colors">
               <link.icon className="h-4 w-4" /> {link.name}
             </a>
           ))}
         </nav>
 
-        {/* Right Icons */}
-        <div className="flex items-center gap-4 lg:m-20">
-          <button className="text-muted-foreground hover:text-foreground transition-colors">
-            <Heart className="h-5 w-5" />
-          </button>
-          <button className="text-muted-foreground hover:text-foreground transition-colors relative">
+        {/* Right Section (Cart & Auth) */}
+        <div className="flex items-center gap-5 lg:mr-20 relative">
+          <a href="/cart" className="text-muted-foreground hover:text-foreground transition-colors relative">
             <ShoppingCart className="h-5 w-5" />
             <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
               3
             </span>
-          </button>
-          <button className="text-muted-foreground hover:text-foreground transition-colors">
-            <UserCircle className="h-6 w-6" />
-          </button>
+          </a>
+          
+          {/* Conditional Rendering: ලොග් වෙලාද නැද්ද අනුව වෙනස් වෙනවා */}
+          {!isLoggedIn ? (
+            <a 
+              href="/signin" 
+              className="hidden lg:flex items-center gap-1.5 text-sm font-bold text-black hover:text-foreground transition-colors pl-2 border-l border-muted-foreground/20"
+            >
+              <LogIn className="h-4 w-4" /> Sign In
+            </a>
+          ) : (
+            <div className="relative hidden lg:block">
+              <button 
+                onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                className="flex items-center justify-center h-8 w-8 rounded-full bg-muted border hover:bg-muted/80 transition-colors pl-2 ml-2 border-l border-muted-foreground/20"
+              >
+                <User className="h-5 w-5 text-foreground pr-2" />
+              </button>
+
+              {/* Desktop User Dropdown 👇 */}
+              <AnimatePresence>
+                {isUserDropdownOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 mt-3 w-40 rounded-xl border bg-background p-2 shadow-lg flex flex-col gap-1"
+                  >
+                    {/* Account ලින්ක් එක */}
+                    <a
+                      href="/account"
+                      onClick={() => setIsUserDropdownOpen(false)}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                    >
+                      <UserCircle className="h-4 w-4" />
+                      Account
+                    </a>
+
+                    {/* Divider ඉර */}
+                    <div className="h-px bg-muted-foreground/10 my-0.5 mx-2"></div>
+
+                    {/* Logout බට්න් එක */}
+                    <button
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Log out
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
       </div>
 
@@ -95,15 +172,57 @@ export function Navbar() {
               {navLinks.map((link, index) => (
                 <a
                   key={index}
-                  href="#"
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)} 
                   className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted transition-colors text-foreground"
                 >
                   <div className="flex items-center gap-2.5">
-                    <link.icon className="h-4 w-4 text-muted-foreground" />
+                    <link.icon className="h-4 w-4 text-black" />
                     {link.name}
                   </div>
                 </a>
               ))}
+              
+              <div className="h-px bg-muted-foreground/10 my-1 mx-2"></div>
+              
+              {/* Mobile Menu Conditional Rendering 👇 */}
+              {!isLoggedIn ? (
+                <a
+                  href="/signin"
+                  onClick={() => setIsMobileMenuOpen(false)} 
+                  className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted transition-colors text-foreground"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <LogIn className="h-4 w-4 text-black" />
+                    Sign In
+                  </div>
+                </a>
+              ) : (
+                <>
+                  {/* Mobile Account ලින්ක් එක */}
+                  <a
+                    href="/account"
+                    onClick={() => setIsMobileMenuOpen(false)} 
+                    className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted transition-colors text-foreground"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <UserCircle className="h-4 w-4 text-black" />
+                      Account
+                    </div>
+                  </a>
+
+                  {/* Mobile Logout බට්න් එක */}
+                  <button
+                    onClick={handleLogout} 
+                    className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted transition-colors text-foreground"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <LogOut className="h-4 w-4 text-black" />
+                      Log out
+                    </div>
+                  </button>
+                </>
+              )}
             </nav>
           </motion.div>
         )}
