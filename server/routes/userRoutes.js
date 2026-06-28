@@ -18,7 +18,7 @@ router.post('/signup', signup);
 router.post('/signin', signin);
 
 // ADMIN USER MANAGEMENT
-router.get('/users',protect, isAdmin, getAllUsers);
+router.get('/', protect, isAdmin, getAllUsers);
 router.put('/block/:id',protect, isAdmin, toggleBlockUser);
 router.delete('/delete/:id', protect, isAdmin, deleteUser);
 router.patch('/role/:id', protect, isAdmin, updateUserRole);

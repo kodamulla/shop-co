@@ -12,6 +12,7 @@ import DetailsPage from "./Pages/details";
 import AdminLayout from "./Pages/admin/AdminLayout";
 import AdminDashboard from "./Pages/admin/AdminDashboard";
 import ManagerManagement from "./Pages/admin/ManagerManagement";
+import UserManagement from "./Pages/admin/UserManagement";
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         <Route path="/admindashboard" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
         <Route path="managers" element={<ManagerManagement />} />
+        <Route path="users" element={<UserManagement />} />
         </Route>
       </Routes>
     </BrowserRouter>
