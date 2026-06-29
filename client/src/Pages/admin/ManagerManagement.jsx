@@ -1,88 +1,71 @@
-import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Search01Icon, PlusSignIcon, MoreHorizontalCircle01Icon } from "@hugeicons/core-free-icons";
+import { MoreHorizontal, ShieldCheck, UserCog } from "lucide-react";
+
+const managers = [
+  { id: 1, name: "Hansi Kodamulla", email: "hansi@shopco.com", status: "Active", role: "Super Admin" },
+  { id: 2, name: "Adithya Semina", email: "adithya@shopco.com", status: "Active", role: "Manager" },
+];
 
 export default function ManagerManagement() {
-  const [managers, setManagers] = useState([]);
-
-  // පසුව අපි මෙතනට Backend එකෙන් Data ගන්න Axios function එක ලියනවා.
-
   return (
-    <div className="flex flex-col gap-6 w-full">
-      <Card className="shadow-sm border-muted">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-2xl font-bold tracking-tight">Manager Management</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Manage your system administrators and store managers. Add, update, or remove access.
-          </CardDescription>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Manager Management</h2>
+          <p className="text-muted-foreground">Manage and assign roles to your staff.</p>
+        </div>
+        <Button className="rounded-full shadow-lg bg-indigo-600 hover:bg-indigo-700">
+          <UserCog className="mr-2 h-4 w-4" /> Add New Manager
+        </Button>
+      </div>
+
+      <Card className="rounded-[24px] border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white/50 backdrop-blur-xl">
+        <CardHeader>
+          <CardTitle>Staff Members</CardTitle>
+          <CardDescription>A list of all registered managers.</CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Toolbar: Search & Add Button */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-            <div className="relative w-full sm:w-80">
-              <HugeiconsIcon 
-                icon={Search01Icon} 
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" 
-              />
-              <Input
-                type="search"
-                placeholder="Search managers..."
-                className="pl-9 bg-muted/50 border-transparent focus-visible:bg-transparent"
-              />
-            </div>
-            <Button className="w-full sm:w-auto shadow-sm">
-              <HugeiconsIcon icon={PlusSignIcon} className="mr-2 h-4 w-4" />
-              Add New Manager
-            </Button>
-          </div>
-
-          {/* Data Table */}
-          <div className="rounded-lg border bg-card">
-            <Table>
-              <TableHeader className="bg-muted/50">
-                <TableRow>
-                  <TableHead className="font-semibold">Name</TableHead>
-                  <TableHead className="font-semibold">Email</TableHead>
-                  <TableHead className="font-semibold">Role</TableHead>
-                  <TableHead className="font-semibold">Status</TableHead>
-                  <TableHead className="text-right font-semibold">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {/* අපි මේක තාවකාලිකව දාන්නේ. ඊළඟට DB එකෙන් Data එන විදියට හදමු */}
-                <TableRow className="hover:bg-muted/50 transition-colors">
-                  <TableCell className="font-medium text-foreground">Hansi Kodamulla</TableCell>
-                  <TableCell className="text-muted-foreground">hansi@shopco.com</TableCell>
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b-0 hover:bg-transparent">
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {managers.map((manager) => (
+                <TableRow key={manager.id} className="group hover:bg-slate-50 transition-colors">
+                  <TableCell className="font-medium flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">
+                      {manager.name.charAt(0)}
+                    </div>
+                    {manager.name}
+                  </TableCell>
+                  <TableCell className="text-slate-500">{manager.email}</TableCell>
                   <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                      Admin
+                    <span className="px-3 py-1 bg-slate-100 rounded-full text-xs font-semibold text-slate-600">
+                      {manager.role}
                     </span>
                   </TableCell>
                   <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-green-500/10 px-2.5 py-0.5 text-xs font-semibold text-green-600">
-                      Active
-                    </span>
+                    <div className="flex items-center gap-2 text-emerald-600 font-semibold text-xs">
+                      <ShieldCheck className="w-4 h-4" /> {manager.status}
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                      <HugeiconsIcon icon={MoreHorizontalCircle01Icon} className="h-5 w-5" />
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </TableCell>
                 </TableRow>
-              </TableBody>
-            </Table>
-          </div>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

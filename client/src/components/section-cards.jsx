@@ -1,74 +1,92 @@
-"use client"
-
-import { Card, CardContent } from "@/components/ui/card"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { 
-  MoneyBag02Icon, 
-  ShoppingBasket01Icon, 
-  UserGroupIcon, 
-  Tag01Icon 
-} from "@hugeicons/core-free-icons"
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TrendingUp, TrendingDown, DollarSign, Users, CreditCard, Package } from "lucide-react";
 
 export function SectionCards({ stats }) {
-  if (!stats) return <div className="p-4 flex gap-4 w-full h-32 animate-pulse bg-muted/20 rounded-xl"></div>;
+  // Backend එකෙන් දත්ත එනකම් (Loading state) ලස්සන Skeleton එකක් පෙන්වන්න
+  if (!stats) {
+    return (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Card key={i} className="rounded-2xl border-none shadow-sm p-5 bg-white h-[140px] flex flex-col justify-between">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+            <div className="mt-4 flex items-end justify-between">
+              <Skeleton className="h-8 w-28" />
+              <div className="space-y-1">
+                <Skeleton className="h-3 w-12" />
+                <Skeleton className="h-3 w-16" />
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    );
+  }
 
-  const cardData = [
+  // Backend එකෙන් එන 'stats' object එකෙන් දත්ත අරගෙන මේ විදියට සකස් කරගන්නවා
+  const dashboardStats = [
     {
       title: "Total Revenue",
-      value: `$${stats?.totalRevenue ? stats.totalRevenue.toLocaleString() : "0"}`,
-      subtitle: "+20.1% from last month",
-      icon: MoneyBag02Icon,
-      color: "text-blue-600",
-      bgColor: "bg-blue-600/10",
-    },
-    {
-      title: "Total Orders",
-      value: stats?.totalOrders || "0",
-      subtitle: "+180 new orders",
-      icon: ShoppingBasket01Icon,
-      color: "text-emerald-600",
-      bgColor: "bg-emerald-600/10",
+      value: `$${stats.totalRevenue?.toLocaleString() || 0}`,
+      trend: stats.revenueTrend || "+0%",
+      isPositive: !(stats.revenueTrend || "").toString().startsWith("-"),
+      timeframe: "vs last month",
+      icon: <DollarSign className="w-5 h-5 text-red-500" />,
+      iconBg: "bg-red-100",
     },
     {
       title: "Total Customers",
-      value: stats?.totalCustomers || "0",
-      subtitle: "+12 new this week",
-      icon: UserGroupIcon,
-      color: "text-violet-600",
-      bgColor: "bg-violet-600/10",
+      value: stats.totalCustomers?.toLocaleString() || 0,
+      trend: stats.customerTrend || "+0%",
+      isPositive: !(stats.customerTrend || "").toString().startsWith("-"),
+      timeframe: "vs last month",
+      icon: <Users className="w-5 h-5 text-orange-500" />,
+      iconBg: "bg-orange-100",
     },
     {
-      title: "Active Products",
-      value: stats?.activeProducts || "0",
-      subtitle: "34 low in stock",
-      icon: Tag01Icon,
-      color: "text-orange-600",
-      bgColor: "bg-orange-600/10",
+      title: "Total Orders",
+      value: stats.totalOrders?.toLocaleString() || 0,
+      trend: stats.orderTrend || "+0%",
+      isPositive: !(stats.orderTrend || "").toString().startsWith("-"),
+      timeframe: "vs last month",
+      icon: <CreditCard className="w-5 h-5 text-emerald-500" />,
+      iconBg: "bg-emerald-100",
+    },
+    {
+      title: "Total Products",
+      value: stats.totalProducts?.toLocaleString() || 0,
+      trend: stats.productTrend || "+0%",
+      isPositive: !(stats.productTrend || "").toString().startsWith("-"),
+      timeframe: "vs last month",
+      icon: <Package className="w-5 h-5 text-blue-500" />,
+      iconBg: "bg-blue-100",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {cardData.map((card, index) => (
-        <Card key={index} className="border-none shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden relative group">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between space-y-0">
-              <p className="text-sm font-medium text-muted-foreground">
-                {card.title}
-              </p>
-              <div className={`p-2.5 rounded-xl ${card.bgColor} transition-transform group-hover:scale-110`}>
-                <HugeiconsIcon icon={card.icon} className={`h-5 w-5 ${card.color}`} strokeWidth={2} />
-              </div>
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+      {dashboardStats.map((stat, index) => (
+        <Card key={index} className="rounded-2xl border-none shadow-sm hover:shadow-md transition-shadow duration-200 p-5 bg-white">
+          <div className="flex items-center gap-3 mb-4">
+            <div className={`p-2.5 rounded-full ${stat.iconBg}`}>
+              {stat.icon}
             </div>
-            <div className="mt-4 flex flex-col gap-1">
-              <span className="text-3xl font-bold tracking-tight">{card.value}</span>
-              <span className="text-xs text-muted-foreground font-medium">
-                {card.subtitle}
+            <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
+          </div>
+          
+          <div className="flex items-end justify-between">
+            <h2 className="text-3xl font-bold tracking-tight text-slate-800">{stat.value}</h2>
+            <div className="flex flex-col items-end">
+              <span className={`flex items-center text-sm font-semibold ${stat.isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
+                {stat.isPositive ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
+                {stat.trend}
               </span>
+              <span className="text-xs text-muted-foreground mt-0.5">{stat.timeframe}</span>
             </div>
-          </CardContent>
-          {/* Subtle bottom line for a pop of color */}
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-muted to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
         </Card>
       ))}
     </div>

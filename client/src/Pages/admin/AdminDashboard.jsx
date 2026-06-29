@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { SectionCards } from "@/components/section-cards";
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
+import { RevenueBarChart } from "@/components/revenue-bar-chart";
+import { CustomerGrowth } from "@/components/customer-growth";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -18,17 +19,29 @@ export default function AdminDashboard() {
     fetchStats();
   }, []);
 
- return (
+  return (
     <div className="mx-auto w-full max-w-7xl space-y-6">
+      
+      {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-800">Dashboard Overview</h1>
         <p className="text-muted-foreground">Welcome to the ShopCo admin analytics.</p>
       </div>
 
+      {/* Top 4 Cards */}
       <SectionCards stats={stats} />
       
-      <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-4">
-        <ChartAreaInteractive />
+      {/* Modern Charts Section (ChartAreaInteractive එක වෙනුවට) */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* වම් පැත්තේ Bar Chart එක (ඉඩ වැඩිපුර ගන්නවා - 3 columns) */}
+        <div className="lg:col-span-3">
+          <RevenueBarChart />
+        </div>
+        
+        {/* දකුණු පැත්තේ Customer Growth එක (ඉඩ අඩුවෙන් ගන්නවා - 2 columns) */}
+        <div className="lg:col-span-2">
+          <CustomerGrowth />
+        </div>
       </div>
     </div>
   );
