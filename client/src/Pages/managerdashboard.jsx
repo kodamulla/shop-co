@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/managerdashboard/app-sidebar"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
+
 import { SectionCards } from "@/components/section-cards"
 import { SiteHeader } from "@/components/site-header"
 import { TooltipProvider } from "../components/ui/tooltip";
