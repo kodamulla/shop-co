@@ -23,21 +23,14 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { 
-  UserGroupIcon, 
-  PackageIcon, 
-  File01Icon, 
-  Database01Icon, 
-  Analytics01Icon,
-  ChartHistogramIcon,
-  MoreVerticalCircle01Icon, 
-  UserCircle02Icon, 
-  Logout01Icon 
+  UserGroupIcon, PackageIcon, File01Icon, Database01Icon, 
+  Analytics01Icon, ChartHistogramIcon,  
+  UserCircle02Icon, Logout01Icon 
 } from "@hugeicons/core-free-icons"
 
 const data = {
