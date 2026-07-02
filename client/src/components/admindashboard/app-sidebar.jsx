@@ -30,7 +30,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { 
   UserGroupIcon, PackageIcon, File01Icon, Database01Icon, 
   Analytics01Icon, ChartHistogramIcon,  
-  UserCircle02Icon, Logout01Icon 
+  UserCircle02Icon, Logout01Icon, MoreVerticalCircle01Icon 
 } from "@hugeicons/core-free-icons"
 
 const data = {
