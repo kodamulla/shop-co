@@ -4,50 +4,41 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Edit2, Trash2, Plus } from "lucide-react"; 
 
 export default function ManagerManagement() {
   const [managers, setManagers] = useState([]);
   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', password: '', role: 'manager' });
+  const [editingUser, setEditingUser] = useState(null);
 
-  // Token එක ගන්න (Login වුණාම සේව් කළා නම් මේක වැඩ)
-  const token = localStorage.getItem('token'); 
-
-  // Axios config එකක් හදාගන්න (සෑම රික්වෙස්ට් එකකටම Token එක යවන්න)
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
+  const token = localStorage.getItem('token');
+  const config = { headers: { Authorization: `Bearer ${token}` } };
 
   const fetchManagers = async () => {
     try {
       const res = await axios.get('http://localhost:5000/api/users', config);
       const allUsers = Array.isArray(res.data) ? res.data : (res.data.users || []);
-      const filtered = allUsers.filter(u => u.role === 'manager' || u.role === 'admin');
-      setManagers(filtered);
-    } catch (err) {
-      console.error("Error fetching managers:", err);
-    }
+      setManagers(allUsers.filter(u => u.role === 'manager' || u.role === 'admin'));
+    } catch (err) { console.error("Error:", err); }
   };
 
   useEffect(() => { fetchManagers(); }, []);
 
-  const handleAddManager = async () => {
+  const handleUpdate = async () => {
     try {
-      await axios.post('http://localhost:5000/api/users/signup', formData, config);
-      fetchManagers(); 
-      alert("Manager added successfully!");
-    } catch (err) {
-      alert("Error adding manager: " + err.response?.data?.message);
-    }
+      await axios.put(`http://localhost:5000/api/users/${editingUser._id}`, editingUser, config);
+      setEditingUser(null);
+      fetchManagers();
+    } catch (err) { alert("Error updating"); }
   };
 
   const deleteManager = async (id) => {
-    try {
+    if (window.confirm("Delete this staff member?")) {
       await axios.delete(`http://localhost:5000/api/users/${id}`, config);
       fetchManagers();
-    } catch (err) {
-      alert("Error deleting manager");
     }
   };
+
   return (
     <div className="p-8 bg-slate-50/50 min-h-screen">
       <div className="flex justify-between items-center mb-8">
@@ -58,42 +49,86 @@ export default function ManagerManagement() {
         
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700 rounded-xl font-bold px-6">+ Add New Manager</Button>
+            <Button className="bg-blue-600 rounded-xl font-bold px-6"><Plus className="w-4 h-4 mr-2"/> Add New Manager</Button>
           </DialogTrigger>
           <DialogContent className="rounded-3xl p-8">
+            <DialogHeader><DialogTitle>Add New Staff Member</DialogTitle></DialogHeader>
+            <div className="space-y-4 py-4">
+              <Input placeholder="First Name" onChange={(e) => setFormData({...formData, firstName: e.target.value})} />
+              <Input placeholder="Last Name" onChange={(e) => setFormData({...formData, lastName: e.target.value})} />
+              <Input placeholder="Email" onChange={(e) => setFormData({...formData, email: e.target.value})} />
+              <Button className="w-full bg-blue-600" onClick={async () => {
+                await axios.post('http://localhost:5000/api/users/signup', formData, config);
+                fetchManagers();
+              }}>Save Staff Member</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <Card className="rounded-3xl border-slate-100 shadow-sm p-6">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="text-slate-400 text-xs uppercase tracking-widest font-bold border-b border-slate-100">
+              <th className="pb-4">Name</th><th className="pb-4">Email</th><th className="pb-4">Role</th><th className="pb-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {managers.map((m) => (
+              <tr key={m._id} className="hover:bg-blue-50/30 transition-colors">
+                <td className="py-4 font-bold text-blue-950">{m.firstName} {m.lastName}</td>
+                <td className="py-4 text-slate-500">{m.email}</td>
+                <td className="py-4"><span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-xs font-bold uppercase">{m.role}</span></td>
+                <td className="py-4 text-right flex justify-end gap-1">
+                  
+                  {/* EDIT Button */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost" className="text-blue-600 font-bold flex items-center gap-1.5 px-3" onClick={() => setEditingUser(m)}>
+                        <Edit2 className="w-3.5 h-3.5"/> Edit
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="rounded-3xl p-8">
   <DialogHeader>
-    <DialogTitle className="text-xl font-black text-blue-950">Add New Staff Member</DialogTitle>
-    <p className="text-slate-400 text-sm">Fill in the details to create a new manager account.</p>
+    <DialogTitle className="text-xl font-black text-blue-950">Edit Staff Member</DialogTitle>
+    <p className="text-slate-400 text-sm">Update staff profile information below.</p>
   </DialogHeader>
   
   <div className="space-y-5 py-4">
+    {/* Name Fields */}
     <div className="grid grid-cols-2 gap-4">
       <div className="space-y-1">
         <label className="text-[10px] font-bold text-slate-500 uppercase">First Name</label>
-        <Input placeholder="John" onChange={(e) => setFormData({...formData, firstName: e.target.value})} />
+        <Input 
+          value={editingUser?.firstName || ''} 
+          onChange={(e) => setEditingUser({...editingUser, firstName: e.target.value})} 
+        />
       </div>
       <div className="space-y-1">
         <label className="text-[10px] font-bold text-slate-500 uppercase">Last Name</label>
-        <Input placeholder="Doe" onChange={(e) => setFormData({...formData, lastName: e.target.value})} />
+        <Input 
+          value={editingUser?.lastName || ''} 
+          onChange={(e) => setEditingUser({...editingUser, lastName: e.target.value})} 
+        />
       </div>
     </div>
-    
+
+    {/* Email Field */}
     <div className="space-y-1">
       <label className="text-[10px] font-bold text-slate-500 uppercase">Email Address</label>
-      <Input placeholder="john@shopco.com" type="email" onChange={(e) => setFormData({...formData, email: e.target.value})} />
+      <Input 
+        value={editingUser?.email || ''} 
+        onChange={(e) => setEditingUser({...editingUser, email: e.target.value})} 
+      />
     </div>
 
+    {/* Role Select Field */}
     <div className="space-y-1">
-      <label className="text-[10px] font-bold text-slate-500 uppercase">Password</label>
-      <Input placeholder="••••••••" type="password" onChange={(e) => setFormData({...formData, password: e.target.value})} />
-    </div>
-
-    {/* Role Select එක */}
-    <div className="space-y-1">
-      <label className="text-[10px] font-bold text-slate-500 uppercase">Assign Role</label>
+      <label className="text-[10px] font-bold text-slate-500 uppercase">Role</label>
       <select 
         className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        onChange={(e) => setFormData({...formData, role: e.target.value})}
+        value={editingUser?.role || 'manager'}
+        onChange={(e) => setEditingUser({...editingUser, role: e.target.value})}
       >
         <option value="manager">Manager</option>
         <option value="admin">Admin</option>
@@ -102,34 +137,18 @@ export default function ManagerManagement() {
 
     <Button 
       className="w-full h-11 bg-blue-600 hover:bg-blue-700 rounded-xl font-black text-sm mt-2" 
-      onClick={handleAddManager}
+      onClick={handleUpdate}
     >
-      Save Staff Member
+      Update Changes
     </Button>
   </div>
 </DialogContent>
-        </Dialog>
-      </div>
+                  </Dialog>
 
-      <Card className="rounded-3xl border-slate-100 shadow-sm p-6">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="text-slate-400 text-xs uppercase tracking-widest font-bold border-b border-slate-100">
-              <th className="pb-4">Name</th>
-              <th className="pb-4">Email</th>
-              <th className="pb-4">Role</th>
-              <th className="pb-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {managers.map((m) => (
-              <tr key={m._id} className="hover:bg-blue-50/30 transition-colors">
-                {/* මම මෙතන firstName සහ lastName වෙන වෙනම දැම්මා */}
-                <td className="py-4 font-bold text-blue-950">{m.firstName} {m.lastName}</td>
-                <td className="py-4 text-slate-500">{m.email}</td>
-                <td className="py-4"><span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-xs font-bold uppercase">{m.role}</span></td>
-                <td className="py-4 text-right">
-                  <Button variant="ghost" className="text-red-500 hover:bg-red-50" onClick={() => deleteManager(m._id)}>Delete</Button>
+                  {/* DELETE Button */}
+                  <Button variant="ghost" className="text-red-500 font-bold flex items-center gap-1.5 px-3" onClick={() => deleteManager(m._id)}>
+                    <Trash2 className="w-3.5 h-3.5"/> Delete
+                  </Button>
                 </td>
               </tr>
             ))}

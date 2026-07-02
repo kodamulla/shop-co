@@ -14,6 +14,7 @@ import AdminDashboard from "./Pages/admin/AdminDashboard";
 import ManagerManagement from "./Pages/admin/ManagerManagement";
 import UserManagement from "./Pages/admin/UserManagement";
 import ProductManagement from "./Pages/admin/ProductManagement";
+import Documents from "./Pages/admin/Documents";
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
         <Route path="managers" element={<ManagerManagement />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="products" element={<ProductManagement />} />
+        <Route path="documents" element={<Documents />} />
         </Route>
       </Routes>
     </BrowserRouter>

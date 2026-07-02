@@ -19,13 +19,13 @@ export function TrafficLineChart({ data }) {
         <p className="text-xs font-semibold text-slate-400 mt-1">Visits vs Conversions</p>
       </CardHeader>
       
-      {/* මෙතන margin වෙනස් කරලා තියෙනවා: bottom: 10 එකතු කළා දින පේළිය කැපෙන්නේ නැති වෙන්න */}
+      
       <CardContent className="flex-1 min-h-[250px] pb-4 px-2 mt-2">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 10, right: 20, left: -20, bottom: 10 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
             
-            {/* dy={10} එකතු කළා XAxis එක ටිකක් පහළට කරලා පැහැදිලි කරන්න */}
+           
             <XAxis 
               dataKey="day" 
               axisLine={false} 

@@ -27,7 +27,7 @@ export function TopProducts({ products }) {
             const hasBackendImage = product.images && product.images.length > 0;
             const displayImage = hasBackendImage ? product.images[0] : getThemedImage(product.name);
             
-            // රුපියල් දහස් ගණන් වලින් තියෙන ඒවා ඩොලර් දශම ස්ථාන දෙකකට හැරවීම (උදා: 4500 -> 45.00)
+            
             const realisticPrice = product.price > 100 ? (product.price / 100).toFixed(2) : parseFloat(product.price).toFixed(2);
 
             return (

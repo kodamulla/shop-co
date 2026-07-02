@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 const COLORS = ["#1e40af", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"]; 
 
 export function CategoryAnalytics() {
-  // Backend දත්ත අයින් කරලා හරියටම මේ ටික පේන්න හැදුවා
+  
   const chartData = [
     { name: "Menswear", value: 30 },
     { name: "Womenswear", value: 25 },

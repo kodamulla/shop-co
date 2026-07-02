@@ -18,7 +18,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -43,9 +42,9 @@ const data = {
     { title: "Product Management", url: "/admindashboard/products", icon: <HugeiconsIcon icon={PackageIcon} strokeWidth={2} /> },
   ],
   documents: [
-    { name: "Data Library", url: "/admindashboard/data-library", icon: <HugeiconsIcon icon={Database01Icon} strokeWidth={2} /> },
-    { name: "Reports", url: "/admindashboard/reports", icon: <HugeiconsIcon icon={Analytics01Icon} strokeWidth={2} /> },
-    { name: "Word Assistant", url: "/admindashboard/word-assistant", icon: <HugeiconsIcon icon={File01Icon} strokeWidth={2} /> },
+    { name: "Data Library", url: "/admindashboard/documents?tab=data", icon: <HugeiconsIcon icon={Database01Icon} strokeWidth={2} /> },
+    { name: "Reports", url: "/admindashboard/documents?tab=reports", icon: <HugeiconsIcon icon={Analytics01Icon} strokeWidth={2} /> },
+    { name: "Word Assistant", url: "/admindashboard/documents?tab=assistant", icon: <HugeiconsIcon icon={File01Icon} strokeWidth={2} /> },
   ],
 }
 
@@ -89,26 +88,16 @@ export function AppSidebar({ ...props }) {
               </SidebarMenuItem>
             </SidebarMenu>
 
-            <div className="mt-6 mb-2 px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Management
-            </div>
+            <div className="mt-6 mb-2 px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Management</div>
             
             <SidebarMenu className="gap-1.5">
               {data.navMain.map((item) => {
                 const isActive = location.pathname.startsWith(item.url)
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
-                      asChild 
-                      className={`h-11 rounded-xl transition-all duration-300 ${
-                        isActive 
-                          ? "bg-blue-50 text-blue-700 font-bold" 
-                          : "text-slate-500 hover:bg-blue-50 hover:text-blue-700"
-                      }`}
-                    >
+                    <SidebarMenuButton asChild className={`h-11 rounded-xl transition-all duration-300 ${isActive ? "bg-blue-50 text-blue-700 font-bold" : "text-slate-500 hover:bg-blue-50 hover:text-blue-700"}`}>
                       <NavLink to={item.url} className="flex items-center gap-3 px-3 w-full">
-                        {item.icon}
-                        <span className="text-sm font-semibold">{item.title}</span>
+                        {item.icon} <span className="text-sm font-semibold">{item.title}</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -119,25 +108,15 @@ export function AppSidebar({ ...props }) {
         </SidebarGroup>
 
         <SidebarGroup className="group-data-[collapsible=icon]:hidden mt-2">
-          <SidebarGroupLabel className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            Documents
-          </SidebarGroupLabel>
+          <SidebarGroupLabel className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Documents</SidebarGroupLabel>
           <SidebarMenu className="gap-1.5 mt-2">
             {data.documents.map((item) => {
-              const isActive = location.pathname.startsWith(item.url)
+              const isActive = location.pathname + location.search === item.url
               return (
                 <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton 
-                    asChild 
-                    className={`h-11 rounded-xl transition-all duration-300 ${
-                      isActive 
-                        ? "bg-blue-50 text-blue-700 font-bold" 
-                        : "text-slate-500 hover:bg-blue-50 hover:text-blue-700"
-                    }`}
-                  >
+                  <SidebarMenuButton asChild className={`h-11 rounded-xl transition-all duration-300 ${isActive ? "bg-blue-50 text-blue-700 font-bold" : "text-slate-500 hover:bg-blue-50 hover:text-blue-700"}`}>
                     <NavLink to={item.url} className="flex items-center gap-3 px-3 w-full">
-                      {item.icon}
-                      <span className="text-sm font-semibold">{item.name}</span>
+                      {item.icon} <span className="text-sm font-semibold">{item.name}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -152,39 +131,18 @@ export function AppSidebar({ ...props }) {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton size="lg" className="rounded-2xl p-2 h-auto hover:bg-blue-50 transition-all data-[state=open]:bg-blue-50 border border-transparent hover:border-blue-100">
-                  <Avatar className="h-10 w-10 rounded-xl">
-                    <AvatarImage src={data.user.avatar} alt={data.user.name} />
-                    <AvatarFallback className="rounded-xl bg-blue-600 text-white font-bold">AS</AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight ml-1">
-                    <span className="truncate font-bold text-blue-950">{data.user.name}</span>
-                    <span className="truncate text-[11px] font-semibold text-slate-400">{data.user.email}</span>
+                <SidebarMenuButton size="lg" className="rounded-2xl p-2 h-auto hover:bg-blue-50 transition-all border border-transparent hover:border-blue-100">
+                  <Avatar className="h-10 w-10 rounded-xl"><AvatarImage src={data.user.avatar} /><AvatarFallback className="bg-blue-600 text-white font-bold">AS</AvatarFallback></Avatar>
+                  <div className="grid flex-1 text-left text-sm ml-1">
+                    <span className="font-bold text-blue-950">{data.user.name}</span>
+                    <span className="text-[11px] font-semibold text-slate-400">{data.user.email}</span>
                   </div>
-                  <HugeiconsIcon icon={MoreVerticalCircle01Icon} strokeWidth={2} className="ml-auto size-5 text-slate-400" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-60 rounded-2xl border-slate-100 shadow-xl p-2" side={isMobile ? "bottom" : "right"} align="end" sideOffset={12}>
-                <DropdownMenuLabel className="p-2 font-normal">
-                  <div className="flex items-center gap-3 text-left text-sm">
-                    <Avatar className="h-10 w-10 rounded-xl">
-                      <AvatarImage src={data.user.avatar} alt={data.user.name} />
-                      <AvatarFallback className="rounded-xl bg-blue-600 text-white font-bold">AS</AvatarFallback>
-                    </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-bold text-blue-950">{data.user.name}</span>
-                      <span className="truncate text-[11px] font-semibold text-slate-400">{data.user.email}</span>
-                    </div>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-slate-50 my-2" />
-                <DropdownMenuItem className="rounded-xl focus:bg-blue-50 cursor-pointer p-3 font-semibold text-slate-600">
-                  <HugeiconsIcon icon={UserCircle02Icon} strokeWidth={2} className="mr-3 size-4" /> Account Settings
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-slate-50 my-2" />
-                <DropdownMenuItem className="rounded-xl focus:bg-red-50 focus:text-red-600 cursor-pointer p-3 font-semibold text-red-500 transition-colors">
-                  <HugeiconsIcon icon={Logout01Icon} strokeWidth={2} className="mr-3 size-4" /> Log out
-                </DropdownMenuItem>
+              <DropdownMenuContent className="w-60 rounded-2xl p-2" side="right" align="end">
+                <DropdownMenuItem className="p-3 font-semibold text-slate-600"><HugeiconsIcon icon={UserCircle02Icon} className="mr-3 size-4" /> Account Settings</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="p-3 font-semibold text-red-500"><HugeiconsIcon icon={Logout01Icon} className="mr-3 size-4" /> Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

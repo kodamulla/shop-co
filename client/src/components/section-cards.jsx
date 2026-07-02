@@ -7,7 +7,7 @@ import { LineChart, Line, ResponsiveContainer } from "recharts";
 export function SectionCards({ stats }) {
   if (!stats) return <div className="flex gap-4 w-full h-[120px] animate-pulse bg-white rounded-3xl border border-slate-100"></div>;
 
-  // Mini Chart සඳහා Dummy Data
+  
   const generateData = () => Array.from({ length: 7 }, () => ({ value: Math.floor(Math.random() * 50) + 10 }));
 
   const cardData = [
