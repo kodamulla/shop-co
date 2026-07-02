@@ -1,92 +1,80 @@
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, TrendingDown, DollarSign, Users, CreditCard, Package } from "lucide-react";
+"use client"
+import { Card, CardContent } from "@/components/ui/card"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { MoneyBag02Icon, ShoppingBasket01Icon, UserGroupIcon, Tag01Icon, ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
+import { LineChart, Line, ResponsiveContainer } from "recharts";
 
 export function SectionCards({ stats }) {
-  // Backend එකෙන් දත්ත එනකම් (Loading state) ලස්සන Skeleton එකක් පෙන්වන්න
-  if (!stats) {
-    return (
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {[1, 2, 3, 4].map((i) => (
-          <Card key={i} className="rounded-2xl border-none shadow-sm p-5 bg-white h-[140px] flex flex-col justify-between">
-            <div className="flex items-center gap-3">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-4 w-24" />
-            </div>
-            <div className="mt-4 flex items-end justify-between">
-              <Skeleton className="h-8 w-28" />
-              <div className="space-y-1">
-                <Skeleton className="h-3 w-12" />
-                <Skeleton className="h-3 w-16" />
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-    );
-  }
+  if (!stats) return <div className="flex gap-4 w-full h-[120px] animate-pulse bg-white rounded-3xl border border-slate-100"></div>;
 
-  // Backend එකෙන් එන 'stats' object එකෙන් දත්ත අරගෙන මේ විදියට සකස් කරගන්නවා
-  const dashboardStats = [
-    {
-      title: "Total Revenue",
-      value: `$${stats.totalRevenue?.toLocaleString() || 0}`,
-      trend: stats.revenueTrend || "+0%",
-      isPositive: !(stats.revenueTrend || "").toString().startsWith("-"),
-      timeframe: "vs last month",
-      icon: <DollarSign className="w-5 h-5 text-red-500" />,
-      iconBg: "bg-red-100",
+  // Mini Chart සඳහා Dummy Data
+  const generateData = () => Array.from({ length: 7 }, () => ({ value: Math.floor(Math.random() * 50) + 10 }));
+
+  const cardData = [
+    { 
+      title: "Total Revenue", 
+      value: `$${stats?.totalRevenue ? (stats.totalRevenue / 100).toLocaleString(undefined, {minimumFractionDigits: 2}) : "0.00"}`, 
+      trend: "+24%", subtext: "vs last week",
+      icon: MoneyBag02Icon, color: "text-blue-600", bg: "bg-blue-100", glow: "bg-blue-400", chartColor: "#2563eb", data: generateData()
     },
-    {
-      title: "Total Customers",
-      value: stats.totalCustomers?.toLocaleString() || 0,
-      trend: stats.customerTrend || "+0%",
-      isPositive: !(stats.customerTrend || "").toString().startsWith("-"),
-      timeframe: "vs last month",
-      icon: <Users className="w-5 h-5 text-orange-500" />,
-      iconBg: "bg-orange-100",
+    { 
+      title: "Total Orders", 
+      value: stats?.totalOrders || "0", 
+      trend: "+12%", subtext: "vs last week",
+      icon: ShoppingBasket01Icon, color: "text-indigo-600", bg: "bg-indigo-100", glow: "bg-indigo-400", chartColor: "#4f46e5", data: generateData()
     },
-    {
-      title: "Total Orders",
-      value: stats.totalOrders?.toLocaleString() || 0,
-      trend: stats.orderTrend || "+0%",
-      isPositive: !(stats.orderTrend || "").toString().startsWith("-"),
-      timeframe: "vs last month",
-      icon: <CreditCard className="w-5 h-5 text-emerald-500" />,
-      iconBg: "bg-emerald-100",
+    { 
+      title: "Customers", 
+      value: stats?.totalCustomers || "0", 
+      trend: "+18%", subtext: "vs last week",
+      icon: UserGroupIcon, color: "text-sky-600", bg: "bg-sky-100", glow: "bg-sky-400", chartColor: "#0284c7", data: generateData()
     },
-    {
-      title: "Total Products",
-      value: stats.totalProducts?.toLocaleString() || 0,
-      trend: stats.productTrend || "+0%",
-      isPositive: !(stats.productTrend || "").toString().startsWith("-"),
-      timeframe: "vs last month",
-      icon: <Package className="w-5 h-5 text-blue-500" />,
-      iconBg: "bg-blue-100",
-    },
+    { 
+      title: "Products", 
+      value: stats?.activeProducts || "0", 
+      trend: "+5%", subtext: "vs last week",
+      icon: Tag01Icon, color: "text-violet-600", bg: "bg-violet-100", glow: "bg-violet-400", chartColor: "#7c3aed", data: generateData()
+    }
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-      {dashboardStats.map((stat, index) => (
-        <Card key={index} className="rounded-2xl border-none shadow-sm hover:shadow-md transition-shadow duration-200 p-5 bg-white">
-          <div className="flex items-center gap-3 mb-4">
-            <div className={`p-2.5 rounded-full ${stat.iconBg}`}>
-              {stat.icon}
-            </div>
-            <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-          </div>
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {cardData.map((card, index) => (
+        <Card key={index} className="rounded-3xl border border-slate-100/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] hover:shadow-xl hover:shadow-blue-900/10 bg-white transition-all duration-500 relative overflow-hidden group cursor-pointer">
+          <div className={`absolute -right-8 -top-8 w-28 h-28 rounded-full ${card.glow} blur-3xl opacity-10 group-hover:opacity-20 transition-opacity duration-500`}></div>
           
-          <div className="flex items-end justify-between">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-800">{stat.value}</h2>
-            <div className="flex flex-col items-end">
-              <span className={`flex items-center text-sm font-semibold ${stat.isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
-                {stat.isPositive ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
-                {stat.trend}
-              </span>
-              <span className="text-xs text-muted-foreground mt-0.5">{stat.timeframe}</span>
+          <CardContent className="p-5 relative z-10 flex flex-col h-full justify-between gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`p-2.5 rounded-2xl ${card.bg} bg-opacity-60 shadow-sm backdrop-blur-sm group-hover:scale-110 transition-transform duration-300`}>
+                  <HugeiconsIcon icon={card.icon} className={`h-5 w-5 ${card.color}`} strokeWidth={2.5} />
+                </div>
+                <span className="text-[12px] font-bold text-slate-400 uppercase tracking-widest">{card.title}</span>
+              </div>
             </div>
-          </div>
+            
+            <div className="flex items-end justify-between mt-2">
+              <div className="flex flex-col">
+                <span className="text-3xl font-black tracking-tighter text-blue-950">{card.value}</span>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="flex items-center text-emerald-500 text-[11px] font-extrabold tracking-wide">
+                    <HugeiconsIcon icon={ArrowUpRight01Icon} className="w-3 h-3 mr-0.5" strokeWidth={3} />
+                    {card.trend}
+                  </span>
+                  <span className="text-[10px] font-semibold text-slate-300">{card.subtext}</span>
+                </div>
+              </div>
+
+              {/* Mini Sparkline Chart */}
+              <div className="w-20 h-10 opacity-70 group-hover:opacity-100 transition-opacity">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={card.data}>
+                    <Line type="monotone" dataKey="value" stroke={card.chartColor} strokeWidth={2.5} dot={false} isAnimationActive={true} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </CardContent>
         </Card>
       ))}
     </div>
