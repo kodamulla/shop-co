@@ -1,5 +1,5 @@
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { ManagerSidebar } from "@/components/managerdashboard/manager-sidebar"; // අලුත් සයිඩ්බාරය
+import { ManagerSidebar } from "@/components/managerdashboard/manager-sidebar"; 
 import { SiteHeader } from "@/components/site-header";
 import { Outlet } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,7 +20,7 @@ export default function ManagerLayout() {
           
           <main className="flex-1 overflow-y-auto p-4 md:p-6 w-full bg-slate-50">
             <div className="max-w-7xl mx-auto">
-              <Outlet /> {/* මෙතනින් තමයි අනිත් Pages ලෝඩ් වෙන්නේ */}
+              <Outlet /> 
             </div>
           </main>
         </SidebarInset>

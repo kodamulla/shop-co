@@ -1,5 +1,5 @@
 const express = require('express');
-const { createCategory, getCategories, deleteCategory } = require('../controllers/categoryController');
+const { createCategory, getCategories, deleteCategory,updateCategory  } = require('../controllers/categoryController');
 
 const router = express.Router();
 
@@ -11,5 +11,7 @@ router.get('/', getCategories);
 
 // Delete a category
 router.delete('/:id', deleteCategory);
+
+router.put('/:id', updateCategory);
 
 module.exports = router;

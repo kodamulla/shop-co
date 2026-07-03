@@ -8,14 +8,14 @@ import { TrafficLineChart } from "@/components/traffic-line-chart";
 import { AbandonedCart } from "@/components/abandoned-cart";
 import { AiTryOnStats } from "@/components/ai-tryon-stats";
 
-// Sparkline Chart (Top Cards සඳහා)
+
 const Sparkline = ({ color }) => (
   <svg className="w-16 h-8" viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 25C15 25 20 10 35 15C50 20 55 5 70 10C85 15 90 25 100 20" stroke={color} strokeWidth="2" strokeLinecap="round"/>
   </svg>
 );
 
-// අලුත් Modern Fashion Card Component එක (පින්තූර සඳහා)
+
 const FashionCard = ({ title, subtitle, image, tag }) => (
   <div className="relative rounded-2xl overflow-hidden shadow-sm h-full min-h-[300px] border border-slate-100 group">
     <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -58,7 +58,7 @@ export default function ManagerDashboard() {
     fetchDashboardData();
   }, []);
 
-  // Manager ට ගැළපෙන විදිහට මාතෘකා වෙනස් කරලා තියෙන්නේ
+  
   const topCards = [
     { title: "TODAY'S REVENUE", value: "$3,450.00", trend: "+14% vs yesterday", icon: <HugeiconsIcon icon={ShoppingCart01Icon} strokeWidth={2.5} className="w-5 h-5 text-blue-600"/>, color: "#3b82f6" },
     { title: "PENDING ORDERS", value: stats.orders, trend: "Requires attention", icon: <HugeiconsIcon icon={PackageIcon} strokeWidth={2.5} className="w-5 h-5 text-indigo-600"/>, color: "#6366f1" },
@@ -96,7 +96,7 @@ export default function ManagerDashboard() {
         ))}
       </div>
 
-      {/* 2. Fashion Lookbook & Actions Row (අලුත්ම Modern UI එක) */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
         <div className="lg:col-span-1">
           <FashionCard 
