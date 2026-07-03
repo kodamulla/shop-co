@@ -15,6 +15,7 @@ import ManagerManagement from "./Pages/admin/ManagerManagement";
 import UserManagement from "./Pages/admin/UserManagement";
 import ProductManagement from "./Pages/admin/ProductManagement";
 import Documents from "./Pages/admin/Documents";
+import CouponsManagementAdmin from "./Pages/admin/CouponsManagement";
 
 
 function App() {
@@ -32,11 +33,20 @@ function App() {
         <Route path="/details" element={<DetailsPage />} />
         
         <Route path="/admindashboard" element={<AdminLayout />}>
+<<<<<<< Updated upstream
         <Route index element={<AdminDashboard />} />
         <Route path="managers" element={<ManagerManagement />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="products" element={<ProductManagement />} />
         <Route path="documents" element={<Documents />} />
+=======
+          <Route index element={<AdminDashboard />} />
+          <Route path="managers" element={<ManagerManagement />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="products" element={<ProductManagement />} />
+          <Route path="documents" element={<Documents />} />
+          <Route path="coupons" element={<CouponsManagement />} />
+>>>>>>> Stashed changes
         </Route>
       </Routes>
     </BrowserRouter>

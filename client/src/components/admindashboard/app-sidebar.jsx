@@ -26,8 +26,8 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { 
   UserGroupIcon, PackageIcon, File01Icon, Database01Icon, 
-  Analytics01Icon, ChartHistogramIcon, MoreVerticalCircle01Icon, 
-  UserCircle02Icon, Logout01Icon 
+  Analytics01Icon, ChartHistogramIcon, UserCircle02Icon, 
+  Logout01Icon, Ticket01Icon // අලුතින් Ticket01Icon එක ගත්තා
 } from "@hugeicons/core-free-icons"
 
 const data = {
@@ -40,6 +40,8 @@ const data = {
     { title: "Manager Management", url: "/admindashboard/managers", icon: <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} /> },
     { title: "User Management", url: "/admindashboard/users", icon: <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} /> },
     { title: "Product Management", url: "/admindashboard/products", icon: <HugeiconsIcon icon={PackageIcon} strokeWidth={2} /> },
+    // Coupon Management එක මෙතනට එකතු කළා
+    { title: "Coupon Management", url: "/admindashboard/coupons", icon: <HugeiconsIcon icon={Ticket01Icon} strokeWidth={2} /> },
   ],
   documents: [
     { name: "Data Library", url: "/admindashboard/documents?tab=data", icon: <HugeiconsIcon icon={Database01Icon} strokeWidth={2} /> },
