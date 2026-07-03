@@ -24,6 +24,7 @@ import ManagerManagement from "./Pages/admin/ManagerManagement";
 import UserManagement from "./Pages/admin/UserManagement";
 import ProductManagement from "./Pages/admin/ProductManagement";
 import Documents from "./Pages/admin/Documents";
+import CouponsManagement from "./Pages/admin/CouponsManagement";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
           <Route path="users" element={<UserManagement />} />
           <Route path="products" element={<ProductManagement />} />
           <Route path="documents" element={<Documents />} />
+          <Route path="coupons" element={<CouponsManagement />} />
         </Route>
       </Routes>
     </BrowserRouter>
