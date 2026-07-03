@@ -1,21 +1,29 @@
-import { BrowserRouter, Routes } from "react-router-dom";
-import { Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./Pages/signin";
 import SignupPage from "./Pages/signup";
-import ManagerPage from "./Pages/managerdashboard";
-import AdminPage from "./Pages/admin/AdminDashboard";
+
+// Manager Imports
+import ManagerLayout from "./Pages/manager/ManagerLayout";
+import ManagerDashboard from './Pages/manager/ManagerDashboard'; 
+import ProductsManagement from "./Pages/manager/ProductsManagement";
+import CategoryManagement from "./Pages/manager/CategoryManagement";
+import OrdersManagement from "./Pages/manager/OrdersManagement";
+import UsersView from "./Pages/manager/UsersView";
+import CouponsManagement from "./Pages/manager/CouponsManagement";
+
 import HomePage from "./Pages/landing";
 import ProfilePage from "./Pages/accountPage"; 
 import CartPage from "./Pages/cartPage"; 
 import CheckoutPage from "./Pages/checkoutPage";  
 import DetailsPage from "./Pages/details";
+
+// Admin Imports
 import AdminLayout from "./Pages/admin/AdminLayout";
 import AdminDashboard from "./Pages/admin/AdminDashboard";
 import ManagerManagement from "./Pages/admin/ManagerManagement";
 import UserManagement from "./Pages/admin/UserManagement";
 import ProductManagement from "./Pages/admin/ProductManagement";
 import Documents from "./Pages/admin/Documents";
-
 
 function App() {
   return (
@@ -24,19 +32,29 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/signin" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/managerdashboard" element={<ManagerPage />} />
-        <Route path="/admindashboard" element={<AdminPage />} />
+        
+        {/* Manager Routes with Layout */}
+        <Route path="/managerdashboard" element={<ManagerLayout />}>
+          <Route index element={<ManagerDashboard />} />
+          <Route path="products" element={<ProductsManagement />} />
+          <Route path="categories" element={<CategoryManagement />} />
+          <Route path="orders" element={<OrdersManagement />} />
+          <Route path="users" element={<UsersView />} />
+          <Route path="coupons" element={<CouponsManagement />} />
+        </Route>
+        
         <Route path="/account" element={<ProfilePage />} /> 
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/details" element={<DetailsPage />} />
         
+        {/* Admin Routes with Layout */}
         <Route path="/admindashboard" element={<AdminLayout />}>
-        <Route index element={<AdminDashboard />} />
-        <Route path="managers" element={<ManagerManagement />} />
-        <Route path="users" element={<UserManagement />} />
-        <Route path="products" element={<ProductManagement />} />
-        <Route path="documents" element={<Documents />} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="managers" element={<ManagerManagement />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="products" element={<ProductManagement />} />
+          <Route path="documents" element={<Documents />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -13,15 +13,21 @@ const {
     updateProfile
 } = require('../controllers/userController');
 
+
+
 // AUTH
 router.post('/signup', signup);
 router.post('/signin', signin);
 
-// ADMIN USER MANAGEMENT
-router.get('/', protect, isAdmin, getAllUsers);
-router.put('/block/:id',protect, isAdmin, toggleBlockUser);
+
+router.get('/', protect, getAllUsers); 
+
+// ADMIN ONLY ROUTES 
+router.put('/block/:id', protect, isAdmin, toggleBlockUser);
 router.delete('/delete/:id', protect, isAdmin, deleteUser);
 router.patch('/role/:id', protect, isAdmin, updateUserRole);
+
+// USER PROFILE 
 router.put('/update-profile/:id', protect, updateProfile);
 
 module.exports = router;
