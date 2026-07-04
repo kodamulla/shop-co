@@ -8,31 +8,19 @@ export default function UsersView() {
 
   const fetchUsers = async () => {
     try {
-     
       const userInfoString = localStorage.getItem('userInfo');
       let token = '';
-
       if (userInfoString) {
         const userInfo = JSON.parse(userInfoString);
         token = userInfo.token;
       } else {
         token = localStorage.getItem('token'); 
       }
-
       
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
-      
+      const config = { headers: { Authorization: `Bearer ${token}` } };
       const res = await axios.get('http://localhost:5000/api/users', config);
-      
-      
       const sortedUsers = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setUsers(sortedUsers);
-      
     } catch (err) {
       console.error("Error fetching users:", err);
     }
@@ -47,10 +35,13 @@ export default function UsersView() {
   };
 
   return (
-    <div className="p-2 w-full max-w-7xl mx-auto space-y-6 pb-12">
-      <div className="flex justify-between items-end mb-8">
+    // 1. Fixed container structure (h-[88vh])
+    <div className="p-4 w-full max-w-7xl mx-auto h-[88vh] min-h-[600px] flex flex-col">
+      
+      {/* 2. FIXED HEADER */}
+      <div className="shrink-0 pb-4 pt-2 mb-4 border-b border-slate-200 flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-black text-blue-950">Users Overview</h1>
+          <h1 className="text-3xl font-black text-blue-950">Users Overview</h1>
           <p className="text-slate-500 font-medium mt-1">View and monitor registered store customers.</p>
         </div>
         <div className="bg-blue-50 px-4 py-2 rounded-xl border border-blue-100 flex items-center gap-2">
@@ -59,20 +50,20 @@ export default function UsersView() {
         </div>
       </div>
 
-      <Card className="rounded-3xl border border-slate-100 shadow-sm p-6 bg-white overflow-hidden">
-        <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+      {/* 3. SCROLLABLE CONTENT */}
+      <div className="flex-1 overflow-y-auto pr-2 pb-4">
+        <Card className="rounded-3xl border border-slate-100 shadow-sm p-6 bg-white overflow-hidden min-w-[800px]">
+          <table className="w-full text-left border-collapse">
             <thead>
-                <tr className="text-slate-400 text-[10px] uppercase font-bold tracking-widest border-b border-slate-100">
+              <tr className="text-slate-400 text-[10px] uppercase font-bold tracking-widest border-b border-slate-100">
                 <th className="pb-4 px-4 whitespace-nowrap">Customer Info</th>
                 <th className="pb-4 px-4 whitespace-nowrap">Contact Details</th>
                 <th className="pb-4 px-4 whitespace-nowrap">Role</th>
                 <th className="pb-4 px-4 text-right whitespace-nowrap">Joined Date</th>
-                </tr>
+              </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
                 {users.map((user) => {
-                 
                   const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
                   
                   return (
@@ -110,9 +101,9 @@ export default function UsersView() {
                   );
                 })}
             </tbody>
-            </table>
-        </div>
-      </Card>
+          </table>
+        </Card>
+      </div>
     </div>
   );
 }
