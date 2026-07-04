@@ -6,17 +6,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Edit2, Trash2, Plus, Package } from "lucide-react";
 
-
-const getThemedImage = (productName) => {
-  const name = productName.toLowerCase();
-  if (name.includes("jeans") || name.includes("denim")) return "https://images.unsplash.com/photo-1604176354204-9268737828e4?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("dress")) return "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("t-shirt") || name.includes("tshirt") || name.includes("shirt")) return "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("hoodie") || name.includes("jacket") || name.includes("winter")) return "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("sneaker") || name.includes("shoe")) return "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=200&q=80"; 
-  return "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=200&q=80"; 
-};
-
 export default function ProductsManagement() {
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({ name: '', price: '', stock: '', category: '' });
@@ -107,9 +96,10 @@ export default function ProductsManagement() {
                     
                     <div className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
                       <img 
-                        src={getThemedImage(p.name)} 
+                        src={p.imageUrl} 
                         alt={p.name} 
                         className="w-full h-full object-cover"
+                        onError={(e) => { e.target.src = "/Logoicon.png" }}
                       />
                     </div>
                     <div>
@@ -123,7 +113,7 @@ export default function ProductsManagement() {
                     </span>
                   </td>
                   <td className="py-4 px-4 font-black text-blue-600 text-base">${p.price}</td>
-                  <td className="py-4 px-4 font-bold text-slate-600">{p.stock} Units</td>
+                  <td className="py-4 px-4 font-bold text-slate-600">{p.stock || p.countInStock} Units</td>
                   <td className="py-4 px-4 text-right">
                     <div className="flex justify-end gap-2">
                       <Dialog>

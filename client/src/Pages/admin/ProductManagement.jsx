@@ -6,21 +6,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Edit2, Trash2, Plus, Package } from "lucide-react";
 
-const getThemedImage = (productName) => {
-  const name = productName.toLowerCase();
-  if (name.includes("jeans") || name.includes("denim")) return "https://images.unsplash.com/photo-1604176354204-9268737828e4?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("dress")) return "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("t-shirt") || name.includes("tshirt") || name.includes("shirt")) return "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("hoodie") || name.includes("jacket") || name.includes("winter")) return "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("sneaker") || name.includes("shoe")) return "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=200&q=80"; 
-  return "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=200&q=80"; 
-};
-
 export default function ProductManagement() {
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({ name: '', price: '', stock: '', category: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingId, setEditingId] = useState(null); // අලුතින් දැම්මා: Edit කරන ID එක තියාගන්න
+  const [editingId, setEditingId] = useState(null);
 
   const fetchProducts = async () => {
     const res = await axios.get('http://localhost:5000/api/products');
@@ -36,13 +26,12 @@ export default function ProductManagement() {
     }
   };
 
-  // අලුතින් දැම්මා: Edit Button එක එබුවම Form එකට Data දාන Function එක
   const handleEdit = (product) => {
     setEditingId(product._id);
     setFormData({ 
       name: product.name, 
       price: product.price, 
-      stock: product.stock || product.countInStock || '', // Backend එකේ countInStock තිබ්බොත් ඒකත් ගන්න
+      stock: product.stock || product.countInStock || '', 
       category: product.category 
     });
     setIsDialogOpen(true);
@@ -51,16 +40,14 @@ export default function ProductManagement() {
   const handleSave = async () => {
     try {
       if (editingId) {
-        // Edit කරනවා නම් PUT Request එක යවන්න
         await axios.put(`http://localhost:5000/api/products/${editingId}`, formData);
       } else {
-        // අලුතින් Add කරනවා නම් POST Request එක යවන්න
         await axios.post('http://localhost:5000/api/products', formData);
       }
       
       fetchProducts();
       setFormData({ name: '', price: '', stock: '', category: '' });
-      setEditingId(null); // Edit ID එක අයින් කරන්න
+      setEditingId(null);
       setIsDialogOpen(false);
     } catch (error) {
       console.error("Error saving product:", error);
@@ -97,9 +84,11 @@ export default function ProductManagement() {
                   <td className="py-4 px-4 flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
                       <img 
-                        src={getThemedImage(p.name)} 
+                        
+                        src={p.imageUrl} 
                         alt={p.name} 
                         className="w-full h-full object-cover"
+                        onError={(e) => { e.target.src = "/Logoicon.png" }} 
                       />
                     </div>
                     <div>
@@ -116,7 +105,6 @@ export default function ProductManagement() {
                   <td className="py-4 px-4 font-bold text-slate-600">{p.stock || p.countInStock} Units</td>
                   <td className="py-4 px-4">
                     <div className="flex justify-center gap-2">
-                      {/* onClick එකට handleEdit එක දැම්මා */}
                       <Button variant="ghost" size="sm" className="text-blue-600 font-semibold gap-1.5 hover:bg-blue-50" onClick={() => handleEdit(p)}>
                         <Edit2 className="w-3.5 h-3.5"/> Edit
                       </Button>
@@ -127,60 +115,37 @@ export default function ProductManagement() {
                   </td>
                 </tr>
               ))}
-              {products.length === 0 && (
-                <tr>
-                  <td colSpan="5" className="py-12 text-center text-slate-400 font-medium">
-                    No products in inventory. Start by adding one!
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </Card>
       </div>
 
       <div className="shrink-0 pt-4 flex justify-end">
-        {/* Dialog open/close වෙන එක Control කරනවා */}
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
-            // Form එක Close කරද්දී පරණ Data අයින් කරනවා
             if (!open) { setEditingId(null); setFormData({ name: '', price: '', stock: '', category: '' }); }
         }}>
           <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700 rounded-full font-bold px-6 h-12 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <Button className="bg-blue-600 hover:bg-blue-700 rounded-full font-bold px-6 h-12">
               <Plus className="w-5 h-5 mr-2"/> Add Product
             </Button>
           </DialogTrigger>
-          <DialogContent className="rounded-3xl p-8 border-slate-100">
-            {/* Editing ද නැද්ද කියලා බලලා Title එක මාරු කරනවා */}
+          <DialogContent className="rounded-3xl p-8">
             <DialogHeader><DialogTitle className="text-xl font-black text-blue-950">{editingId ? 'Edit Product' : 'Add New Product'}</DialogTitle></DialogHeader>
             <div className="space-y-4 py-4">
-              <div>
-                <label className="text-xs font-bold text-slate-500 uppercase ml-1">Product Name</label>
-                <Input className="rounded-xl mt-1" placeholder="e.g. Classic White T-Shirt" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
-              </div>
+              <Input placeholder="Product Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-slate-500 uppercase ml-1">Price ($)</label>
-                  <Input className="rounded-xl mt-1" placeholder="e.g. 24.99" type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-slate-500 uppercase ml-1">Stock Quantity</label>
-                  <Input className="rounded-xl mt-1" placeholder="e.g. 150" type="number" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} />
-                </div>
+                <Input placeholder="Price ($)" type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} />
+                <Input placeholder="Stock" type="number" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} />
               </div>
-              <div>
-                <label className="text-xs font-bold text-slate-500 uppercase ml-1">Category</label>
-                <Input className="rounded-xl mt-1" placeholder="e.g. Men's Wear" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} />
-              </div>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 rounded-xl font-bold py-6 mt-4" onClick={handleSave}>
+              <Input placeholder="Category" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} />
+              <Button className="w-full bg-blue-600 hover:bg-blue-700 rounded-xl font-bold py-6" onClick={handleSave}>
                 {editingId ? 'Update Product' : 'Save Product'}
               </Button>
             </div>
           </DialogContent>
         </Dialog>
       </div>
-
     </div>
   );
 }
