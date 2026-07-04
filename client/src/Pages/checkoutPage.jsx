@@ -13,11 +13,17 @@ import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/landingpage/navbar";
 import { Footer } from "@/components/landingpage/footer";
 
+// 1. Cart Context එක Import කරගත්තා
+import { useCart } from "../context/CartContext";
+
 export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  
+  // 2. Cart එකෙන් දත්ත ගන්නවා
+  const { cart } = useCart();
 
-  // Profile එකේ තියෙන ඩේටා වලින් Shipping Details Initial State එකේදීම පුරවනවා (Error එක එන්නේ නැති වෙන්න)
+  // Profile එකේ තියෙන ඩේටා වලින් Shipping Details Initial State එකේදීම පුරවනවා
   const [formData, setFormData] = useState(() => {
     const storedUser = localStorage.getItem("user");
     let parsedUser = {};
@@ -50,17 +56,16 @@ export default function CheckoutPage() {
     setIsProcessing(true);
 
     // මෙතනින් Payment Gateway API Call එක ලියන්න පුළුවන්
-    // දැනට තත්පර 2කින් Order එක සාර්ථක වුණා කියලා පෙන්වනවා
     setTimeout(() => {
       setIsProcessing(false);
       setOrderPlaced(true);
     }, 2000);
   };
 
-  // Dummy Order Summary (Cart එකෙන් එන්න ඕනේ දත්ත)
-  const subtotal = 565.00;
-  const discount = 113.00;
-  const deliveryFee = 15.00;
+  // 3. Dummy Data වෙනුවට දැන් නියම ගණනය කිරීම් (Real Calculations) වෙනවා
+  const subtotal = cart.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
+  const discount = subtotal * 0.2; // 20% Discount
+  const deliveryFee = subtotal > 0 ? 15 : 0;
   const total = subtotal - discount + deliveryFee;
 
   // Order එක Success වුණාම පෙන්වන UI එක

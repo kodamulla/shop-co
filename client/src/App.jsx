@@ -1,6 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { CartProvider } from "./context/CartContext";
 import LoginPage from "./Pages/signin";
 import SignupPage from "./Pages/signup";
+import HomePage from "./Pages/landing";
+import ProfilePage from "./Pages/accountPage"; 
+import CartPage from "./Pages/cartPage"; 
+import CheckoutPage from "./Pages/checkoutPage";  
+import DetailsPage from "./Pages/details";
+import ClothingPage from "./Pages/ClothingPage";
+
 
 // Manager Imports
 import ManagerLayout from "./Pages/manager/ManagerLayout";
@@ -10,12 +18,6 @@ import CategoryManagement from "./Pages/manager/CategoryManagement";
 import OrdersManagement from "./Pages/manager/OrdersManagement";
 import UsersView from "./Pages/manager/UsersView";
 import ManagerCouponsManagement from "./Pages/manager/ManagerCouponsManagement";
-
-import HomePage from "./Pages/landing";
-import ProfilePage from "./Pages/accountPage"; 
-import CartPage from "./Pages/cartPage"; 
-import CheckoutPage from "./Pages/checkoutPage";  
-import DetailsPage from "./Pages/details";
 
 // Admin Imports
 import AdminLayout from "./Pages/admin/AdminLayout";
@@ -28,13 +30,19 @@ import AdminCouponsManagement from "./Pages/admin/AdminCouponsManagement";
 
 function App() {
   return (
+    <CartProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/signin" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/account" element={<ProfilePage />} /> 
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/details" element={<DetailsPage />} />
+       <Route path="/clothing" element={<ClothingPage />} />
         
-        {/* Manager Routes with Layout */}
+        {/* Manager Routes */}
         <Route path="/managerdashboard" element={<ManagerLayout />}>
           <Route index element={<ManagerDashboard />} />
           <Route path="products" element={<ProductsManagement />} />
@@ -44,12 +52,7 @@ function App() {
           <Route path="coupons" element={<ManagerCouponsManagement />} />
         </Route>
         
-        <Route path="/account" element={<ProfilePage />} /> 
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/details" element={<DetailsPage />} />
-        
-        {/* Admin Routes with Layout */}
+        {/* Admin Routes */}
         <Route path="/admindashboard" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="managers" element={<ManagerManagement />} />
@@ -60,6 +63,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </CartProvider>
   );
 }
 

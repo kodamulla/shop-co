@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useCart } from "../../context/CartContext";
 import { 
   ShoppingCart, 
   TrendingUp, 
@@ -18,12 +19,12 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false); 
   
-  // Component එක ලෝඩ් වෙද්දීම localStorage එක චෙක් කරලා State එක හදාගන්නවා
+ 
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return !!localStorage.getItem("token"); 
   });
 
-  // Scroll කරද්දී Menus වහන්න
+  
   useEffect(() => {
     const handleScroll = () => {
       if (isMobileMenuOpen) setIsMobileMenuOpen(false);
@@ -52,7 +53,7 @@ export function Navbar() {
   const navLinks = [
     { name: "Home", href: "/#home", icon: Home },
     { name: "New Arrivals", href: "/#new-arrivals", icon: TrendingUp },
-    { name: "Clothing", href: "/products", icon: Shirt },
+    { name: "Clothing", href: "/clothing", icon: Shirt },
     { name: "Details", href: "/details", icon: HelpCircle },
   ];
 
@@ -102,7 +103,7 @@ export function Navbar() {
             </span>
           </a>
           
-          {/* Conditional Rendering: ලොග් වෙලාද නැද්ද අනුව වෙනස් වෙනවා */}
+          
           {!isLoggedIn ? (
             <a 
               href="/signin" 

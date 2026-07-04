@@ -13,60 +13,17 @@ import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/landingpage/navbar";
 import { Footer } from "@/components/landingpage/footer";
 
-// Dummy Data - පස්සේ මේක Backend එකෙන් එන Data වලින් මාරු කරන්න පුළුවන්
-const initialCartItems = [
-  {
-    id: 1,
-    name: "Gradient Graphic T-shirt",
-    size: "Large",
-    color: "White",
-    price: 145,
-    quantity: 1,
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80",
-  },
-  {
-    id: 2,
-    name: "Checkered Shirt",
-    size: "Medium",
-    color: "Red",
-    price: 180,
-    quantity: 2,
-    image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&q=80",
-  },
-  {
-    id: 3,
-    name: "Skinny Fit Jeans",
-    size: "32",
-    color: "Blue",
-    price: 240,
-    quantity: 1,
-    image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&q=80",
-  }
-];
+// 1. Context එක Import කරගන්නවා
+import { useCart } from "../context/CartContext"; 
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  // 2. Dummy data වෙනුවට Context එකෙන් cart එකයි function ටිකයි ගන්නවා
+  const { cart, updateQuantity, removeItem } = useCart(); 
   const [promoCode, setPromoCode] = useState("");
 
-  // Quantity වෙනස් කරන Function එක
-  const updateQuantity = (id, change) => {
-    setCartItems(cartItems.map(item => {
-      if (item.id === id) {
-        const newQuantity = item.quantity + change;
-        return { ...item, quantity: newQuantity > 0 ? newQuantity : 1 };
-      }
-      return item;
-    }));
-  };
-
-  // Item එකක් Cart එකෙන් අයින් කරන Function එක
-  const removeItem = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
-  };
-
   // ගණනය කිරීම් (Calculations)
-  const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  const discount = subtotal * 0.2; // 20% Discount එකක් දාලා තියෙනවා උදාහරණයක් විදිහට
+  const subtotal = cart.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
+  const discount = subtotal * 0.2; // 20% Discount
   const deliveryFee = subtotal > 0 ? 15 : 0;
   const total = subtotal - discount + deliveryFee;
 
@@ -85,7 +42,7 @@ export default function CartPage() {
           </h1>
         </motion.div>
 
-        {cartItems.length === 0 ? (
+        {cart.length === 0 ? (
           // Empty Cart State
           <motion.div 
             initial={{ opacity: 0 }} 
@@ -99,7 +56,7 @@ export default function CartPage() {
             <p className="text-muted-foreground mb-8 max-w-md">
               Looks like you haven't added anything to your cart yet. Discover our latest collections!
             </p>
-            <Button size="lg" onClick={() => window.location.href = "/products"}>
+            <Button size="lg" onClick={() => window.location.href = "/clothing"}>
               Start Shopping
             </Button>
           </motion.div>
@@ -110,20 +67,22 @@ export default function CartPage() {
             <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-4">
               <div className="bg-card rounded-2xl border shadow-sm p-4 md:p-6 flex flex-col gap-6">
                 <AnimatePresence>
-                  {cartItems.map((item, index) => (
+                  {/* 3. cartItems වෙනුවට cart එක Map කරනවා */}
+                  {cart.map((item, index) => (
                     <motion.div 
-                      key={item.id}
+                      key={item._id} // ID එක _id විදිහට හැදුවා (Database එකට ගැලපෙන්න)
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0, overflow: "hidden" }}
-                      className={`flex gap-4 md:gap-6 ${index !== cartItems.length - 1 ? "pb-6 border-b" : ""}`}
+                      className={`flex gap-4 md:gap-6 ${index !== cart.length - 1 ? "pb-6 border-b" : ""}`}
                     >
                       {/* Product Image */}
                       <div className="h-24 w-24 md:h-32 md:w-32 flex-shrink-0 bg-muted rounded-xl overflow-hidden">
                         <img 
-                          src={item.image} 
+                          src={item.imageUrl} // image වෙනුවට imageUrl පාවිච්චි කළා
                           alt={item.name} 
                           className="h-full w-full object-cover"
+                          onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&q=80" }}
                         />
                       </div>
 
@@ -135,14 +94,11 @@ export default function CartPage() {
                               {item.name}
                             </h3>
                             <p className="text-sm text-muted-foreground mt-1">
-                              Size: <span className="text-foreground">{item.size}</span>
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              Color: <span className="text-foreground">{item.color}</span>
+                              Category: <span className="text-foreground">{item.category}</span>
                             </p>
                           </div>
                           <button 
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => removeItem(item._id)}
                             className="text-red-500 hover:bg-red-50 p-2 rounded-md transition-colors"
                           >
                             <Trash2 className="h-5 w-5" />
@@ -157,16 +113,16 @@ export default function CartPage() {
                           {/* Quantity Selector */}
                           <div className="flex items-center bg-muted rounded-full px-3 py-1.5 gap-3">
                             <button 
-                              onClick={() => updateQuantity(item.id, -1)}
+                              onClick={() => updateQuantity(item._id, -1)}
                               className="text-foreground hover:text-primary transition-colors"
                             >
                               <Minus className="h-4 w-4" />
                             </button>
                             <span className="font-medium text-sm w-4 text-center">
-                              {item.quantity}
+                              {item.quantity || 1}
                             </span>
                             <button 
-                              onClick={() => updateQuantity(item.id, 1)}
+                              onClick={() => updateQuantity(item._id, 1)}
                               className="text-foreground hover:text-primary transition-colors"
                             >
                               <Plus className="h-4 w-4" />
