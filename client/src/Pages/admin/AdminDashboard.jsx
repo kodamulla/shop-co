@@ -36,49 +36,53 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="mx-auto w-full max-w-7xl p-4 space-y-6 bg-slate-50/50 rounded-3xl pb-12">
+    // 1. මුළු පේජ් එකම Fixed Height එකකින් තියලා (h-[88vh]) Scroll වෙන එක පාලනය කළා
+    <div className="p-4 w-full max-w-7xl mx-auto h-[88vh] min-h-[600px] flex flex-col">
       
-      {/* Header */}
-      <div className="mb-2">
-        <h1 className="text-2xl font-black tracking-tight text-blue-950">Store Overview</h1>
-        <p className="text-sm font-semibold text-slate-400 mt-1">Real-time fashion analytics and store performance.</p>
+      {/* 2. FIXED HEADER - මේක කවදාවත් Scroll වෙන්නේ නැහැ */}
+      <div className="shrink-0 pb-4 pt-2 mb-4 border-b border-slate-200">
+        <h1 className="text-3xl font-black tracking-tight text-blue-950">Store Overview</h1>
+        <p className="text-slate-500 font-medium mt-1">Real-time fashion analytics and store performance.</p>
       </div>
 
-      {/* Top Stats Cards */}
-      <div className="w-full">
-        <SectionCards stats={dashboardData.stats} />
-      </div>
-
-      {/* Main Charts: Revenue & Categories */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        <div className="lg:col-span-8 min-h-[350px]">
-          <RevenueAreaChart />
-        </div>
-        <div className="lg:col-span-4 min-h-[350px]">
-          <CategoryAnalytics />
-        </div>
-      </div>
-
-      {/* Bottom Section: Integrated Dashboard Widgets */}
-      {/* items-stretch දාලා හැම කාඩ් එකක්ම එකම උසකට එන්න හැදුවා */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch pb-10">
+      {/* 3. SCROLLABLE DASHBOARD - Dashboard එකේ widget ටික විතරයි මේක අස්සේ Scroll වෙන්නේ */}
+      <div className="flex-1 overflow-y-auto pr-2 pb-4 space-y-6">
         
-        {/* වම් පස: Trending Products & Featured Campaign */}
-        <div className="flex flex-col gap-6">
-          <div className="flex-1 min-h-[300px]"><TopProducts products={dashboardData.topProducts} /></div>
-          <div className="flex-1 min-h-[300px]"><FeaturedOutfit /></div>
+        {/* Top Stats Cards */}
+        <div className="w-full">
+          <SectionCards stats={dashboardData.stats} />
         </div>
 
-        {/* මැද සහ දකුණු පස: AI Stats, Traffic, Returns & Cart */}
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-            <div className="flex flex-col gap-6">
-                <div className="flex-1 min-h-[200px]"><AiTryOnStats /></div>
-                <div className="flex-1 min-h-[350px]"><TrafficLineChart data={dashboardData.weeklyAnalytics} /></div>
-            </div>
-            <div className="flex flex-col gap-6">
-                <div className="flex-1 min-h-[250px]"><ReturnRates /></div>
-                <div className="flex-1 min-h-[250px]"><AbandonedCart /></div>
-            </div>
+        {/* Main Charts: Revenue & Categories */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          <div className="lg:col-span-8 min-h-[350px]">
+            <RevenueAreaChart />
+          </div>
+          <div className="lg:col-span-4 min-h-[350px]">
+            <CategoryAnalytics />
+          </div>
+        </div>
+
+        {/* Bottom Section: Integrated Dashboard Widgets */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch pb-10">
+          
+          {/* වම් පස: Trending Products & Featured Campaign */}
+          <div className="flex flex-col gap-6">
+            <div className="flex-1 min-h-[300px]"><TopProducts products={dashboardData.topProducts} /></div>
+            <div className="flex-1 min-h-[300px]"><FeaturedOutfit /></div>
+          </div>
+
+          {/* මැද සහ දකුණු පස: AI Stats, Traffic, Returns & Cart */}
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+              <div className="flex flex-col gap-6">
+                  <div className="flex-1 min-h-[200px]"><AiTryOnStats /></div>
+                  <div className="flex-1 min-h-[350px]"><TrafficLineChart data={dashboardData.weeklyAnalytics} /></div>
+              </div>
+              <div className="flex flex-col gap-6">
+                  <div className="flex-1 min-h-[250px]"><ReturnRates /></div>
+                  <div className="flex-1 min-h-[250px]"><AbandonedCart /></div>
+              </div>
+          </div>
         </div>
       </div>
 

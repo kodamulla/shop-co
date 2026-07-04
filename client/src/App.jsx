@@ -9,7 +9,7 @@ import ProductsManagement from "./Pages/manager/ProductsManagement";
 import CategoryManagement from "./Pages/manager/CategoryManagement";
 import OrdersManagement from "./Pages/manager/OrdersManagement";
 import UsersView from "./Pages/manager/UsersView";
-import CouponsManagement from "./Pages/manager/CouponsManagement";
+import ManagerCouponsManagement from "./Pages/manager/ManagerCouponsManagement";
 
 import HomePage from "./Pages/landing";
 import ProfilePage from "./Pages/accountPage"; 
@@ -24,7 +24,7 @@ import ManagerManagement from "./Pages/admin/ManagerManagement";
 import UserManagement from "./Pages/admin/UserManagement";
 import ProductManagement from "./Pages/admin/ProductManagement";
 import Documents from "./Pages/admin/Documents";
-import CouponsManagement from "./Pages/admin/CouponsManagement";
+import AdminCouponsManagement from "./Pages/admin/AdminCouponsManagement";
 
 function App() {
   return (
@@ -41,7 +41,7 @@ function App() {
           <Route path="categories" element={<CategoryManagement />} />
           <Route path="orders" element={<OrdersManagement />} />
           <Route path="users" element={<UsersView />} />
-          <Route path="coupons" element={<CouponsManagement />} />
+          <Route path="coupons" element={<ManagerCouponsManagement />} />
         </Route>
         
         <Route path="/account" element={<ProfilePage />} /> 
@@ -56,7 +56,7 @@ function App() {
           <Route path="users" element={<UserManagement />} />
           <Route path="products" element={<ProductManagement />} />
           <Route path="documents" element={<Documents />} />
-          <Route path="coupons" element={<CouponsManagement />} />
+          <Route path="coupons" element={<AdminCouponsManagement />} />
         </Route>
       </Routes>
     </BrowserRouter>
