@@ -38,8 +38,8 @@ export function HeroSection() {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            {/* Button එක <a> ටැග් එකකින් කවර් කරලා ලින්ක් එක දුන්නා 👇 */}
-            <a href="/products">
+            {/* 🚀 මෙතන ලින්ක් එක /clothing විදිහට වෙනස් කළා 👇 */}
+            <a href="/clothing">
               <Button size="lg" className="h-12 px-8 text-base font-medium rounded-lg hover:bg-white hover:text-black transition-all shadow-sm">
                 Shop Now <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
@@ -70,12 +70,9 @@ export function HeroSection() {
         </motion.div>
 
         {/* Right Column (Image and Feature Cards) */}
-        {/* දකුණු පැත්තේ ඉඳන් එන Animation එක (පොඩි පමාවක් එක්ක) */}
         <motion.div 
           initial={{ opacity: 0, x: 50 }}
-          // animate වෙනුවට whileInView දැම්මා 👇
           whileInView={{ opacity: 1, x: 0 }}
-          // තිරයට ආවම එක පාරක් විතරක් වැඩ කරන්න මේක දැම්මා 👇
           viewport={{ once: true, amount: 0.2 }} 
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
           className="flex flex-col gap-3 pb-12 lg:pb-0"
@@ -84,7 +81,7 @@ export function HeroSection() {
           {/* Main Image */}
           <div className="relative overflow-hidden rounded-2xl bg-muted aspect-[4/3] md:aspect-[3/2] lg:aspect-[14/9]">
             <motion.img
-              whileHover={{ scale: 1.05 }} // මවුස් එක ගෙනිච්චම පින්තූරය ලොකු වෙන Animation එක
+              whileHover={{ scale: 1.05 }} 
               transition={{ duration: 0.5 }}
               src="/landinggirl.png"
               alt="Latest Collection"

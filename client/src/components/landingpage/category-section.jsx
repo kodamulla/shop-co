@@ -25,7 +25,7 @@ export function CategorySection() {
     { 
       name: "Sneakers", 
       image: "/snikearss.png" 
-    }, // කළු පසුබිමක් සහිත සපත්තු (Sneakers)
+    }, 
   ];
 
   // Animations සැකසුම්
@@ -59,7 +59,6 @@ export function CategorySection() {
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4">
             Explore Popular Categories
           </h2>
-          {/* අලුතින් එකතු කළ ඡේදය මෙතන තියෙනවා 👇 */}
           <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
             Browse through our carefully curated collections designed to match your unique style and everyday needs. Find exactly what you're looking for.
           </p>
@@ -76,7 +75,8 @@ export function CategorySection() {
           {categories.map((category, index) => (
             <motion.a 
               key={index}
-              href="#"
+              // 🚀 මෙන්න මෙතන තමයි ලින්ක් එක හැදුවේ 👇
+              href={`/clothing#${category.name}`}
               variants={itemVariants}
               className="flex flex-col items-center group cursor-pointer"
             >
@@ -85,7 +85,6 @@ export function CategorySection() {
                 <img 
                   src={category.image} 
                   alt={category.name} 
-                  // Grayscale සහ Hover scale අයින් කළා. දැන් හැමවෙලේම පාටින් තියෙනවා.
                   className="object-cover w-full h-full"
                 />
               </div>
