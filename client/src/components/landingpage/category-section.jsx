@@ -28,13 +28,13 @@ export function CategorySection() {
     }, 
   ];
 
-  // Animations සැකසුම්
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15, // එකින් එක පමාවෙලා එන්න
+        staggerChildren: 0.15, 
       },
     },
   };
@@ -48,7 +48,7 @@ export function CategorySection() {
     <section className="w-full py-10 md:py-15 bg-background overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
         
-        {/* Heading එක උඩට මතුවෙන Animation එක */}
+        
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -64,7 +64,7 @@ export function CategorySection() {
           </p>
         </motion.div>
 
-        {/* Categories Grid (රවුම් ටික) */}
+        
         <motion.div 
           variants={containerVariants}
           initial="hidden"
@@ -75,12 +75,12 @@ export function CategorySection() {
           {categories.map((category, index) => (
             <motion.a 
               key={index}
-              // 🚀 මෙන්න මෙතන තමයි ලින්ක් එක හැදුවේ 👇
+              
               href={`/clothing#${category.name}`}
               variants={itemVariants}
               className="flex flex-col items-center group cursor-pointer"
             >
-              {/* රවුම් පින්තූරය */}
+              
               <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-[140px] lg:h-[140px] rounded-full overflow-hidden mb-4 bg-muted shadow-sm group-hover:shadow-md transition-shadow">
                 <img 
                   src={category.image} 

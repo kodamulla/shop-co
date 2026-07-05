@@ -11,7 +11,6 @@ import {
   SidebarMenuItem,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   useSidebar,
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -24,9 +23,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { 
-  UserGroupIcon, PackageIcon, File01Icon, Database01Icon, 
-  Analytics01Icon, ChartHistogramIcon, UserCircle02Icon, 
-  Logout01Icon, Ticket01Icon // අලුතින් Ticket01Icon එක ගත්තා
+  UserGroupIcon, PackageIcon, 
+  ChartHistogramIcon, UserCircle02Icon, 
+  Logout01Icon, Ticket01Icon
 } from "@hugeicons/core-free-icons"
 
 const data = {
@@ -39,13 +38,7 @@ const data = {
     { title: "Manager Management", url: "/admindashboard/managers", icon: <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} /> },
     { title: "User Management", url: "/admindashboard/users", icon: <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} /> },
     { title: "Product Management", url: "/admindashboard/products", icon: <HugeiconsIcon icon={PackageIcon} strokeWidth={2} /> },
-    // Coupon Management එක මෙතනට එකතු කළා
     { title: "Coupon Management", url: "/admindashboard/coupons", icon: <HugeiconsIcon icon={Ticket01Icon} strokeWidth={2} /> },
-  ],
-  documents: [
-    { name: "Data Library", url: "/admindashboard/documents?tab=data", icon: <HugeiconsIcon icon={Database01Icon} strokeWidth={2} /> },
-    { name: "Reports", url: "/admindashboard/documents?tab=reports", icon: <HugeiconsIcon icon={Analytics01Icon} strokeWidth={2} /> },
-    { name: "Word Assistant", url: "/admindashboard/documents?tab=assistant", icon: <HugeiconsIcon icon={File01Icon} strokeWidth={2} /> },
   ],
 }
 
@@ -106,24 +99,6 @@ export function AppSidebar({ ...props }) {
               })}
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup className="group-data-[collapsible=icon]:hidden mt-2">
-          <SidebarGroupLabel className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Documents</SidebarGroupLabel>
-          <SidebarMenu className="gap-1.5 mt-2">
-            {data.documents.map((item) => {
-              const isActive = location.pathname + location.search === item.url
-              return (
-                <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild className={`h-11 rounded-xl transition-all duration-300 ${isActive ? "bg-blue-50 text-blue-700 font-bold" : "text-slate-500 hover:bg-blue-50 hover:text-blue-700"}`}>
-                    <NavLink to={item.url} className="flex items-center gap-3 px-3 w-full">
-                      {item.icon} <span className="text-sm font-semibold">{item.name}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )
-            })}
-          </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
 

@@ -1,16 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-const getThemedImage = (productName) => {
-  const name = productName.toLowerCase();
-  if (name.includes("jeans") || name.includes("denim")) return "https://images.unsplash.com/photo-1604176354204-9268737828e4?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("dress")) return "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("t-shirt") || name.includes("tshirt") || name.includes("shirt")) return "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("hoodie") || name.includes("jacket") || name.includes("winter")) return "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=200&q=80"; 
-  if (name.includes("sneaker") || name.includes("shoe")) return "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=200&q=80"; 
-  return "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=200&q=80"; 
-};
-
 export function TopProducts({ products }) {
   if (!products || products.length === 0) return null;
 
@@ -24,17 +14,19 @@ export function TopProducts({ products }) {
       <CardContent className="p-0 flex-1 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
         <div className="divide-y divide-slate-50">
           {products.map((product) => {
-            const hasBackendImage = product.images && product.images.length > 0;
-            const displayImage = hasBackendImage ? product.images[0] : getThemedImage(product.name);
-            
-            
             const realisticPrice = product.price > 100 ? (product.price / 100).toFixed(2) : parseFloat(product.price).toFixed(2);
 
             return (
               <div key={product._id} className="flex items-center justify-between p-4 px-6 hover:bg-blue-50/40 transition-colors cursor-pointer group">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-slate-50 overflow-hidden flex items-center justify-center flex-shrink-0 border border-slate-100 shadow-sm relative">
-                    <img src={displayImage} alt={product.name} className="w-full flex-1 object-cover transition-transform duration-500 group-hover:scale-125" onError={(e) => { e.target.src = getThemedImage("default"); }}/>
+                    {/* 🚀 මෙතන තමයි product.imageUrl එක කෙලින්ම දැම්මේ */}
+                    <img 
+                      src={product.imageUrl} 
+                      alt={product.name} 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-125" 
+                      onError={(e) => { e.target.src = "/Logoicon.png"; }}
+                    />
                     <div className="absolute inset-0 bg-blue-900/0 group-hover:bg-blue-900/10 transition-colors duration-300"></div>
                   </div>
 

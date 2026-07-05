@@ -4,21 +4,20 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Eye, Package, Truck, CheckCircle2, XCircle, Calendar, MapPin, ShoppingBag } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Eye, Package, Truck, CheckCircle2, XCircle, Calendar, MapPin, ShoppingBag, Search } from "lucide-react";
 
 export default function OrderManagement() {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchOrders = async () => {
     try {
       const res = await axios.get('http://localhost:5000/api/orders');
-     
       const sortedOrders = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setOrders(sortedOrders);
-    } catch (err) {
-      console.error("Error fetching orders:", err);
-    }
+    } catch (err) { console.error("Error fetching orders:", err); }
   };
 
   useEffect(() => { fetchOrders(); }, []);
@@ -26,13 +25,17 @@ export default function OrderManagement() {
   const updateStatus = async (id, status) => {
     try {
       await axios.put(`http://localhost:5000/api/orders/${id}/status`, { status });
-      fetchOrders();
-    } catch (err) {
-      console.error("Error updating status:", err);
-    }
+      fetchOrders(); // Status එක වෙනස් උනාම Table එක Refresh වෙනවා
+    } catch (err) { console.error("Error updating status:", err); }
   };
 
-  
+  const filteredOrders = orders.filter((o) => {
+    const query = searchQuery.toLowerCase();
+    const orderId = o._id ? o._id.toLowerCase() : "";
+    const customerName = o.user?.name ? o.user.name.toLowerCase() : "";
+    return orderId.includes(query) || customerName.includes(query);
+  });
+
   const getStatusStyle = (status) => {
     switch (status) {
       case 'Processing': return { bg: 'bg-orange-100', text: 'text-orange-700', icon: <Package className="w-3 h-3 mr-1"/> };
@@ -49,134 +52,86 @@ export default function OrderManagement() {
   };
 
   return (
-    <div className="p-2 w-full max-w-7xl mx-auto space-y-6 pb-12">
-      <div className="flex justify-between items-end mb-8">
+    <div className="p-4 w-full max-w-7xl mx-auto h-[88vh] min-h-[600px] flex flex-col">
+      <div className="shrink-0 pb-4 pt-2 mb-4 border-b border-slate-200 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-black text-blue-950">Orders Management</h1>
+          <h1 className="text-3xl font-black text-blue-950">Orders Management</h1>
           <p className="text-slate-500 font-medium mt-1">Track, update, and manage customer orders.</p>
         </div>
-        <div className="bg-blue-50 px-4 py-2 rounded-xl border border-blue-100">
-            <span className="text-sm font-bold text-blue-800">Total Orders: {orders.length}</span>
+        
+        <div className="flex items-center gap-4">
+           
+            <div className="relative w-80 group">
+              <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+              <Input 
+                placeholder="Search by id..." 
+                className="pl-11 py-6 rounded-2xl bg-white border-slate-200 shadow-sm focus:border-blue-500 transition-all"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="bg-blue-50 px-5 py-3 rounded-2xl border border-blue-100">
+                <span className="text-sm font-bold text-blue-800">Total: {orders.length}</span>
+            </div>
         </div>
       </div>
 
-      <Card className="rounded-3xl border border-slate-100 shadow-sm p-6 bg-white overflow-hidden">
-        <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+      <div className="flex-1 overflow-y-auto pr-2 pb-4">
+        <Card className="rounded-3xl border border-slate-100 shadow-sm p-6 bg-white min-w-[800px]">
+          <table className="w-full text-left border-collapse">
             <thead>
-                <tr className="text-slate-400 text-[10px] uppercase font-bold tracking-widest border-b border-slate-100">
-                <th className="pb-4 px-4 whitespace-nowrap">Order Info</th>
-                <th className="pb-4 px-4 whitespace-nowrap">Customer</th>
-                <th className="pb-4 px-4 whitespace-nowrap">Status</th>
-                <th className="pb-4 px-4 whitespace-nowrap">Total Price</th>
-                <th className="pb-4 px-4 text-right whitespace-nowrap">Actions</th>
-                </tr>
+              <tr className="text-slate-400 text-[10px] uppercase font-bold tracking-widest border-b border-slate-100">
+                <th className="pb-4 px-4">Order Info</th>
+                <th className="pb-4 px-4">Customer</th>
+                <th className="pb-4 px-4">Status</th>
+                <th className="pb-4 px-4">Total</th>
+                <th className="pb-4 px-4 text-center">Actions</th>
+              </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-                {orders.map((order) => {
+              {filteredOrders.length > 0 ? filteredOrders.map((order) => {
                 const statusStyle = getStatusStyle(order.status);
                 return (
-                <tr key={order._id} className="hover:bg-slate-50/50 transition-colors group">
+                  <tr key={order._id} className="hover:bg-slate-50 transition-colors">
                     <td className="py-4 px-4">
-                        <div className="font-black text-blue-950 text-sm">#{order._id.slice(-6).toUpperCase()}</div>
-                        <div className="flex items-center text-xs text-slate-400 font-medium mt-1">
-                            <Calendar className="w-3 h-3 mr-1"/> {formatDate(order.createdAt)}
-                        </div>
+                      <div className="font-black text-blue-950 text-sm">#{order._id.slice(-6).toUpperCase()}</div>
+                      <div className="text-xs text-slate-400 font-medium">{formatDate(order.createdAt)}</div>
                     </td>
-                    
+                    <td className="py-4 px-4 font-bold text-slate-800">{order.user?.name || "Guest User"}</td>
                     <td className="py-4 px-4">
-                        <div className="font-bold text-slate-800 text-sm">{order.user?.name || "Guest User"}</div>
-                        <div className="text-xs text-slate-500">{order.user?.email || "No email provided"}</div>
+                      <Select defaultValue={order.status} onValueChange={(value) => updateStatus(order._id, value)}>
+                        <SelectTrigger className={`w-32 h-8 rounded-full font-bold text-xs border-none ${statusStyle.bg} ${statusStyle.text}`}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-2xl">
+                          <SelectItem value="Processing">Processing</SelectItem>
+                          <SelectItem value="Shipped">Shipped</SelectItem>
+                          <SelectItem value="Delivered">Delivered</SelectItem>
+                          <SelectItem value="Cancelled">Cancelled</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </td>
-                    
-                    <td className="py-4 px-4">
-                        <Select defaultValue={order.status} onValueChange={(value) => updateStatus(order._id, value)}>
-                            <SelectTrigger className={`w-[140px] h-8 rounded-full font-bold text-xs border-none ${statusStyle.bg} ${statusStyle.text} focus:ring-0 focus:ring-offset-0`}>
-                                <div className="flex items-center">
-                                    {statusStyle.icon}
-                                    <SelectValue />
-                                </div>
-                            </SelectTrigger>
-                            <SelectContent className="rounded-2xl border-slate-100 shadow-xl font-medium text-sm">
-                                <SelectItem value="Processing">Processing</SelectItem>
-                                <SelectItem value="Shipped">Shipped</SelectItem>
-                                <SelectItem value="Delivered">Delivered</SelectItem>
-                                <SelectItem value="Cancelled">Cancelled</SelectItem>
-                            </SelectContent>
-                        </Select>
+                    <td className="py-4 px-4 font-black text-blue-600">${order.totalPrice.toFixed(2)}</td>
+                    <td className="py-4 px-4 text-center">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="text-blue-600 font-semibold" onClick={() => setSelectedOrder(order)}><Eye className="w-4 h-4 mr-2"/> View</Button>
+                        </DialogTrigger>
+                        <DialogContent className="rounded-3xl max-w-lg">
+                           <DialogHeader><DialogTitle>Order Details #{selectedOrder?._id.slice(-6).toUpperCase()}</DialogTitle></DialogHeader>
+                           {/* Details එක මෙතන පෙන්නන්න */}
+                        </DialogContent>
+                      </Dialog>
                     </td>
-
-                    <td className="py-4 px-4">
-                        <div className="font-black text-blue-600 text-base">${order.totalPrice.toFixed(2)}</div>
-                        <div className="text-[10px] text-slate-400 font-bold uppercase">{order.orderItems.length} Items</div>
-                    </td>
-                    
-                    <td className="py-4 px-4 text-right">
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="rounded-xl font-bold text-blue-600 border-blue-100 hover:bg-blue-50" onClick={() => setSelectedOrder(order)}>
-                                    <Eye className="w-4 h-4 mr-2"/> View Details
-                                </Button>
-                            </DialogTrigger>
-                            
-                          
-                            <DialogContent className="rounded-3xl p-0 border-slate-100 max-w-2xl overflow-hidden">
-                                <div className="bg-blue-950 p-6 text-white flex justify-between items-center">
-                                    <div>
-                                        <DialogTitle className="text-xl font-black">Order #{selectedOrder?._id.slice(-6).toUpperCase()}</DialogTitle>
-                                        <p className="text-blue-300 text-sm font-medium mt-1">{formatDate(selectedOrder?.createdAt)}</p>
-                                    </div>
-                                    <div className={`px-4 py-1.5 rounded-full text-xs font-bold flex items-center ${selectedOrder?.status === 'Processing' ? 'bg-orange-500 text-white' : selectedOrder?.status === 'Delivered' ? 'bg-green-500 text-white' : selectedOrder?.status === 'Cancelled' ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}>
-                                        {selectedOrder?.status}
-                                    </div>
-                                </div>
-                                
-                                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-6">
-                                        <div>
-                                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center mb-3"><ShoppingBag className="w-4 h-4 mr-2"/> Items Ordered</h3>
-                                            <div className="space-y-3">
-                                                {selectedOrder?.orderItems.map((item, idx) => (
-                                                    <div key={idx} className="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                                        <div>
-                                                            <p className="font-bold text-blue-950 text-sm line-clamp-1">{item.name}</p>
-                                                            <p className="text-xs text-slate-500 font-medium">Qty: {item.qty} × ${item.price.toFixed(2)}</p>
-                                                        </div>
-                                                        <p className="font-black text-blue-600">${(item.qty * item.price).toFixed(2)}</p>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-6">
-                                        <div>
-                                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center mb-3"><MapPin className="w-4 h-4 mr-2"/> Shipping Info</h3>
-                                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm text-slate-700 font-medium">
-                                                <p className="font-bold text-blue-950 mb-1">{selectedOrder?.user?.name || "Guest"}</p>
-                                                <p>{selectedOrder?.shippingAddress?.address}</p>
-                                                <p>{selectedOrder?.shippingAddress?.city}</p>
-                                                <p>Postal Code: {selectedOrder?.shippingAddress?.postalCode}</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                                            <div className="flex justify-between items-center">
-                                                <span className="font-bold text-blue-900">Total Amount</span>
-                                                <span className="text-xl font-black text-blue-600">${selectedOrder?.totalPrice.toFixed(2)}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </DialogContent>
-                        </Dialog>
-                    </td>
-                </tr>
-                )})}
+                  </tr>
+                );
+              }) : (
+                <tr><td colSpan="5" className="text-center py-10 text-slate-400">No orders found.</td></tr>
+              )}
             </tbody>
-            </table>
-        </div>
-      </Card>
+          </table>
+        </Card>
+      </div>
     </div>
   );
 }
