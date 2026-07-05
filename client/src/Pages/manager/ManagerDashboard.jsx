@@ -30,31 +30,39 @@ export default function ManagerDashboard() {
   const [stats, setStats] = useState({ products: 0, orders: 0, users: 32, coupons: 0 });
   const [dashboardData, setDashboardData] = useState({ weeklyAnalytics: [] });
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const backendURL = "http://localhost:5000/api"; 
-        
-        const [productsRes, ordersRes, usersRes, couponsRes] = await Promise.all([
-          axios.get(`${backendURL}/products`).catch(() => ({ data: [] })),
-          axios.get(`${backendURL}/orders`).catch(() => ({ data: [] })),
-          axios.get(`${backendURL}/users`).catch(() => ({ data: [] })),
-          axios.get(`${backendURL}/coupons`).catch(() => ({ data: [] }))
-        ]);
+ useEffect(() => {
+  const fetchDashboardData = async () => {
+    try {
+      const backendURL = "http://localhost:5000/api"; 
+      const token = localStorage.getItem("token"); // Token එක ගන්න
 
-        setStats({
-          products: productsRes.data.length || 0,
-          orders: ordersRes.data.length || 0,
-          users: Math.max(usersRes.data.length, 32), 
-          coupons: couponsRes.data.length || 0
-        });
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      }
-    };
-    fetchDashboardData();
-  }, []);
+      // Token එකක් නැත්නම් මෙතනින්ම නවත්වන්න
+      if (!token) return;
 
+      // Header එකට Authorization එක ඇතුල් කරන්න
+      const config = {
+        headers: { Authorization: `Bearer ${token}` }
+      };
+
+      const [productsRes, ordersRes, usersRes, couponsRes] = await Promise.all([
+        axios.get(`${backendURL}/products`, config).catch(() => ({ data: [] })),
+        axios.get(`${backendURL}/orders`, config).catch(() => ({ data: [] })),
+        axios.get(`${backendURL}/users`, config).catch(() => ({ data: [] })),
+        axios.get(`${backendURL}/coupons`, config).catch(() => ({ data: [] }))
+      ]);
+
+      setStats({
+        products: productsRes.data.length || 0,
+        orders: ordersRes.data.length || 0,
+        users: Math.max(usersRes.data.length, 32), 
+        coupons: couponsRes.data.length || 0
+      });
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    }
+  };
+  fetchDashboardData();
+}, []);
   const topCards = [
     { title: "TODAY'S REVENUE", value: "$3,450.00", trend: "+14% vs yesterday", icon: <HugeiconsIcon icon={ShoppingCart01Icon} strokeWidth={2.5} className="w-5 h-5 text-blue-600"/>, color: "#3b82f6" },
     { title: "PENDING ORDERS", value: stats.orders, trend: "Requires attention", icon: <HugeiconsIcon icon={PackageIcon} strokeWidth={2.5} className="w-5 h-5 text-indigo-600"/>, color: "#6366f1" },

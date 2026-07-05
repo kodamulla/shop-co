@@ -1,14 +1,19 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
+
+// Pages
 import LoginPage from "./Pages/signin";
 import SignupPage from "./Pages/signup";
 import HomePage from "./Pages/landing";
 import ProfilePage from "./Pages/accountPage"; 
 import CartPage from "./Pages/cartPage"; 
-import CheckoutPage from "./Pages/checkoutPage";  
+import CheckoutPage from "./Pages/checkoutPage"; 
 import DetailsPage from "./Pages/details";
 import ClothingPage from "./Pages/ClothingPage";
 
+// Settings Pages
+import AccountSettings from "./pages/AccountSettings"; // Admin සඳහා
+import ManagerSettings from "./pages/ManagerSettings"; // Manager සඳහා
 
 // Manager Imports
 import ManagerLayout from "./Pages/manager/ManagerLayout";
@@ -31,38 +36,40 @@ import AdminCouponsManagement from "./Pages/admin/AdminCouponsManagement";
 function App() {
   return (
     <CartProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/signin" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/account" element={<ProfilePage />} /> 
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/details" element={<DetailsPage />} />
-       <Route path="/clothing" element={<ClothingPage />} />
-        
-        {/* Manager Routes */}
-        <Route path="/managerdashboard" element={<ManagerLayout />}>
-          <Route index element={<ManagerDashboard />} />
-          <Route path="products" element={<ProductsManagement />} />
-          <Route path="categories" element={<CategoryManagement />} />
-          <Route path="orders" element={<OrdersManagement />} />
-          <Route path="users" element={<UsersView />} />
-          <Route path="coupons" element={<ManagerCouponsManagement />} />
-        </Route>
-        
-        {/* Admin Routes */}
-        <Route path="/admindashboard" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="managers" element={<ManagerManagement />} />
-          <Route path="users" element={<UserManagement />} />
-          <Route path="products" element={<ProductManagement />} />
-          <Route path="documents" element={<Documents />} />
-          <Route path="coupons" element={<AdminCouponsManagement />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/signin" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/account" element={<ProfilePage />} /> 
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/details" element={<DetailsPage />} />
+          <Route path="/clothing" element={<ClothingPage />} />
+          
+          {/* Manager Routes */}
+          <Route path="/managerdashboard" element={<ManagerLayout />}>
+            <Route index element={<ManagerDashboard />} />
+            <Route path="products" element={<ProductsManagement />} />
+            <Route path="categories" element={<CategoryManagement />} />
+            <Route path="orders" element={<OrdersManagement />} />
+            <Route path="users" element={<UsersView />} />
+            <Route path="coupons" element={<ManagerCouponsManagement />} />
+            <Route path="settings" element={<ManagerSettings />} />
+          </Route>
+          
+          {/* Admin Routes */}
+          <Route path="/admindashboard" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="managers" element={<ManagerManagement />} />
+            <Route path="users" element={<UserManagement />} />
+            <Route path="products" element={<ProductManagement />} />
+            <Route path="documents" element={<Documents />} />
+            <Route path="coupons" element={<AdminCouponsManagement />} />
+            <Route path="settings" element={<AccountSettings />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </CartProvider>
   );
 }
