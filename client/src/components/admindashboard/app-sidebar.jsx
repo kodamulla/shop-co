@@ -1,6 +1,5 @@
 "use client"
 
-
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import {
   Sidebar,
@@ -56,6 +55,12 @@ export function AppSidebar({ ...props }) {
           { title: "Products", url: "/managerdashboard/products", icon: <HugeiconsIcon icon={PackageIcon} strokeWidth={2} /> },
           { title: "Orders", url: "/managerdashboard/orders", icon: <HugeiconsIcon icon={ChartHistogramIcon} strokeWidth={2} /> },
         ]
+  };
+
+  // ලොග් අවුට් ෆන්ෂන් එක මෙතන තමයි තියෙන්නේ 👇
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/signin";
   };
 
   return (
@@ -119,25 +124,24 @@ export function AppSidebar({ ...props }) {
               </DropdownMenuTrigger>
               
               <DropdownMenuContent className="w-60 rounded-2xl p-2" side="right" align="end">
-  {/* මෙතන NavLink වෙනුවට onClick එකක් පාවිච්චි කරමු */}
-  <DropdownMenuItem 
-    className="p-3 font-semibold text-slate-600 cursor-pointer"
-    onClick={() => navigate(`/${dashboardPath}/settings`)}
-  >
-    <HugeiconsIcon icon={UserCircle02Icon} className="mr-3 size-4" /> 
-    Account Settings
-  </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="p-3 font-semibold text-slate-600 cursor-pointer"
+                  onClick={() => navigate(`/${dashboardPath}/settings`)}
+                >
+                  <HugeiconsIcon icon={UserCircle02Icon} className="mr-3 size-4" /> 
+                  Account Settings
+                </DropdownMenuItem>
 
-  <DropdownMenuSeparator />
+                <DropdownMenuSeparator />
 
-  <DropdownMenuItem 
-    className="p-3 font-semibold text-red-500 cursor-pointer"
-    onClick={handleLogout}
-  >
-    <HugeiconsIcon icon={Logout01Icon} className="mr-3 size-4" /> 
-    Log out
-  </DropdownMenuItem>
-</DropdownMenuContent>
+                <DropdownMenuItem 
+                  className="p-3 font-semibold text-red-500 cursor-pointer"
+                  onClick={handleLogout}
+                >
+                  <HugeiconsIcon icon={Logout01Icon} className="mr-3 size-4" /> 
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>

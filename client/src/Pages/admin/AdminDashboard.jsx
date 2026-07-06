@@ -20,7 +20,15 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/dashboard/stats');
+        // 1. Token එක ලබාගැනීම
+        const token = localStorage.getItem("token");
+        if (!token) return; // Token නැත්නම් නවත්වන්න
+
+        // 2. Header එකත් එක්ක Request එක යැවීම
+        const res = await axios.get('http://localhost:5000/api/dashboard/stats', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
         if(res.data.success) {
           setDashboardData({
             stats: res.data.stats,
@@ -36,21 +44,19 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    
     <div className="p-4 w-full max-w-7xl mx-auto h-[88vh] min-h-[600px] flex flex-col">
       
-     
       <div className="shrink-0 pb-4 pt-2 mb-4 border-b border-slate-200">
         <h1 className="text-3xl font-black tracking-tight text-blue-950">Store Overview</h1>
         <p className="text-slate-500 font-medium mt-1">Real-time fashion analytics and store performance.</p>
       </div>
 
-      
       <div className="flex-1 overflow-y-auto pr-2 pb-4 space-y-6">
         
         {/* Top Stats Cards */}
         <div className="w-full">
-          <SectionCards stats={dashboardData.stats} />
+          {/* stats වලට දත්ත ආවට පස්සේ විතරක් SectionCards පෙන්වන්න. එතකොට සුදු තිර එන්නේ නෑ */}
+          {dashboardData.stats && <SectionCards stats={dashboardData.stats} />}
         </div>
 
         {/* Main Charts: Revenue & Categories */}
@@ -66,13 +72,17 @@ export default function AdminDashboard() {
         {/* Bottom Section: Integrated Dashboard Widgets */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch pb-10">
           
-          {/*  Trending Products & Featured Campaign */}
+          {/* Trending Products & Featured Campaign */}
           <div className="flex flex-col gap-6">
-            <div className="flex-1 min-h-[300px]"><TopProducts products={dashboardData.topProducts} /></div>
-            <div className="flex-1 min-h-[300px]"><FeaturedOutfit /></div>
+            <div className="flex-1 min-h-[300px]">
+              <TopProducts products={dashboardData.topProducts} />
+            </div>
+            <div className="flex-1 min-h-[300px]">
+              <FeaturedOutfit />
+            </div>
           </div>
 
-          {/*  AI Stats, Traffic, Returns & Cart */}
+          {/* AI Stats, Traffic, Returns & Cart */}
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
               <div className="flex flex-col gap-6">
                   <div className="flex-1 min-h-[200px]"><AiTryOnStats /></div>

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
 import LoginPage from "./Pages/signin";
@@ -47,8 +48,10 @@ function App() {
           <Route path="/details" element={<DetailsPage />} />
           <Route path="/clothing" element={<ClothingPage />} />
           
-          {/* Manager Routes */}
-          <Route path="/managerdashboard" element={<ManagerLayout />}>
+          {/* Manager Routes: allowedRole="manager" විතරයි */}
+          <Route path="/managerdashboard" element={
+            <ProtectedRoute allowedRole="manager"><ManagerLayout /></ProtectedRoute>
+          }>
             <Route index element={<ManagerDashboard />} />
             <Route path="products" element={<ProductsManagement />} />
             <Route path="categories" element={<CategoryManagement />} />
@@ -58,8 +61,10 @@ function App() {
             <Route path="settings" element={<ManagerSettings />} />
           </Route>
           
-          {/* Admin Routes */}
-          <Route path="/admindashboard" element={<AdminLayout />}>
+          {/* Admin Routes: allowedRole="admin" විතරයි */}
+          <Route path="/admindashboard" element={
+            <ProtectedRoute allowedRole="admin"><AdminLayout /></ProtectedRoute>
+          }>
             <Route index element={<AdminDashboard />} />
             <Route path="managers" element={<ManagerManagement />} />
             <Route path="users" element={<UserManagement />} />

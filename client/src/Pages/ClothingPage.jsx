@@ -17,6 +17,7 @@ import 'swiper/css/free-mode';
 
 export default function ClothingPage() {
   const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { addToCart } = useCart();
   
   // Modal එකට අදාළ States
@@ -28,15 +29,19 @@ export default function ClothingPage() {
       try {
         const res = await axios.get('http://localhost:5000/api/products');
         setProducts(res.data);
-      } catch (err) { console.error("Error:", err); }
+      } catch (err) { 
+        console.error("Error:", err); 
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchProducts();
   }, []);
 
-  // 🚀 අලුත් කොටස: Home Page එකෙන් එන Hash (#) එක අඳුරගෙන ඒකට Scroll වෙනවා
+  // Home Page එකෙන් එන Hash (#) එක අඳුරගෙන ඒකට Scroll වෙනවා
   useEffect(() => {
     if (products.length > 0 && window.location.hash) {
-      const id = window.location.hash.substring(1); // # ලකුණ අයින් කරනවා
+      const id = window.location.hash.substring(1); 
       const element = document.getElementById(id);
       if (element) {
         setTimeout(() => {
@@ -85,95 +90,102 @@ export default function ClothingPage() {
     <div className="bg-[#fafafa] min-h-screen flex flex-col font-sans relative">
       <Navbar />
       
-      <main className="flex-1">
-        <div className="bg-gray-950 text-white py-16 md:py-24 px-6 text-center">
+      <main className="flex-1 flex flex-col">
+        <div className="bg-white text-black py-16 md:py-24 px-6 text-center shrink-0">
           <h1 className="text-4xl md:text-6xl font-black uppercase tracking-widest mb-6">
             Explore The Collection
           </h1>
-          <p className="text-gray-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+          <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
             Discover our latest arrivals of premium quality fashion. Meticulously crafted to elevate your everyday wardrobe. Find the perfect fit for any occasion.
           </p>
         </div>
 
-        <div className="py-12 px-4 md:px-8 lg:px-12 max-w-[1400px] mx-auto">
-          {categories.map((cat) => {
-            const categoryProducts = products.filter(p => p.category === cat);
-            if (categoryProducts.length === 0) return null;
+        <div className="flex-1 py-12 px-4 md:px-8 lg:px-12 w-full max-w-[1400px] mx-auto flex flex-col">
+          
+          {isLoading ? (
+            <div className="m-auto flex justify-center items-center">
+              <div className="w-10 h-10 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
+            </div>
+          ) : (
+            categories.map((cat) => {
+              const categoryProducts = products.filter(p => p.category === cat);
+              if (categoryProducts.length === 0) return null;
 
-            return (
-              // 🚀 අලුත් කොටස: id={cat} සහ scroll-mt-24 (Navbar එකෙන් වැහෙන එක නවත්වන්න)
-              <div key={cat} id={cat} className="mb-20 scroll-mt-24">
-                <div className="flex items-center justify-between mb-6 md:mb-8 border-b pb-4">
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 uppercase tracking-widest">{cat}</h2>
-                  <button className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-black transition-colors">
-                    View All
-                  </button>
-                </div>
+              return (
+                <div key={cat} id={cat} className="mb-20 scroll-mt-24">
+                  <div className="flex items-center justify-between mb-6 md:mb-8 border-b pb-4">
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-900 uppercase tracking-widest">{cat}</h2>
+                    <button className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-black transition-colors">
+                      View All
+                    </button>
+                  </div>
 
-                <Swiper
-                  modules={[FreeMode]}
-                  freeMode={true}
-                  spaceBetween={20}
-                  breakpoints={{
-                    320: { slidesPerView: 2 },
-                    480: { slidesPerView: 3 },
-                    768: { slidesPerView: 4 },
-                    1024: { slidesPerView: 5 },
-                    1280: { slidesPerView: 6 },
-                  }}
-                  className="w-full pb-10"
-                >
-                  {categoryProducts.map((p) => (
-                    <SwiperSlide key={p._id}>
-                      <div className="group cursor-pointer flex flex-col h-full" onClick={() => openModal(p)}>
-                        
-                        <div className="relative aspect-[4/5] bg-gray-200 rounded-xl overflow-hidden mb-4">
-                          <img 
-                            src={p.imageUrl} 
-                            alt={p.name} 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
-                            onError={(e) => { e.target.src = "/Logoicon.png" }} 
-                          />
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); }} 
-                            className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-white hover:text-red-500 shadow-sm"
-                          >
-                            <Heart size={18} />
-                          </button>
+                  <Swiper
+                    modules={[FreeMode]}
+                    freeMode={true}
+                    spaceBetween={20}
+                    breakpoints={{
+                      320: { slidesPerView: 2 },
+                      480: { slidesPerView: 3 },
+                      768: { slidesPerView: 4 },
+                      1024: { slidesPerView: 5 },
+                      1280: { slidesPerView: 6 },
+                    }}
+                    className="w-full pb-10"
+                  >
+                    {categoryProducts.map((p) => (
+                      <SwiperSlide key={p._id}>
+                        <div className="group cursor-pointer flex flex-col h-full" onClick={() => openModal(p)}>
                           
-                          <button 
-                            onClick={(e) => handleAddToCart(e, p)}
-                            className="absolute bottom-0 left-0 w-full bg-black/85 backdrop-blur-md text-white py-3.5 text-sm font-semibold uppercase tracking-wider translate-y-full group-hover:translate-y-0 transition-transform duration-300 hover:bg-black flex items-center justify-center gap-2"
-                          >
-                            <ShoppingBag size={16} /> Quick Add
-                          </button>
-                        </div>
-                        
-                        <div className="flex flex-col flex-grow px-1">
-                          <div className="flex justify-between items-start mb-1">
-                            <h3 className="font-semibold text-gray-900 text-sm md:text-base leading-tight pr-4 truncate">{p.name}</h3>
-                            <span className="font-bold text-gray-900 text-sm md:text-base">${p.price}</span>
+                          <div className="relative aspect-[4/5] bg-gray-200 rounded-xl overflow-hidden mb-4">
+                            <img 
+                              src={p.imageUrl} 
+                              alt={p.name} 
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
+                              onError={(e) => { e.target.src = "/Logoicon.png" }} 
+                            />
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); }} 
+                              className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-white hover:text-red-500 shadow-sm"
+                            >
+                              <Heart size={18} />
+                            </button>
+                            
+                            <button 
+                              onClick={(e) => handleAddToCart(e, p)}
+                              className="absolute bottom-0 left-0 w-full bg-black/85 backdrop-blur-md text-white py-3.5 text-sm font-semibold uppercase tracking-wider translate-y-full group-hover:translate-y-0 transition-transform duration-300 hover:bg-black flex items-center justify-center gap-2"
+                            >
+                              <ShoppingBag size={16} /> Quick Add
+                            </button>
                           </div>
-                          <p className="text-xs text-gray-500 line-clamp-1 mb-2">{p.description}</p>
-                          <div className="flex items-center gap-1 mt-auto">
-                            <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                            <span className="text-xs font-medium text-gray-600">4.8 <span className="text-gray-400 font-normal">(120)</span></span>
+                          
+                          <div className="flex flex-col flex-grow px-1">
+                            <div className="flex justify-between items-start mb-1">
+                              <h3 className="font-semibold text-gray-900 text-sm md:text-base leading-tight pr-4 truncate">{p.name}</h3>
+                              <span className="font-bold text-gray-900 text-sm md:text-base">${p.price}</span>
+                            </div>
+                            <p className="text-xs text-gray-500 line-clamp-1 mb-2">{p.description}</p>
+                            <div className="flex items-center gap-1 mt-auto">
+                              <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                              <span className="text-xs font-medium text-gray-600">4.8 <span className="text-gray-400 font-normal">(120)</span></span>
+                            </div>
                           </div>
-                        </div>
 
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              </div>
-            );
-          })}
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
+              );
+            })
+          )}
         </div>
       </main>
 
-      <Footer />
+      {/* 👇 මෙතන තමයි වෙනස් කළේ: ලෝඩ් වෙලා ඉවර වුණාම විතරක් Footer එක පෙන්නනවා */}
+      {!isLoading && <Footer />}
 
-      {/* 🚀 Basic Product Details Modal */}
+      {/* Basic Product Details Modal */}
       <AnimatePresence>
         {selectedProduct && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">

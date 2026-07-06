@@ -1,10 +1,18 @@
 import { motion } from "framer-motion";
 import { Flame, Trophy, Sparkles, Star, Heart, Copy, ArrowRight, ChevronRight } from "lucide-react";
-import { useState } from "react"; 
-import { Button } from "@/components/ui/button"; // Button එක import කළා 👇
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // පේජ් මාරු කරන්න මේක ඕනේ
+import { Button } from "@/components/ui/button";
 
 export function ProductSection() {
+  const navigate = useNavigate(); // පේජ් එක මාරු කරන්න
   const [showSwipe, setShowSwipe] = useState(true);
+
+  // Mouse Swipe Functions
+  const carouselRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   const handleScroll = (e) => {
     if (e.currentTarget.scrollLeft > 10) {
@@ -12,6 +20,21 @@ export function ProductSection() {
     } else {
       setShowSwipe(true);
     }
+  };
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - carouselRef.current.offsetLeft);
+    setScrollLeft(carouselRef.current.scrollLeft);
+  };
+  const handleMouseLeave = () => setIsDragging(false);
+  const handleMouseUp = () => setIsDragging(false);
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    carouselRef.current.scrollLeft = scrollLeft - walk;
   };
 
   const products = [
@@ -108,7 +131,6 @@ export function ProductSection() {
     <section className="w-full -mt-10 md:-mt-20 py-10 md:py-10 bg-muted overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
         
-        {/* Heading සහ Paragraph */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -124,7 +146,6 @@ export function ProductSection() {
           </p>
         </motion.div>
 
-        {/* Swipe Indicator */}
         <motion.div 
           className="hidden lg:flex w-full justify-end mb-4 pr-2"
           animate={{ opacity: showSwipe ? 1 : 0 }} 
@@ -135,14 +156,18 @@ export function ProductSection() {
           </span>
         </motion.div>
 
-        {/* Product Grid / Carousel */}
         <motion.div
-          onScroll={handleScroll} 
+          ref={carouselRef}
+          onScroll={handleScroll}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
-          className="grid grid-cols-2 lg:flex lg:flex-nowrap gap-4 lg:gap-6 overflow-x-auto lg:snap-x lg:snap-mandatory pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          className="grid grid-cols-2 lg:flex lg:flex-nowrap gap-4 lg:gap-6 overflow-x-auto lg:snap-x lg:snap-mandatory pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing"
         >
           {products.map((product, index) => {
             const Icon = product.badgeIcon;
@@ -151,17 +176,17 @@ export function ProductSection() {
               <motion.div
                 key={index}
                 variants={itemVariants}
+                onClick={() => navigate("/details", { state: { product } })}
                 className="group flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all p-2.5 sm:p-3 cursor-pointer w-full flex-none lg:w-[280px] xl:w-[300px] lg:snap-start"
               >
-                {/* පින්තූරය සහ ඒ උඩ තියෙන Icons */}
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-muted mb-3 sm:mb-4">
                   <img
                     src={product.image}
                     alt={product.title}
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                    draggable={false}
+                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 select-none"
                   />
                   
-                  {/* Top Left Badge */}
                   {product.badge && (
                     <div className="absolute top-2 left-2 bg-black text-white px-2 py-1 sm:px-2.5 sm:py-1 rounded-full flex items-center gap-1 sm:gap-1.5 shadow-sm z-10">
                       {Icon && <Icon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />}
@@ -169,35 +194,36 @@ export function ProductSection() {
                     </div>
                   )}
 
-                  {/* Top Right Heart Icon */}
-                  <button className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full text-zinc-500 hover:text-red-500 transition-colors shadow-sm z-10">
+                  <button 
+                    onClick={(e) => e.stopPropagation()} 
+                    className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full text-zinc-500 hover:text-red-500 transition-colors shadow-sm z-10"
+                  >
                     <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
 
-                  {/* Bottom Left Rating */}
                   <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-1.5 py-1 sm:px-2 sm:py-1 rounded-md flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-foreground shadow-sm z-10">
                     <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-black text-black" />
                     {product.rating}
                     <span className="text-muted-foreground font-normal ml-0.5">| {product.reviews}</span>
                   </div>
 
-                  {/* Bottom Right Icon */}
-                  <button className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm p-1 sm:p-1.5 rounded-md text-foreground shadow-sm z-10 hover:bg-zinc-100 transition-colors">
+                  <button 
+                    onClick={(e) => e.stopPropagation()} 
+                    className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm p-1 sm:p-1.5 rounded-md text-foreground shadow-sm z-10 hover:bg-zinc-100 transition-colors"
+                  >
                     <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                 </div>
                 
-                {/* Product විස්තර */}
                 <div className="flex flex-col px-1 flex-1">
-                  <h3 className="font-semibold text-sm md:text-base text-foreground line-clamp-1">
+                  <h3 className="font-semibold text-sm md:text-base text-foreground line-clamp-1 select-none">
                     {product.title}
                   </h3>
-                  <p className="text-[11px] sm:text-xs md:text-sm text-muted-foreground mt-0.5 sm:mt-1 line-clamp-1">
+                  <p className="text-[11px] sm:text-xs md:text-sm text-muted-foreground mt-0.5 sm:mt-1 line-clamp-1 select-none">
                     {product.description}
                   </p>
                   
-                  {/* මිල ගණන් පේළිය */}
-                  <div className="mt-2 sm:mt-2.5 flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2 sm:mb-0">
+                  <div className="mt-2 sm:mt-2.5 flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2 sm:mb-0 select-none">
                     <span className="font-bold text-sm sm:text-base text-foreground">{product.price}</span>
                     <span className="text-[10px] sm:text-xs text-muted-foreground line-through">{product.originalPrice}</span>
                     <span className="text-[10px] sm:text-xs font-semibold text-foreground">{product.discount}</span>
@@ -216,11 +242,15 @@ export function ProductSection() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="flex justify-center"
         >
-          <a href="/products">
-            <Button variant="outline" size="lg" className="rounded-lg px-8 h-12 text-sm font-medium hover:bg-blue-600 hover:text-white transition-all shadow-sm">
-              Want Explore More? <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-          </a>
+          {/* මෙතන තිබ්බ <a href="/products"> කෑල්ල සම්පූර්ණයෙන්ම අයින් කරලා මේ onClick එක දැම්මා */}
+          <Button 
+            variant="outline" 
+            size="lg" 
+            className="rounded-lg px-8 h-12 text-sm font-medium hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+            onClick={() => navigate("/clothing")} 
+          >
+            Want Explore More? <ChevronRight className="ml-2 h-4 w-4" />
+          </Button>
         </motion.div>
 
       </div>

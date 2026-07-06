@@ -12,7 +12,7 @@ import { TestimonialsSection } from "@/components/landingpage/testimonials-secti
 export default function LandingPage() {
   const location = useLocation(); // URL එකේ තියෙන දේවල් අල්ලගන්නවා
 
-  // පිටුව ලෝඩ් වෙද්දී ලින්ක් එකේ # කෑල්ලක් තියෙනවද බලලා එතනට Scroll කරනවා 👇
+  
   useEffect(() => {
     if (location.hash) {
       // # ලකුණ අයින් කරලා නම විතරක් ගන්නවා (උදා: 'new-arrivals')

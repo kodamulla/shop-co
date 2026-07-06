@@ -1,18 +1,38 @@
 import { motion } from "framer-motion";
 import { Sparkles, Star, Heart, Copy, Zap, ArrowRight } from "lucide-react";
-import { useState } from "react"; // අලුතින් useState import කළා 👇
+import { useState, useRef } from "react"; // අලුතින් useRef එකතු කළා 👇
 
 export function NewArrivalsSection() {
-  // Swipe Indicator එක පෙන්වන්න සහ හංගන්න State එකක් 👇
   const [showSwipe, setShowSwipe] = useState(true);
 
-  // Scroll කරද්දී වැඩ කරන Function එක 👇
+  // මවුස් එකෙන් අදින්න (Swipe කරන්න) ඕන කරන State සහ Ref 👇
+  const carouselRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
   const handleScroll = (e) => {
     if (e.currentTarget.scrollLeft > 10) {
       setShowSwipe(false);
     } else {
       setShowSwipe(true);
     }
+  };
+
+  // Mouse Swipe Functions (මවුස් එකෙන් Drag කරද්දී වැඩ කරන කොටස) 👇
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - carouselRef.current.offsetLeft);
+    setScrollLeft(carouselRef.current.scrollLeft);
+  };
+  const handleMouseLeave = () => setIsDragging(false);
+  const handleMouseUp = () => setIsDragging(false);
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5; // ස්වයිප් වෙන වේගය
+    carouselRef.current.scrollLeft = scrollLeft - walk;
   };
 
   // New Arrivals සඳහා කාඩ් 5ක්
@@ -97,16 +117,14 @@ export function NewArrivalsSection() {
 
   return (
     <section id="new-arrivals"  className="w-full py-10 md:py-15 bg-muted overflow-hidden scroll-mt-12">
-      {/* bg-muted/30 පාවිච්චි කළේ උඩ Section එකෙන් මේක පොඩ්ඩක් වෙනස් කරලා පෙන්නන්නයි */}
       <div className="container mx-auto px-4 md:px-6">
         
-        {/* Heading සහ Paragraph */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-8 md:mb-5" // Margin එක mb-12 වලට අඩු කළා Arrow එකට ඉඩ තියන්න
+          className="text-center mb-8 md:mb-5"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4">
             New Arrivals
@@ -116,11 +134,10 @@ export function NewArrivalsSection() {
           </p>
         </motion.div>
 
-        {/* Swipe Indicator එක (Fade in/out වෙන විදිහට හැදුවා) 👇 */}
         <motion.div 
           className="hidden lg:flex w-full justify-end mb-4 pr-2"
-          animate={{ opacity: showSwipe ? 1 : 0 }} // scroll එක අනුව පේනවා/නොපෙනෙනවා
-          transition={{ duration: 0.3 }} // මෘදුව මැකිලා යන වේගය
+          animate={{ opacity: showSwipe ? 1 : 0 }} 
+          transition={{ duration: 0.3 }} 
         >
           <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5 animate-pulse cursor-default">
             Swipe <ArrowRight className="w-4 h-4" />
@@ -129,12 +146,18 @@ export function NewArrivalsSection() {
 
         {/* Product Grid / Carousel */}
         <motion.div
-          onScroll={handleScroll} // Scroll කරද්දී අර function එක වැඩ කරන්න මෙතනට දැම්මා 👇
+          ref={carouselRef} // මෙතනට Ref එක දැම්මා
+          onScroll={handleScroll}
+          onMouseDown={handleMouseDown} // මවුස් එකෙන් අදින්න මෙතනට දැම්මා
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
-          className="grid grid-cols-2 gap-4 lg:flex lg:flex-nowrap lg:overflow-x-auto lg:snap-x lg:snap-mandatory lg:gap-6 pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          // යාලුවාගේ CSS ඒ විදිහටම තියෙනවා 👇
+          className="grid grid-cols-2 gap-4 lg:flex lg:flex-nowrap lg:overflow-x-auto lg:snap-x lg:snap-mandatory lg:gap-6 pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing"
         >
           {products.map((product, index) => {
             const Icon = product.badgeIcon;
@@ -143,17 +166,16 @@ export function NewArrivalsSection() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="group flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all p-2.5 sm:p-3 cursor-pointer w-full flex-none lg:w-[280px] xl:w-[300px] lg:snap-start"
+                className="group flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all p-2.5 sm:p-3 w-full flex-none lg:w-[280px] xl:w-[300px] lg:snap-start"
               >
-                {/* පින්තූරය සහ ඒ උඩ තියෙන Icons */}
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-muted mb-3 sm:mb-4">
                   <img
                     src={product.image}
                     alt={product.title}
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                    draggable={false} // මවුස් එකෙන් අදිද්දි පින්තූරේ විතරක් ඇදෙන එක නවත්වන්න මේක දැම්මා
+                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 select-none"
                   />
                   
-                  {/* Top Left Badge */}
                   {product.badge && (
                     <div className="absolute top-2 left-2 bg-black text-white px-2 py-1 sm:px-2.5 sm:py-1 rounded-full flex items-center gap-1 sm:gap-1.5 shadow-sm z-10">
                       {Icon && <Icon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />}
@@ -161,35 +183,30 @@ export function NewArrivalsSection() {
                     </div>
                   )}
 
-                  {/* Top Right Heart Icon */}
                   <button className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full text-zinc-500 hover:text-red-500 transition-colors shadow-sm z-10">
                     <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
 
-                  {/* Bottom Left Rating */}
                   <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-1.5 py-1 sm:px-2 sm:py-1 rounded-md flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-foreground shadow-sm z-10">
                     <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-black text-black" />
                     {product.rating}
                     <span className="text-muted-foreground font-normal ml-0.5">| {product.reviews}</span>
                   </div>
 
-                  {/* Bottom Right Icon */}
                   <button className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm p-1 sm:p-1.5 rounded-md text-foreground shadow-sm z-10 hover:bg-zinc-100 transition-colors">
                     <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                 </div>
                 
-                {/* Product විස්තර */}
                 <div className="flex flex-col px-1 flex-1">
-                  <h3 className="font-semibold text-sm md:text-base text-foreground line-clamp-1">
+                  <h3 className="font-semibold text-sm md:text-base text-foreground line-clamp-1 select-none">
                     {product.title}
                   </h3>
-                  <p className="text-[11px] sm:text-xs md:text-sm text-muted-foreground mt-0.5 sm:mt-1 line-clamp-1">
+                  <p className="text-[11px] sm:text-xs md:text-sm text-muted-foreground mt-0.5 sm:mt-1 line-clamp-1 select-none">
                     {product.description}
                   </p>
                   
-                  {/* මිල ගණන් පේළිය */}
-                  <div className="mt-2 sm:mt-2.5 flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2 sm:mb-0">
+                  <div className="mt-2 sm:mt-2.5 flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2 sm:mb-0 select-none">
                     <span className="font-bold text-sm sm:text-base text-foreground">{product.price}</span>
                     <span className="text-[10px] sm:text-xs text-muted-foreground line-through">{product.originalPrice}</span>
                     <span className="text-[10px] sm:text-xs font-semibold text-foreground">{product.discount}</span>

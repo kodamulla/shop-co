@@ -19,12 +19,10 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false); 
   
- 
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return !!localStorage.getItem("token"); 
   });
 
-  
   useEffect(() => {
     const handleScroll = () => {
       if (isMobileMenuOpen) setIsMobileMenuOpen(false);
@@ -48,6 +46,19 @@ export function Navbar() {
     setIsUserDropdownOpen(false);
     setIsMobileMenuOpen(false);
     window.location.href = "/"; // මුල් පිටුවට යවනවා
+  };
+
+  // 🚀 අලුත් කොටස: Smooth Scroll වෙන Function එක
+  const handleNavClick = (e, href) => {
+    if (href.startsWith("/#")) {
+      const targetId = href.substring(2); // "/#new-arrivals" එකෙන් "new-arrivals" ගන්නවා
+      const element = document.getElementById(targetId);
+      
+      if (element) {
+        e.preventDefault(); // එක පාරටම පනින එක නවත්වනවා
+        element.scrollIntoView({ behavior: "smooth" }); // ලස්සනට පල්ලෙහාට යනවා
+      }
+    }
   };
 
   const navLinks = [
@@ -88,7 +99,12 @@ export function Navbar() {
         {/* Center Navigation */}
         <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-black">
           {navLinks.map((link, index) => (
-            <a key={index} href={link.href} className="flex items-center gap-1.5 hover:text-foreground transition-colors">
+            <a 
+              key={index} 
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)} // 👈 මෙතනට අලුත් function එක දැම්මා
+              className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+            >
               <link.icon className="h-4 w-4" /> {link.name}
             </a>
           ))}
@@ -174,7 +190,10 @@ export function Navbar() {
                 <a
                   key={index}
                   href={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)} 
+                  onClick={(e) => { 
+                    setIsMobileMenuOpen(false); 
+                    handleNavClick(e, link.href); // 👈 Mobile Menu එකෙත් ලස්සනට යන්න හැදුවා
+                  }} 
                   className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted transition-colors text-foreground"
                 >
                   <div className="flex items-center gap-2.5">
