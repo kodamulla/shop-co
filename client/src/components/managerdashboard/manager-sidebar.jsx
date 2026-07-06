@@ -1,6 +1,6 @@
 "use client"
 
-import { NavLink, useLocation } from "react-router-dom"
+import { NavLink, useLocation, Link } from "react-router-dom"
 import {
   Sidebar,
   SidebarContent,
@@ -11,10 +11,9 @@ import {
   SidebarMenuItem,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,12 +24,11 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { 
   PackageIcon, 
-  ShoppingCart01Icon, // Orders icon
+  ShoppingCart01Icon, 
   UserGroupIcon, 
-  Ticket01Icon, // Coupons icon
-  Layers01Icon, // Category icon
+  Ticket01Icon, 
+  Layers01Icon, 
   ChartHistogramIcon, 
-  MoreVerticalCircle01Icon, 
   UserCircle02Icon, 
   Logout01Icon 
 } from "@hugeicons/core-free-icons"
@@ -54,6 +52,12 @@ const data = {
 export function ManagerSidebar({ ...props }) {
   const { isMobile } = useSidebar()
   const location = useLocation()
+
+  // ලොග් අවුට් ෆන්ෂන් එක
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/signin";
+  };
 
   return (
     <Sidebar collapsible="offcanvas" className="border-r border-slate-100 bg-white shadow-sm" {...props}>
@@ -125,9 +129,29 @@ export function ManagerSidebar({ ...props }) {
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-60 rounded-2xl p-2" side="right" align="end">
-                <DropdownMenuItem className="p-3 font-semibold text-slate-600"><HugeiconsIcon icon={UserCircle02Icon} className="mr-3 size-4" /> Account Settings</DropdownMenuItem>
+                
+                {/* 100% වැඩ කරන Account Settings ලින්ක් එක */}
+                <DropdownMenuItem asChild>
+                  <Link 
+                    to="/managerdashboard/settings" 
+                    className="flex w-full items-center p-3 font-semibold text-slate-600 cursor-pointer"
+                  >
+                    <HugeiconsIcon icon={UserCircle02Icon} className="mr-3 size-4" /> 
+                    Account Settings
+                  </Link>
+                </DropdownMenuItem>
+                
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="p-3 font-semibold text-red-500"><HugeiconsIcon icon={Logout01Icon} className="mr-3 size-4" /> Log out</DropdownMenuItem>
+                
+                {/* 100% වැඩ කරන Log out බට්න් එක */}
+                <DropdownMenuItem 
+                  className="flex w-full items-center p-3 font-semibold text-red-500 cursor-pointer"
+                  onSelect={handleLogout}
+                >
+                  <HugeiconsIcon icon={Logout01Icon} className="mr-3 size-4" /> 
+                  Log out
+                </DropdownMenuItem>
+
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
