@@ -5,11 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Edit2, Trash2, Ban, Unlock, Users, Search } from "lucide-react"; 
+import { ModernAlert } from "@/components/ui/ModernAlert"; // 👈 අලුත් Alert එක Import කළා
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // 👈 Alert එක පාලනය කරන State එක
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    type: "success",
+    title: "",
+    message: "",
+    showCancel: false,
+    confirmText: "Continue",
+    onConfirm: null
+  });
 
   const fetchUsers = async () => {
     try {
@@ -18,11 +30,8 @@ export default function UserManagement() {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      // Backend එකෙන් එන දත්ත Array එකක් හෝ Object එකක් ලෙස සලකා දත්ත ලබාගැනීම
       const data = res.data;
       const userList = Array.isArray(data) ? data : (data.users || []);
-      
-      // Role එක 'user' පමණක් පෙරීම
       setUsers(userList.filter(u => u.role === 'user'));
     } catch (err) { 
       console.error("Error fetching users:", err); 
@@ -31,50 +40,93 @@ export default function UserManagement() {
 
   useEffect(() => { fetchUsers(); }, []);
 
-  // Search Logic: Name හෝ Email හරහා පෙරීම
-  // Search Logic:firstName, lastName හෝ email එකේ තියෙනවාද බලනවා
   const filteredUsers = users.filter((u) => {
     const query = searchQuery.toLowerCase();
-    
-    // මෙතන අරන් තියෙන firstName සහ lastName වලට space එකක් එකතු කළා
     const fullName = `${u.firstName || ''} ${u.lastName || ''}`.toLowerCase();
     const email = (u.email || '').toLowerCase();
-    
-    // Search query එකේ තියෙන space එකත් එක්කම compare වෙනවා
     return fullName.includes(query) || email.includes(query);
   });
 
-  const handleBlockToggle = async (id) => {
+  const handleBlockToggle = async (id, isBlocked) => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(`http://localhost:5000/api/users/block/${id}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchUsers();
-    } catch (err) { alert("Error updating status"); }
+      
+      setAlertConfig({
+        isOpen: true, type: "success", title: "Success!",
+        message: `User has been ${isBlocked ? 'unblocked' : 'blocked'} successfully.`,
+        showCancel: false, confirmText: "OK", 
+        onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+      });
+    } catch (err) { 
+      setAlertConfig({
+        isOpen: true, type: "error", title: "Error!", message: "Error updating status",
+        showCancel: false, confirmText: "OK", 
+        onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+      });
+    }
   };
 
   const handleUpdate = async () => {
+   
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/users/${editingUser._id}`, editingUser, {
+
+      const updateData = {
+        firstName: editingUser.firstName,
+        lastName: editingUser.lastName
+      };
+      
+      await axios.put(`http://localhost:5000/api/users/update-profile/${editingUser._id}`, editingUser, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEditingUser(null);
       fetchUsers();
-    } catch (err) { alert("Error updating user"); }
+      
+      setAlertConfig({
+        isOpen: true, type: "success", title: "Updated!", message: "User details updated successfully.",
+        showCancel: false, confirmText: "OK", 
+        onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+      });
+    } catch (err) { 
+      console.error("Full Update Error:", err);
+      setAlertConfig({
+        isOpen: true, type: "error", title: "Error!", message: "Error updating user",
+        showCancel: false, confirmText: "Try Again", 
+        onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+      });
+    }
   };
 
   const deleteUser = async (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      try {
-        const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:5000/api/users/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        fetchUsers();
-      } catch (err) { alert("Error deleting user"); }
-    }
+    setAlertConfig({
+      isOpen: true, type: "error", title: "Delete User",
+      message: "Are you sure you want to delete this user? This action cannot be undone.",
+      showCancel: true, confirmText: "Delete",
+      onConfirm: async () => {
+        try {
+          const token = localStorage.getItem('token');
+          await axios.delete(`http://localhost:5000/api/users/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          fetchUsers();
+          setAlertConfig({
+            isOpen: true, type: "success", title: "Deleted!", message: "User deleted successfully.",
+            showCancel: false, confirmText: "OK", 
+            onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+          });
+        } catch (err) { 
+          setAlertConfig({
+            isOpen: true, type: "error", title: "Error!", message: "Error deleting user",
+            showCancel: false, confirmText: "OK", 
+            onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+          });
+        }
+      }
+    });
   };
 
   return (
@@ -88,12 +140,11 @@ export default function UserManagement() {
           <p className="text-slate-500 font-medium mt-1">View and manage all registered customers.</p>
         </div>
 
-        {/* Search Bar එක ලස්සන කළා */}
         <div className="relative w-80 group">
           <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
           <Input 
             placeholder="Search by name or email..." 
-            className="pl-11 py-6 rounded-2xl bg-white border-slate-200 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-300 placeholder:text-slate-400"
+            className="pl-11 py-6 rounded-2xl bg-white border-slate-200 shadow-sm focus:border-blue-500 transition-all duration-300"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -141,7 +192,7 @@ export default function UserManagement() {
                              </div>
                           </DialogContent>
                         </Dialog>
-                        <Button variant="ghost" size="sm" className={u.isBlocked ? "text-emerald-600" : "text-orange-500"} onClick={() => handleBlockToggle(u._id)}>{u.isBlocked ? "Unblock" : "Block"}</Button>
+                        <Button variant="ghost" size="sm" className={u.isBlocked ? "text-emerald-600" : "text-orange-500"} onClick={() => handleBlockToggle(u._id, u.isBlocked)}>{u.isBlocked ? "Unblock" : "Block"}</Button>
                         <Button variant="ghost" size="sm" className="text-red-500" onClick={() => deleteUser(u._id)}><Trash2 className="w-4 h-4 mr-1"/> Delete</Button>
                       </div>
                     </td>
@@ -154,6 +205,17 @@ export default function UserManagement() {
           </table>
         </Card>
       </div>
+
+      <ModernAlert 
+        isOpen={alertConfig.isOpen}
+        onClose={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={alertConfig.onConfirm || (() => setAlertConfig(prev => ({ ...prev, isOpen: false })))}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        showCancel={alertConfig.showCancel}
+        confirmText={alertConfig.confirmText}
+      />
     </div>
   );
 }

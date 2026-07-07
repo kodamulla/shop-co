@@ -4,12 +4,18 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Ticket, Plus, Trash2, Calendar, Percent, CheckCircle2, XCircle, Tag } from "lucide-react";
+import { Ticket, Plus, Trash2, CheckCircle2, XCircle, Tag } from "lucide-react";
+import { ModernAlert } from "@/components/ui/ModernAlert"; // 👈 Alert එක Import කළා
 
 export default function CouponManagement() {
   const [coupons, setCoupons] = useState([]);
   const [formData, setFormData] = useState({ code: '', discount: '', expiryDate: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // 👈 Alert State
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false, type: "success", title: "", message: "", showCancel: false, confirmText: "OK", onConfirm: null
+  });
 
   const fetchCoupons = async () => {
     try {
@@ -25,28 +31,47 @@ export default function CouponManagement() {
   const handleSave = async () => {
     try {
       if (!formData.code || !formData.discount || !formData.expiryDate) {
-        alert("Please fill all fields!");
+        setAlertConfig({
+            isOpen: true, type: "error", title: "Missing Fields!",
+            message: "Please fill all fields before creating a coupon.",
+            showCancel: false, confirmText: "OK", onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+        });
         return;
       }
       await axios.post('http://localhost:5000/api/coupons/create', formData);
       setFormData({ code: '', discount: '', expiryDate: '' });
       setIsDialogOpen(false);
       fetchCoupons();
+      
+      setAlertConfig({
+        isOpen: true, type: "success", title: "Success!",
+        message: "New coupon created successfully!",
+        showCancel: false, confirmText: "OK", onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+      });
     } catch (err) {
-      console.error("Error saving coupon:", err);
-      alert(err.response?.data?.message || "Error creating coupon");
+      setAlertConfig({
+        isOpen: true, type: "error", title: "Error!",
+        message: err.response?.data?.message || "Error creating coupon",
+        showCancel: false, confirmText: "Try Again", onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+      });
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this coupon?")) {
-      try {
-        await axios.delete(`http://localhost:5000/api/coupons/${id}`);
-        fetchCoupons();
-      } catch (err) {
-        console.error("Error deleting coupon:", err);
-      }
-    }
+    setAlertConfig({
+        isOpen: true, type: "error", title: "Delete Coupon",
+        message: "Are you sure you want to delete this coupon?",
+        showCancel: true, confirmText: "Delete",
+        onConfirm: async () => {
+          try {
+            await axios.delete(`http://localhost:5000/api/coupons/${id}`);
+            fetchCoupons();
+            setAlertConfig(prev => ({ ...prev, isOpen: false }));
+          } catch (err) {
+            setAlertConfig({ isOpen: true, type: "error", title: "Error", message: "Error deleting coupon!", showCancel: false, confirmText: "OK", onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false })) });
+          }
+        }
+    });
   };
 
   const formatDate = (dateString) => {
@@ -56,8 +81,6 @@ export default function CouponManagement() {
 
   return (
     <div className="p-4 w-full max-w-7xl mx-auto h-[88vh] min-h-[600px] flex flex-col">
-      
-      {/* FIXED HEADER */}
       <div className="shrink-0 pb-4 pt-2 mb-4 border-b border-slate-200">
         <h1 className="text-3xl font-black text-blue-950 flex items-center gap-2">
           <Tag className="w-8 h-8 text-blue-600"/>
@@ -66,7 +89,6 @@ export default function CouponManagement() {
         <p className="text-slate-500 font-medium mt-1">Create and manage store discount codes for customers.</p>
       </div>
 
-      {/* SCROLLABLE TABLE */}
       <div className="flex-1 overflow-y-auto pr-2 pb-4">
         <Card className="rounded-3xl border border-slate-100 shadow-sm p-6 bg-white min-w-[800px]">
           <table className="w-full text-left border-collapse">
@@ -114,11 +136,10 @@ export default function CouponManagement() {
         </Card>
       </div>
 
-      {/* FIXED FOOTER (Add Button) */}
       <div className="shrink-0 pt-4 flex justify-end">
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700 rounded-full font-bold px-6 h-12 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <Button className="bg-blue-600 hover:bg-blue-700 rounded-full font-bold px-6 h-12 shadow-md hover:shadow-lg transition-all">
               <Plus className="w-5 h-5 mr-2"/> Add New Coupon
             </Button>
           </DialogTrigger>
@@ -142,6 +163,17 @@ export default function CouponManagement() {
           </DialogContent>
         </Dialog>
       </div>
+
+      <ModernAlert 
+        isOpen={alertConfig.isOpen}
+        onClose={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={alertConfig.onConfirm || (() => setAlertConfig(prev => ({ ...prev, isOpen: false })))}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        showCancel={alertConfig.showCancel}
+        confirmText={alertConfig.confirmText}
+      />
     </div>
   );
 }
