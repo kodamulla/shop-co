@@ -10,6 +10,11 @@ const categorySchema = new mongoose.Schema({
     description: {
         type: String,
         required: false
+    },
+    // 👈 මේ imageUrl කොටස අලුතින් එකතු කළා
+    imageUrl: {
+        type: String,
+        default: "/Logoicon.png"
     }
 }, { timestamps: true });
 

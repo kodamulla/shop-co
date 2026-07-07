@@ -4,6 +4,7 @@ dotenv.config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const path = require('path'); // 👈 අලුතින් එකතු කළා
 
 //  import Route files 
 const productRoutes = require('./routes/productRoutes');
@@ -18,6 +19,9 @@ const app = express();
 // Middleware setup
 app.use(cors());
 app.use(express.json()); // JSON data 
+
+// 👈 Uploads ෆෝල්ඩර් එක public කරන්න මේ පේළිය එකතු කළා
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes register 
 app.use('/api/products', productRoutes);

@@ -9,7 +9,8 @@ import { ModernAlert } from "@/components/ui/ModernAlert";
 
 export default function ProductManagement() {
   const [products, setProducts] = useState([]);
-  const [formData, setFormData] = useState({ name: '', price: '', stock: '', category: '', description: '' });
+  // 👈 sizes සහ image දෙකම state එකට දැම්මා
+  const [formData, setFormData] = useState({ name: '', price: '', stock: '', category: '', description: '', sizes: '', image: null });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,33 +59,47 @@ export default function ProductManagement() {
       price: product.price, 
       stock: product.stock ?? product.countInStock ?? '', 
       category: product.category,
-      description: product.description || ''
+      description: product.description || '',
+      sizes: product.sizes ? product.sizes.join(', ') : '', // 👈 sizes string එකක් විදිහට පෙන්නනවා
+      image: null 
     });
     setIsDialogOpen(true);
   };
 
   const handleSave = async () => {
     try {
-      const dataToSave = { 
-        name: formData.name,
-        price: Number(formData.price),
-        countInStock: Number(formData.stock), 
-        stock: Number(formData.stock), 
-        category: formData.category,
-        description: formData.description || "No description",
-        imageUrl: "/Logoicon.png" 
-      };
+      // 👈 sizes එකත් අනිවාර්ය කළා
+      if (!formData.name || !formData.price || !formData.stock || !formData.category || !formData.sizes) {
+        setAlertConfig({ isOpen: true, type: "error", title: "Error", message: "Please fill all required fields (including sizes)!", showCancel: false, confirmText: "OK", onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false })) });
+        return;
+      }
+
+      const data = new FormData();
+      data.append('name', formData.name);
+      data.append('price', Number(formData.price));
+      data.append('countInStock', Number(formData.stock));
+      data.append('stock', Number(formData.stock));
+      data.append('category', formData.category);
+      data.append('description', formData.description || "No description");
+      
+      // 👈 Sizes array එක හදලා FormData එකට දානවා
+      const sizesArray = formData.sizes.split(',').map(s => s.trim());
+      data.append('sizes', JSON.stringify(sizesArray));
+      
+      if (formData.image) {
+        data.append('image', formData.image);
+      }
       
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/products/${editingId}`, dataToSave);
+        await axios.put(`http://localhost:5000/api/products/${editingId}`, data);
       } else {
-        await axios.post('http://localhost:5000/api/products', dataToSave);
+        await axios.post('http://localhost:5000/api/products', data);
       }
       
       fetchProducts();
       setIsDialogOpen(false);
       setEditingId(null);
-      setFormData({ name: '', price: '', stock: '', category: '', description: '' });
+      setFormData({ name: '', price: '', stock: '', category: '', description: '', sizes: '', image: null });
       
       setAlertConfig({
         isOpen: true, type: "success", title: "Success!",
@@ -92,6 +107,7 @@ export default function ProductManagement() {
         showCancel: false, confirmText: "OK", onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
       });
     } catch (error) {
+      console.error(error);
       setAlertConfig({
         isOpen: true, type: "error", title: "Error!",
         message: "Error saving product. Please check fields.",
@@ -137,7 +153,12 @@ export default function ProductManagement() {
                 <tr key={p._id} className="hover:bg-slate-50/80 transition-colors group">
                   <td className="py-4 px-4 flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
-                      <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" onError={(e) => { e.target.src = "/Logoicon.png" }} />
+                      <img 
+                        src={p.imageUrl && p.imageUrl.startsWith('/uploads') ? `http://localhost:5000${p.imageUrl}` : (p.imageUrl || "/Logoicon.png")} 
+                        alt={p.name} 
+                        className="w-full h-full object-cover" 
+                        onError={(e) => { e.target.src = "/Logoicon.png" }} 
+                      />
                     </div>
                     <div>
                       <div className="font-bold text-slate-800 text-sm">{p.name}</div>
@@ -147,7 +168,7 @@ export default function ProductManagement() {
                   <td className="py-4 px-4"><span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold uppercase tracking-wider">{p.category}</span></td>
                   <td className="py-4 px-4 font-black text-blue-600 text-base">${p.price}</td>
                   <td className="py-4 px-4 font-bold text-slate-600">{p.stock ?? p.countInStock} Units</td>
-                  <td className="py-4 px-4">
+                  <td className="py-4 px-4 text-center">
                     <div className="flex justify-center gap-2">
                       <Button variant="ghost" size="sm" className="text-blue-600 font-semibold hover:bg-blue-50" onClick={() => handleEdit(p)}><Edit2 className="w-3.5 h-3.5 mr-1"/> Edit</Button>
                       <Button variant="ghost" size="sm" className="text-red-500 font-semibold hover:bg-red-50" onClick={() => handleDelete(p._id)}><Trash2 className="w-3.5 h-3.5 mr-1"/> Delete</Button>
@@ -163,10 +184,10 @@ export default function ProductManagement() {
       <div className="shrink-0 pt-4 flex justify-end">
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
-            if (!open) { setEditingId(null); setFormData({ name: '', price: '', stock: '', category: '', description: '' }); }
+            if (!open) { setEditingId(null); setFormData({ name: '', price: '', stock: '', category: '', description: '', sizes: '', image: null }); }
         }}>
           <DialogTrigger asChild>
-            <Button onClick={() => {setEditingId(null); setFormData({ name: '', price: '', stock: '', category: '', description: '' });}} className="bg-blue-600 hover:bg-blue-700 rounded-full font-bold px-6 h-12 shadow-md">
+            <Button onClick={() => {setEditingId(null); setFormData({ name: '', price: '', stock: '', category: '', description: '', sizes: '', image: null });}} className="bg-blue-600 hover:bg-blue-700 rounded-full font-bold px-6 h-12 shadow-md">
               <Plus className="w-5 h-5 mr-2"/> Add Product
             </Button>
           </DialogTrigger>
@@ -180,6 +201,13 @@ export default function ProductManagement() {
               </div>
               <Input placeholder="Category" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} />
               <Input placeholder="Description" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
+              
+              {/* 👈 Sizes input එක අලුතින් දැම්මා */}
+              <Input placeholder="Sizes (e.g. S, M, L)" value={formData.sizes} onChange={(e) => setFormData({...formData, sizes: e.target.value})} />
+              
+              <label className="text-xs font-bold text-slate-500">Product Image</label>
+              <Input type="file" onChange={(e) => setFormData({...formData, image: e.target.files[0]})} />
+
               <Button className="w-full bg-blue-600 hover:bg-blue-700 rounded-xl font-bold py-6" onClick={handleSave}>
                 {editingId ? 'Update Product' : 'Save Product'}
               </Button>

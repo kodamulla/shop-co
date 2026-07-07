@@ -3,7 +3,17 @@ const Category = require('../models/categoryModel');
 // 1. Create a Category (POST)
 const createCategory = async (req, res) => {
     try {
-        const category = await Category.create(req.body);
+        const { name, description } = req.body;
+        
+        // 👈 පින්තූරයක් තියෙනවා නම් Path එක ගන්නවා, නැත්නම් Default එක දානවා
+        const imageUrl = req.file ? `/uploads/${req.file.filename}` : "/Logoicon.png";
+
+        const category = await Category.create({
+            name,
+            description,
+            imageUrl // 👈 අලුතින් image එක database එකට යවනවා
+        });
+        
         res.status(201).json(category);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -24,7 +34,14 @@ const getCategories = async (req, res) => {
 const updateCategory = async (req, res) => {
     try {
         const { id } = req.params;
-        const category = await Category.findByIdAndUpdate(id, req.body, { new: true });
+        let updateData = { ...req.body };
+
+        // 👈 Edit කරද්දී අලුතින් පින්තූරයක් දැම්මොත් ඒක අල්ලගන්නවා
+        if (req.file) {
+            updateData.imageUrl = `/uploads/${req.file.filename}`;
+        }
+
+        const category = await Category.findByIdAndUpdate(id, updateData, { new: true });
         if (!category) return res.status(404).json({ message: 'Category not found' });
         res.status(200).json(category);
     } catch (error) {

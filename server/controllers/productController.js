@@ -5,27 +5,25 @@ const Product = require('../models/Product');
 // @access  Private/Manager
 const createProduct = async (req, res) => {
     try {
-        // Frontend eken (hari Postman eken) ewena data tika ganna
-        const { name, description, price, category, sizes, imageUrl, countInStock } = req.body;
+        const { name, description, price, category, sizes, countInStock } = req.body;
+        
+        const imageUrl = req.file ? `/uploads/${req.file.filename}` : "/Logoicon.png";
 
-        // Aluth product ekak hadanna
         const product = new Product({
             name,
             description,
             price,
             category,
-            sizes,
+            sizes: typeof sizes === 'string' ? JSON.parse(sizes) : sizes,
             imageUrl,
             countInStock
         });
 
-        // Eka Database eke save karanna
         const savedProduct = await product.save();
-        
-        // Save wechcha data eka return karanna
         res.status(201).json(savedProduct);
 
     } catch (error) {
+        console.error("Backend Error:", error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -42,27 +40,36 @@ const getProducts = async (req, res) => {
     }
 };
 
-
 // Update a product
 const updateProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
+        
+        // පින්තූරයක් update වෙනවා නම් ඒක අල්ලගන්න
+        let updateData = { ...req.body };
+        if (req.file) {
+            updateData.imageUrl = `/uploads/${req.file.filename}`;
+        }
+        
+        // sizes string එකක් නම් array එකක් කරන්න
+        if (updateData.sizes && typeof updateData.sizes === 'string') {
+            updateData.sizes = JSON.parse(updateData.sizes);
+        }
 
-    const product = await Product.findByIdAndUpdate(id, req.body, {
-      new: true, // Update wuna aluth data eka return karanna
-      runValidators: true, // Schema eke rules check karanna
-    });
+        const product = await Product.findByIdAndUpdate(id, updateData, {
+            new: true,
+            runValidators: true,
+        });
 
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json(product);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    res.status(200).json(product);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
-
 
 // Delete a product
 const deleteProduct = async (req, res) => {
