@@ -15,17 +15,73 @@ import { Footer } from "@/components/landingpage/footer";
 
 // 1. Context එක Import කරගන්නවා
 import { useCart } from "../context/CartContext"; 
+// 2. අලුත් ModernAlert එක Import කරගන්නවා
+import { ModernAlert } from "@/components/ui/ModernAlert";
 
 export default function CartPage() {
-  // 2. Dummy data වෙනුවට Context එකෙන් cart එකයි function ටිකයි ගන්නවා
   const { cart, updateQuantity, removeItem } = useCart(); 
   const [promoCode, setPromoCode] = useState("");
+  const [discountPercentage, setDiscountPercentage] = useState(0); // Discount එක පාලනය කරන්න අලුත් State එකක්
+
+  // Alert එක පාලනය කරන State එක
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    type: "success",
+    title: "",
+    message: "",
+    showCancel: false,
+    confirmText: "Continue",
+    onConfirm: null
+  });
 
   // ගණනය කිරීම් (Calculations)
   const subtotal = cart.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
-  const discount = subtotal * 0.2; // 20% Discount
+  const discount = subtotal * discountPercentage; // දැන් මේක Promo code එක මත තීරණය වෙනවා
   const deliveryFee = subtotal > 0 ? 15 : 0;
   const total = subtotal - discount + deliveryFee;
+
+  // Item එකක් මකද්දී අහන Function එක
+  const handleDeleteClick = (itemId, itemName) => {
+    setAlertConfig({
+      isOpen: true,
+      type: "error", // රතු පාට අයිකන් එක
+      title: "Remove Item",
+      message: `Are you sure you want to remove ${itemName} from your cart?`,
+      showCancel: true,
+      confirmText: "Remove",
+      onConfirm: () => {
+        removeItem(itemId);
+        setAlertConfig(prev => ({ ...prev, isOpen: false })); // මැකුවට පස්සේ Alert එක වහනවා
+      }
+    });
+  };
+
+  // Promo Code එක Apply කරන Function එක
+  const handleApplyPromo = () => {
+    if (promoCode.trim().toUpperCase() === "SHOP20") {
+      setDiscountPercentage(0.20); // 20% discount එක දෙනවා
+      setAlertConfig({
+        isOpen: true,
+        type: "success",
+        title: "Promo Applied!",
+        message: "20% discount has been successfully applied to your cart.",
+        showCancel: false,
+        confirmText: "Awesome",
+        onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+      });
+    } else {
+      setDiscountPercentage(0); // වැරදි නම් discount එක 0 කරනවා
+      setAlertConfig({
+        isOpen: true,
+        type: "error",
+        title: "Invalid Code",
+        message: "The promo code you entered is invalid. (Hint: Try 'SHOP20')",
+        showCancel: false,
+        confirmText: "Try Again",
+        onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-muted/20 font-sans">
@@ -98,7 +154,7 @@ export default function CartPage() {
                             </p>
                           </div>
                           <button 
-                            onClick={() => removeItem(item._id)}
+                            onClick={() => handleDeleteClick(item._id, item.name)} // 👈 අලුත් Delete Function එක දැම්මා
                             className="text-red-500 hover:bg-red-50 p-2 rounded-md transition-colors"
                           >
                             <Trash2 className="h-5 w-5" />
@@ -151,7 +207,7 @@ export default function CartPage() {
                     <span className="font-medium text-foreground">${subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Discount (-20%)</span>
+                    <span>Discount (-{discountPercentage * 100}%)</span>
                     <span className="font-medium text-red-500">-${discount.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
@@ -176,7 +232,7 @@ export default function CartPage() {
                       className="pl-9 h-11 bg-muted/50 border-transparent focus:border-primary"
                     />
                   </div>
-                  <Button variant="secondary" className="h-11 px-6">Apply</Button>
+                  <Button variant="secondary" className="h-11 px-6" onClick={handleApplyPromo}>Apply</Button> {/* 👈 Apply Function එක සම්බන්ද කළා */}
                 </div>
 
                 {/* Checkout Button */}
@@ -191,6 +247,19 @@ export default function CartPage() {
       </main>
 
       <Footer />
+
+      {/* 👇 අලුත් Modern Alert Component එක පේජ් එකේ යටින්ම දැම්මා */}
+      <ModernAlert 
+        isOpen={alertConfig.isOpen}
+        onClose={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={alertConfig.onConfirm || (() => setAlertConfig(prev => ({ ...prev, isOpen: false })))}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        showCancel={alertConfig.showCancel}
+        confirmText={alertConfig.confirmText}
+      />
+
     </div>
   );
 }

@@ -1,11 +1,13 @@
-import { motion } from "framer-motion";
-import { Flame, Trophy, Sparkles, Star, Heart, Copy, ArrowRight, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Flame, Trophy, Sparkles, Star, Heart, Copy, ArrowRight, ChevronRight, X, Ruler, ShoppingBag } from "lucide-react";
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom"; // පේජ් මාරු කරන්න මේක ඕනේ
+import { useNavigate } from "react-router-dom"; 
 import { Button } from "@/components/ui/button";
+import { useCart } from "../../context/CartContext";
+import { ModernAlert } from "@/components/ui/ModernAlert"; // 
 
 export function ProductSection() {
-  const navigate = useNavigate(); // පේජ් එක මාරු කරන්න
+  const navigate = useNavigate(); 
   const [showSwipe, setShowSwipe] = useState(true);
 
   // Mouse Swipe Functions
@@ -13,6 +15,17 @@ export function ProductSection() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+
+  
+  const { addToCart } = useCart();
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedSize, setSelectedSize] = useState("");
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    type: "success",
+    title: "",
+    message: "",
+  });
 
   const handleScroll = (e) => {
     if (e.currentTarget.scrollLeft > 10) {
@@ -35,6 +48,62 @@ export function ProductSection() {
     const x = e.pageX - carouselRef.current.offsetLeft;
     const walk = (x - startX) * 1.5;
     carouselRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  
+  const openModal = (product) => {
+    setSelectedProduct(product);
+    setSelectedSize("");
+  };
+
+  const closeModal = () => {
+    setSelectedProduct(null);
+    setSelectedSize("");
+  };
+
+  const getProductSizes = (title) => {
+    if (title.includes('Sneakers')) return ['7', '8', '9', '10', '11'];
+    if (title.includes('Watch') || title.includes('Bag')) return ['Standard'];
+    return ['S', 'M', 'L', 'XL', 'XXL'];
+  };
+
+  const handleAddToCart = (e, product, size = null) => {
+    e.stopPropagation();
+
+    if (selectedProduct && !size && getProductSizes(product.title).length > 1) {
+      setAlertConfig({
+        isOpen: true,
+        type: "warning",
+        title: "Wait!",
+        message: "Please select a size first!",
+      });
+      return;
+    }
+
+    const numericPrice = parseFloat(product.price.replace('$', ''));
+
+    const productToAdd = {
+      _id: product.title, 
+      name: product.title,
+      price: numericPrice,
+      imageUrl: product.image,
+      category: "Best Seller",
+      description: product.description,
+      ...(size && { selectedSize: size })
+    };
+
+    addToCart(productToAdd);
+
+    setAlertConfig({
+      isOpen: true,
+      type: "success",
+      title: "Success!",
+      message: `${product.title} Added to Cart!`,
+    });
+
+    if (selectedProduct) {
+      closeModal();
+    }
   };
 
   const products = [
@@ -176,7 +245,7 @@ export function ProductSection() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                onClick={() => navigate("/details", { state: { product } })}
+                onClick={() => openModal(product)} // 👈 අර Details page යන එක අයින් කරලා Modal එක ඕපන් වෙන්න දැම්මා
                 className="group flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all p-2.5 sm:p-3 cursor-pointer w-full flex-none lg:w-[280px] xl:w-[300px] lg:snap-start"
               >
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-muted mb-3 sm:mb-4">
@@ -234,7 +303,6 @@ export function ProductSection() {
           })}
         </motion.div>
 
-        {/* Explore More Button එක 👇 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -242,7 +310,6 @@ export function ProductSection() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="flex justify-center"
         >
-          {/* මෙතන තිබ්බ <a href="/products"> කෑල්ල සම්පූර්ණයෙන්ම අයින් කරලා මේ onClick එක දැම්මා */}
           <Button 
             variant="outline" 
             size="lg" 
@@ -254,6 +321,107 @@ export function ProductSection() {
         </motion.div>
 
       </div>
+
+      {/* 👇 Product Details Modal එක */}
+      <AnimatePresence>
+        {selectedProduct && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={closeModal}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-full max-w-4xl bg-white rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
+            >
+              <button 
+                onClick={closeModal}
+                className="absolute top-4 right-4 z-10 p-2 bg-white/80 md:bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+              >
+                <X size={20} className="text-gray-900" />
+              </button>
+
+              <div className="w-full md:w-1/2 h-64 md:h-auto bg-gray-100 relative">
+                <img 
+                  src={selectedProduct.image} 
+                  alt={selectedProduct.title} 
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.target.src = "/Logoicon.png" }} 
+                />
+              </div>
+
+              <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col overflow-y-auto">
+                <div className="mb-2">
+                  <span className="text-xs font-bold tracking-widest uppercase text-gray-400">
+                    {selectedProduct.badge || "Best Seller"}
+                  </span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 leading-tight">
+                  {selectedProduct.title}
+                </h2>
+                <div className="text-2xl font-black text-gray-900 mb-6">
+                  {selectedProduct.price}
+                </div>
+                
+                <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-8">
+                  {selectedProduct.description}. This premium item is crafted for comfort and style. Elevate your wardrobe with this carefully designed piece.
+                </p>
+
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Size</span>
+                    <button className="text-xs font-medium text-gray-500 hover:text-black flex items-center gap-1">
+                      <Ruler size={14} /> Size Guide
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {getProductSizes(selectedProduct.title).map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`min-w-[3rem] h-12 px-4 rounded-xl border text-sm font-bold transition-all duration-200 flex items-center justify-center
+                          ${selectedSize === size 
+                            ? 'border-black bg-black text-white shadow-md' 
+                            : 'border-gray-200 bg-white text-gray-600 hover:border-gray-400'
+                          }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-auto pt-4 flex gap-4">
+                  <button 
+                    onClick={(e) => handleAddToCart(e, selectedProduct, selectedSize)}
+                    className="flex-1 bg-black text-white h-14 rounded-xl font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <ShoppingBag size={18} /> Add to Cart
+                  </button>
+                  <button className="h-14 w-14 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-colors">
+                    <Heart size={20} />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <ModernAlert 
+        isOpen={alertConfig.isOpen}
+        onClose={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+      />
+
     </section>
   );
 }

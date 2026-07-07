@@ -5,7 +5,8 @@ import {
   Truck, 
   ShieldCheck, 
   CheckCircle2,
-  Lock
+  Lock,
+  Tag // 👈 Promo code අයිකන් එක Import කළා
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -15,13 +16,30 @@ import { Footer } from "@/components/landingpage/footer";
 
 // 1. Cart Context එක Import කරගත්තා
 import { useCart } from "../context/CartContext";
+// 2. අලුත් ModernAlert එක Import කරගත්තා
+import { ModernAlert } from "@/components/ui/ModernAlert";
 
 export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   
-  // 2. Cart එකෙන් දත්ත ගන්නවා
+  // Cart එකෙන් දත්ත ගන්නවා
   const { cart } = useCart();
+
+  // Promo code States
+  const [promoCode, setPromoCode] = useState("");
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+
+  // Alert එක පාලනය කරන State එක
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    type: "success",
+    title: "",
+    message: "",
+    showCancel: false,
+    confirmText: "Continue",
+    onConfirm: null
+  });
 
   // Profile එකේ තියෙන ඩේටා වලින් Shipping Details Initial State එකේදීම පුරවනවා
   const [formData, setFormData] = useState(() => {
@@ -62,9 +80,36 @@ export default function CheckoutPage() {
     }, 2000);
   };
 
-  // 3. Dummy Data වෙනුවට දැන් නියම ගණනය කිරීම් (Real Calculations) වෙනවා
+  // Promo Code එක Apply කරන Function එක
+  const handleApplyPromo = () => {
+    if (promoCode.trim().toUpperCase() === "SHOP20") {
+      setDiscountPercentage(0.20); // 20% discount එක දෙනවා
+      setAlertConfig({
+        isOpen: true,
+        type: "success",
+        title: "Promo Applied!",
+        message: "20% discount has been successfully applied to your order.",
+        showCancel: false,
+        confirmText: "Awesome",
+        onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+      });
+    } else {
+      setDiscountPercentage(0); // වැරදි නම් discount එක 0 කරනවා
+      setAlertConfig({
+        isOpen: true,
+        type: "error",
+        title: "Invalid Code",
+        message: "The promo code you entered is invalid. (Hint: Try 'SHOP20')",
+        showCancel: false,
+        confirmText: "Try Again",
+        onConfirm: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+      });
+    }
+  };
+
+  // ගණනය කිරීම්
   const subtotal = cart.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
-  const discount = subtotal * 0.2; // 20% Discount
+  const discount = subtotal * discountPercentage; // Promo Code එක අනුව වෙනස් වෙනවා
   const deliveryFee = subtotal > 0 ? 15 : 0;
   const total = subtotal - discount + deliveryFee;
 
@@ -218,7 +263,7 @@ export default function CheckoutPage() {
                   <span className="font-medium text-foreground">${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
-                  <span>Discount</span>
+                  <span>Discount (-{discountPercentage * 100}%)</span>
                   <span className="font-medium text-red-500">-${discount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
@@ -230,6 +275,27 @@ export default function CheckoutPage() {
                   <span className="text-base md:text-lg font-bold">Total</span>
                   <span className="text-xl md:text-2xl font-bold">${total.toFixed(2)}</span>
                 </div>
+              </div>
+
+              {/* 👈 අලුත් Promo Code Input එක */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="relative flex-1">
+                  <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input 
+                    placeholder="Add promo code" 
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    className="pl-9 h-11 bg-muted/50 border-transparent focus:border-primary"
+                  />
+                </div>
+                <Button 
+                  type="button" // 👈 මේක ගොඩක් වැදගත් (නැත්නම් Form එක Submit වෙනවා)
+                  variant="secondary" 
+                  className="h-11 px-6" 
+                  onClick={handleApplyPromo}
+                >
+                  Apply
+                </Button>
               </div>
 
               <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted p-3 rounded-lg mb-6">
@@ -251,6 +317,19 @@ export default function CheckoutPage() {
       </main>
 
       <Footer />
+
+      {/* 👇 Modern Alert Component එක */}
+      <ModernAlert 
+        isOpen={alertConfig.isOpen}
+        onClose={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={alertConfig.onConfirm || (() => setAlertConfig(prev => ({ ...prev, isOpen: false })))}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        showCancel={alertConfig.showCancel}
+        confirmText={alertConfig.confirmText}
+      />
+
     </div>
   );
 }

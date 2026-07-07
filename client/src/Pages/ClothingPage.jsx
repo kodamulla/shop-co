@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { ModernAlert } from "@/components/ui/ModernAlert";
 import { ShoppingBag, Heart, Star, X, Ruler } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +24,14 @@ export default function ClothingPage() {
   // Modal එකට අදාළ States
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
+
+  // 👇 Modern Alert එක පාලනය කරන State එක
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    type: "success",
+    title: "",
+    message: "",
+  });
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -57,13 +66,26 @@ export default function ClothingPage() {
     e.stopPropagation(); 
     
     if (selectedProduct && !size && getProductSizes(product.category).length > 1) {
-      alert("Please select a size first!");
+      // 👇 අලුත් Warning Alert එක
+      setAlertConfig({
+        isOpen: true,
+        type: "warning",
+        title: "Wait!",
+        message: "Please select a size first!",
+      });
       return;
     }
 
     const productToAdd = size ? { ...product, selectedSize: size } : product;
     addToCart(productToAdd);
-    alert(`✅ ${product.name} Added to Cart!`); 
+    
+    // 👇 අලුත් Success Alert එක
+    setAlertConfig({
+      isOpen: true,
+      type: "success",
+      title: "Success!",
+      message: `${product.name} Added to Cart!`,
+    });
     
     if (selectedProduct) {
       closeModal();
@@ -182,7 +204,6 @@ export default function ClothingPage() {
         </div>
       </main>
 
-      {/* 👇 මෙතන තමයි වෙනස් කළේ: ලෝඩ් වෙලා ඉවර වුණාම විතරක් Footer එක පෙන්නනවා */}
       {!isLoading && <Footer />}
 
       {/* Basic Product Details Modal */}
@@ -275,6 +296,17 @@ export default function ClothingPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* 👇 අලුත් Modern Alert Component එක */}
+      <ModernAlert 
+        isOpen={alertConfig.isOpen}
+        onClose={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+      />
+
     </div>
   );
 }
