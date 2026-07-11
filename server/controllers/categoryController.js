@@ -1,17 +1,36 @@
 const Category = require('../models/categoryModel');
+const supabase = require('../config/supabase'); // 👈 අලුත් Supabase Connection එක
 
 // 1. Create a Category (POST)
 const createCategory = async (req, res) => {
     try {
         const { name, description } = req.body;
         
-        // 👈 පින්තූරයක් තියෙනවා නම් Path එක ගන්නවා, නැත්නම් Default එක දානවා
-        const imageUrl = req.file ? `/uploads/${req.file.filename}` : "/Logoicon.png";
+        let imageUrl = "/Logoicon.png";
+        
+        // 👈 පින්තූරයක් තියෙනවා නම් Supabase එකට upload කරනවා
+        if (req.file) {
+            const fileName = `categories/${Date.now()}_${req.file.originalname.replace(/\s+/g, '_')}`;
+            
+            const { data, error } = await supabase.storage
+                .from('shopco-images') // Bucket name එක
+                .upload(fileName, req.file.buffer, {
+                    contentType: req.file.mimetype,
+                });
+            
+            if (error) throw error;
+            
+            const { data: publicUrlData } = supabase.storage
+                .from('shopco-images')
+                .getPublicUrl(fileName);
+                
+            imageUrl = publicUrlData.publicUrl;
+        }
 
         const category = await Category.create({
             name,
             description,
-            imageUrl // 👈 අලුතින් image එක database එකට යවනවා
+            imageUrl
         });
         
         res.status(201).json(category);
@@ -36,9 +55,23 @@ const updateCategory = async (req, res) => {
         const { id } = req.params;
         let updateData = { ...req.body };
 
-        // 👈 Edit කරද්දී අලුතින් පින්තූරයක් දැම්මොත් ඒක අල්ලගන්නවා
+        // 👈 Edit කරද්දී අලුත් පින්තූරයක් දැම්මොත් ඒක Supabase යවනවා
         if (req.file) {
-            updateData.imageUrl = `/uploads/${req.file.filename}`;
+            const fileName = `categories/${Date.now()}_${req.file.originalname.replace(/\s+/g, '_')}`;
+            
+            const { data, error } = await supabase.storage
+                .from('shopco-images') 
+                .upload(fileName, req.file.buffer, {
+                    contentType: req.file.mimetype,
+                });
+            
+            if (error) throw error;
+            
+            const { data: publicUrlData } = supabase.storage
+                .from('shopco-images')
+                .getPublicUrl(fileName);
+                
+            updateData.imageUrl = publicUrlData.publicUrl;
         }
 
         const category = await Category.findByIdAndUpdate(id, updateData, { new: true });

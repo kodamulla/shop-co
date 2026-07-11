@@ -1,11 +1,12 @@
 const express = require('express');
-const multer = require('multer'); // 👈 Multer එකතු කළා
+const multer = require('multer');
 const { createCategory, getCategories, deleteCategory, updateCategory } = require('../controllers/categoryController');
 
 const router = express.Router();
 
-// 👈 Uploads ෆෝල්ඩරයට පින්තූර දාන්න Multer හදමු
-const upload = multer({ dest: 'uploads/' });
+// 👈 Multer setup - memory storage
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // Add a category (පින්තූරයත් එක්ක)
 router.post('/', upload.single('image'), createCategory);

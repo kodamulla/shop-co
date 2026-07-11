@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const supabase = require('../config/supabase'); // 👈 අලුත් Supabase Connection එක
 
 // @desc    Create a new product
 // @route   POST /api/products
@@ -7,7 +8,28 @@ const createProduct = async (req, res) => {
     try {
         const { name, description, price, category, sizes, countInStock } = req.body;
         
-        const imageUrl = req.file ? `/uploads/${req.file.filename}` : "/Logoicon.png";
+        let imageUrl = "/Logoicon.png"; // Default image
+
+        // 👈 ෆයිල් එකක් තියෙනවා නම් Supabase එකට upload කරනවා
+        if (req.file) {
+            // ෆයිල් එකට අලුත් නමක් හදනවා හැප්පෙන්නේ නැති වෙන්න
+            const fileName = `products/${Date.now()}_${req.file.originalname.replace(/\s+/g, '_')}`;
+            
+            const { data, error } = await supabase.storage
+                .from('shopco-images') // ඔයාගේ Bucket එකේ නම මෙතනට දෙන්න
+                .upload(fileName, req.file.buffer, {
+                    contentType: req.file.mimetype,
+                });
+            
+            if (error) throw error;
+            
+            // Upload කරපු ෆයිල් එකේ Public URL එක ගන්නවා
+            const { data: publicUrlData } = supabase.storage
+                .from('shopco-images')
+                .getPublicUrl(fileName);
+                
+            imageUrl = publicUrlData.publicUrl;
+        }
 
         const product = new Product({
             name,
@@ -15,7 +37,7 @@ const createProduct = async (req, res) => {
             price,
             category,
             sizes: typeof sizes === 'string' ? JSON.parse(sizes) : sizes,
-            imageUrl,
+            imageUrl, // 👈 දැන් මෙතන තියෙන්නේ Supabase එකෙන් ආපු URL එක
             countInStock
         });
 
@@ -44,11 +66,25 @@ const getProducts = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        
-        // පින්තූරයක් update වෙනවා නම් ඒක අල්ලගන්න
         let updateData = { ...req.body };
+        
+        // 👈 Edit කරද්දී අලුත් පින්තූරයක් දැම්මොත් Supabase එකට upload කරන්න
         if (req.file) {
-            updateData.imageUrl = `/uploads/${req.file.filename}`;
+            const fileName = `products/${Date.now()}_${req.file.originalname.replace(/\s+/g, '_')}`;
+            
+            const { data, error } = await supabase.storage
+                .from('shopco-images') 
+                .upload(fileName, req.file.buffer, {
+                    contentType: req.file.mimetype,
+                });
+            
+            if (error) throw error;
+            
+            const { data: publicUrlData } = supabase.storage
+                .from('shopco-images')
+                .getPublicUrl(fileName);
+                
+            updateData.imageUrl = publicUrlData.publicUrl;
         }
         
         // sizes string එකක් නම් array එකක් කරන්න
