@@ -10,7 +10,8 @@ export function BranchesSection() {
       address: "123 Galle Road, Colombo 03",
       phone: "+94 11 234 5678",
       hours: "9:00 AM - 8:00 PM",
-      image: "https://images.unsplash.com/photo-1587635293674-5c962b083321?q=80&w=800&auto=format&fit=crop",
+      // Luxury modern clothing store interior
+      image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=800&auto=format&fit=crop",
       description: "Our flagship store located in the heart of Colombo, offering the largest collection of premium clothing and exclusive designer wear."
     },
     {
@@ -18,7 +19,8 @@ export function BranchesSection() {
       address: "45 Dalada Vidiya, Kandy",
       phone: "+94 81 234 5678",
       hours: "9:30 AM - 7:30 PM",
-      image: "https://images.unsplash.com/photo-1620216654763-718816c71be9?q=80&w=800&auto=format&fit=crop",
+      // Elegant and warm boutique aesthetic
+      image: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?q=80&w=800&auto=format&fit=crop",
       description: "Experience modern fashion blended with cultural heritage at our Kandy branch, situated just minutes away from the Temple of the Tooth."
     },
     {
@@ -26,7 +28,8 @@ export function BranchesSection() {
       address: "89 Main Street, Galle Fort",
       phone: "+94 91 234 5678",
       hours: "10:00 AM - 7:00 PM",
-      image: "https://images.unsplash.com/photo-1574895663701-49e0839818fa?q=80&w=800&auto=format&fit=crop",
+      // Clean, bright, and premium retail space
+      image: "https://images.unsplash.com/photo-1555529771-835f59fc5efe?q=80&w=800&auto=format&fit=crop",
       description: "Located inside the historic Galle Fort, this boutique store offers a curated selection of vacation wear and premium accessories."
     },
     {
@@ -34,7 +37,8 @@ export function BranchesSection() {
       address: "12 Beach Road, Negombo",
       phone: "+94 31 234 5678",
       hours: "9:00 AM - 8:00 PM",
-      image: "https://images.unsplash.com/photo-1586526401019-b684dc3138b7?q=80&w=800&auto=format&fit=crop",
+      // Bright and modern clothing boutique
+      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=800&auto=format&fit=crop",
       description: "Your go-to destination for summer collections and casual wear, perfectly located near the vibrant Negombo beach strip."
     },
     {
@@ -42,7 +46,7 @@ export function BranchesSection() {
       address: "34 Colombo Road, Kurunegala",
       phone: "+94 37 234 5678",
       hours: "9:00 AM - 7:00 PM",
-      image: "https://images.unsplash.com/photo-1590393802688-e21544621bb6?q=80&w=800&auto=format&fit=crop",
+      image: "https://images.unsplash.com/photo-1570857502809-08184874388e?q=80&w=800&auto=format&fit=crop",
       description: "Our newest branch bringing the latest urban fashion trends to the bustling city of Kurunegala with spacious fitting rooms."
     }
   ];
