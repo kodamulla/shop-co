@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useCart } from "../../context/CartContext";
 import { 
   ShoppingCart, 
   TrendingUp, 
@@ -7,7 +6,6 @@ import {
   HelpCircle,
   Menu,
   X,
-  LogIn,
   User, 
   LogOut,
   UserCircle,
@@ -73,14 +71,14 @@ export function Navbar() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      className="sticky top-0 z-50 w-full  bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 relative">
         
         {/* Left Section: Mobile Menu Toggle & Logo */}
         <div className="flex items-center gap-3">
           <button 
-            className="lg:hidden p-2 -ml-2 bg-muted/50 hover:bg-muted text-foreground rounded-md transition-colors"
+            className="lg:hidden p-2 -ml-2  hover:bg-muted text-foreground rounded-md transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? (
@@ -102,7 +100,7 @@ export function Navbar() {
             <a 
               key={index} 
               href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)} // 👈 මෙතනට අලුත් function එක දැම්මා
+              onClick={(e) => handleNavClick(e, link.href)}
               className="flex items-center gap-1.5 hover:text-foreground transition-colors"
             >
               <link.icon className="h-4 w-4" /> {link.name}
@@ -114,18 +112,16 @@ export function Navbar() {
         <div className="flex items-center gap-5 lg:mr-20 relative">
           <a href="/cart" className="text-muted-foreground hover:text-foreground transition-colors relative">
             <ShoppingCart className="h-5 w-5" />
-            <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+            <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[10px] font-bold text-primary-foreground">
               3
             </span>
-          </a>
-          
-          
+          </a>     
           {!isLoggedIn ? (
             <a 
               href="/signin" 
-              className="hidden lg:flex items-center gap-1.5 text-sm font-bold text-black hover:text-foreground transition-colors pl-2 border-l border-muted-foreground/20"
+              className="hidden lg:flex items-center gap-1.5 text-sm font-medium px-5 py-2 rounded-sm bg-black text-white hover:bg-white border hover:border-black hover:text-black transition-all duration-300 ml-2 shadow-sm"
             >
-              <LogIn className="h-4 w-4" /> Sign In
+              Sign In
             </a>
           ) : (
             <div className="relative hidden lg:block">
@@ -136,7 +132,7 @@ export function Navbar() {
                 <User className="h-5 w-5 text-foreground pr-2" />
               </button>
 
-              {/* Desktop User Dropdown 👇 */}
+              {/* Desktop User Dropdown */}
               <AnimatePresence>
                 {isUserDropdownOpen && (
                   <motion.div 
@@ -146,7 +142,6 @@ export function Navbar() {
                     transition={{ duration: 0.2 }}
                     className="absolute right-0 mt-3 w-40 rounded-xl border bg-background p-2 shadow-lg flex flex-col gap-1"
                   >
-                    {/* Account ලින්ක් එක */}
                     <a
                       href="/account"
                       onClick={() => setIsUserDropdownOpen(false)}
@@ -156,10 +151,8 @@ export function Navbar() {
                       Account
                     </a>
 
-                    {/* Divider ඉර */}
                     <div className="h-px bg-muted-foreground/10 my-0.5 mx-2"></div>
 
-                    {/* Logout බට්න් එක */}
                     <button
                       onClick={handleLogout}
                       className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors"
@@ -192,7 +185,7 @@ export function Navbar() {
                   href={link.href}
                   onClick={(e) => { 
                     setIsMobileMenuOpen(false); 
-                    handleNavClick(e, link.href); // 👈 Mobile Menu එකෙත් ලස්සනට යන්න හැදුවා
+                    handleNavClick(e, link.href);
                   }} 
                   className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted transition-colors text-foreground"
                 >
@@ -203,23 +196,18 @@ export function Navbar() {
                 </a>
               ))}
               
-              <div className="h-px bg-muted-foreground/10 my-1 mx-2"></div>
-              
-              {/* Mobile Menu Conditional Rendering 👇 */}
+              {/* Mobile Menu Conditional Rendering */}
               {!isLoggedIn ? (
+                // 👇 Mobile Sign In Button එකත් ඒ විදිහටම වෙනස් කළා
                 <a
                   href="/signin"
                   onClick={() => setIsMobileMenuOpen(false)} 
-                  className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted transition-colors text-foreground"
+                  className="flex items-center justify-center gap-2 rounded-sm px-4 py-2 mt-2 text-sm font-medium bg-black text-white border  hover:bg-white hover:text-black hover:border-black transition-all duration-300 shadow-sm"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <LogIn className="h-4 w-4 text-black" />
-                    Sign In
-                  </div>
+                  Sign In
                 </a>
               ) : (
                 <>
-                  {/* Mobile Account ලින්ක් එක */}
                   <a
                     href="/account"
                     onClick={() => setIsMobileMenuOpen(false)} 
@@ -231,7 +219,6 @@ export function Navbar() {
                     </div>
                   </a>
 
-                  {/* Mobile Logout බට්න් එක */}
                   <button
                     onClick={handleLogout} 
                     className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted transition-colors text-foreground"

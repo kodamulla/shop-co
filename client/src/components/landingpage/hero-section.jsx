@@ -11,43 +11,66 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion"; 
 
+const smoothContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15, 
+    },
+  },
+};
+
+const smoothItemVariants = {
+  hidden: { opacity: 0, y: 40, x: 0 }, 
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    x: 0,
+    transition: { 
+      duration: 0.7, 
+      ease: [0.25, 0.46, 0.45, 0.94] 
+    } 
+  },
+};
+
 export function HeroSection() {
   return (
-    <main id="home" className="w-full mx-auto px-2 md:px-10 overflow-hidden bg-muted scroll-mt-15">
-      <div className="grid lg:grid-cols-2 items-center lg:min-h-[calc(100vh-4rem)] mx-2 lg:mx-10 gap-8">
+    <main id="home" className="w-full mx-auto px-2 md:px-10 overflow-hidden bg-white scroll-mt-16">
+      
+      {/* Container එකේ Desktop වලට විතරක් min-h දුන්නා */}
+      <div className="grid lg:grid-cols-2 items-center lg:min-h-[calc(100dvh-4rem)] mx-2 lg:mx-10 gap-8">
         
-        {/* Left Column (Text Content) */}
+        {/* ================= LEFT COLUMN ================= */}
         <motion.div 
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex flex-col justify-center space-y-8 min-h-[calc(100vh-4rem)] lg:min-h-0 py-8 lg:py-0"
+          variants={smoothContainerVariants}
+          initial="hidden"
+          animate="visible"
+          /* 🚀 මෙතන තමයි වෙනස් කළේ: min-h-[calc(100dvh-4rem)] දාලා මේ කොටස විතරක් හරියටම Full Screen වෙන විදිහට හැදුවා */
+          className="flex flex-col justify-center space-y-8 min-h-[calc(100dvh-4rem)] lg:min-h-0 py-8 lg:py-0 w-full"
         >
-          <div className="space-y-3">
-            <Badge variant="secondary" className="w-fit bg-muted hover:bg-muted text-black font-medium px-3 py-4 rounded-md cursor-pointer flex items-center gap-1">
-              Summer Collection 2026 <ChevronRight className="h-5 w-3" />
-            </Badge>
-            
+          
+          <motion.div variants={smoothItemVariants} className="space-y-3">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.1]">
-              Discover the <br /> Perfect Look for <br /> Every Occasion
+              Discover the Perfect Look for Every Occasion
             </h1>
-            
+          </motion.div>
+          
+          <motion.div variants={smoothItemVariants}>
             <p className="text-lg text-muted-foreground max-w-[500px] leading-relaxed">
               Discover quality, comfortable fashion perfect for the Sri Lankan lifestyle. Shop the latest trends with free islandwide delivery on all orders.
             </p>
-          </div>
+          </motion.div>
           
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* 🚀 මෙතන ලින්ක් එක /clothing විදිහට වෙනස් කළා 👇 */}
-            <a href="/clothing">
-              <Button size="lg" className="h-12 px-8 text-base font-medium rounded-lg hover:bg-white hover:text-black transition-all shadow-sm">
+          <motion.div variants={smoothItemVariants} className="flex flex-col sm:flex-row gap-4 w-full">
+            <a href="/clothing" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-base font-medium rounded-lg bg-black text-white hover:bg-white hover:text-black hover:border-black border border-transparent transition-all shadow-sm">
                 Shop Now <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </a>
-          </div>
+          </motion.div>
 
-          {/* Social Proof */}
-          <div className="pt-0 space-y-2">
+          <motion.div variants={smoothItemVariants} className="pt-0 space-y-2">
             <p className="text-sm text-muted-foreground font-medium">
               Trusted by 10,000+ happy customers worldwide
             </p>
@@ -66,20 +89,20 @@ export function HeroSection() {
                 <span>4.9/5</span>
               </div>
             </div>
-          </div>
+          </motion.div>
+
         </motion.div>
 
-        {/* Right Column (Image and Feature Cards) */}
+        {/* ================= RIGHT COLUMN ================= */}
         <motion.div 
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.2 }} 
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-          className="flex flex-col gap-3 pb-12 lg:pb-0"
+          variants={smoothContainerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }} 
+          className="flex flex-col gap-3 pb-12 lg:pb-0 w-full"
         >
           
-          {/* Main Image */}
-          <div className="relative overflow-hidden rounded-2xl bg-muted aspect-[4/3] md:aspect-[3/2] lg:aspect-[14/9]">
+          <motion.div variants={smoothItemVariants} className="relative overflow-hidden rounded-2xl bg-muted aspect-[4/3] md:aspect-[3/2] lg:aspect-[14/9]">
             <motion.img
               whileHover={{ scale: 1.05 }} 
               transition={{ duration: 0.5 }}
@@ -92,22 +115,18 @@ export function HeroSection() {
                 Summer Sale: 30% OFF
               </Badge>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Feature Cards Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
             {[
-              { icon: Check, title: "Premium Products", value: "100+" },
-              { icon: Truck, title: "Global Shipping", value: "10+ Countries" },
-              { icon: ShieldCheck, title: "Secure Checkout", value: "100% Safe" },
-              { icon: RefreshCw, title: "Easy Returns", value: "30 Days" },
+              { icon: Check, title: "Premium", value: "100+ items" },
+              { icon: Truck, title: "Shipping", value: "Global" },
+              { icon: ShieldCheck, title: "Secure", value: "100% Safe" },
+              { icon: RefreshCw, title: "Returns", value: "30 Days" },
             ].map((feature, i) => (
               <motion.div 
                 key={i} 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.4 + (i * 0.1) }}
+                variants={smoothItemVariants}
                 className="border bg-card text-card-foreground rounded-xl p-4 flex flex-col justify-between space-y-4 shadow-sm"
               >
                 <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
