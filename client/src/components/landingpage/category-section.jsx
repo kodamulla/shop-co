@@ -46,7 +46,7 @@ export function CategorySection() {
 
   return (
     <section className="w-full py-10 md:py-15 bg-background overflow-hidden">
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto md:px-6 px-4">
         
         
         <motion.div 
@@ -54,7 +54,7 @@ export function CategorySection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-12 md:mb-16"
+          className="text-center mb-12 md:mb-16 px-4 lg:px-0"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4">
             Explore Popular Categories

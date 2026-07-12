@@ -8,6 +8,7 @@ import { CategorySection } from "@/components/landingpage/category-section";
 import { ProductSection } from "@/components/landingpage/product-section";
 import { NewArrivalsSection } from "@/components/landingpage/new-arrivals-section";
 import { TestimonialsSection } from "@/components/landingpage/testimonials-section";
+import { BranchesSection } from "@/components/landingpage/BranchesSection";
 
 export default function LandingPage() {
   const location = useLocation(); // URL එකේ තියෙන දේවල් අල්ලගන්නවා
@@ -41,7 +42,7 @@ export default function LandingPage() {
       <NewArrivalsSection />
       <ProductSection />
       <TestimonialsSection />
-      
+      <BranchesSection />
       <Footer />
     </div>
   );

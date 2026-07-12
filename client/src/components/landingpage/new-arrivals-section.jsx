@@ -141,7 +141,7 @@ export function NewArrivalsSection() {
       discount: "(31% OFF)",
       rating: "4.8",
       reviews: "210",
-      image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=400&auto=format&fit=crop", 
+      image: "https://images.unsplash.com/photo-1622560480654-d96214fdc887?q=80&w=400&auto=format&fit=crop", 
     },
     {
       badge: "New",
@@ -186,14 +186,14 @@ export function NewArrivalsSection() {
 
   return (
     <section id="new-arrivals"  className="w-full py-10 md:py-15 bg-white overflow-hidden scroll-mt-12">
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto md:px-6 px-4 ">
         
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-8 md:mb-5"
+          className="text-center mb-8 md:mb-5 px-4 lg:px-0"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4">
             New Arrivals
@@ -224,7 +224,7 @@ export function NewArrivalsSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
-          className="grid grid-cols-2 gap-4 lg:flex lg:flex-nowrap lg:overflow-x-auto lg:snap-x lg:snap-mandatory lg:gap-6 pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing"
+          className="grid grid-cols-2 lg:flex lg:flex-nowrap gap-4 lg:gap-6 overflow-x-auto lg:snap-x lg:snap-mandatory pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing"
         >
           {products.map((product, index) => {
             return (
@@ -232,7 +232,7 @@ export function NewArrivalsSection() {
                 key={index}
                 variants={itemVariants}
                 onClick={() => openModal(product)} 
-                className="group flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all p-2.5 sm:p-3 w-full flex-none lg:w-[280px] xl:w-[300px] lg:snap-start cursor-pointer"
+                className="group flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all p-2.5 sm:p-3 cursor-pointer w-full flex-none lg:w-[280px] xl:w-[300px] lg:snap-start"
               >
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-muted mb-3 sm:mb-4">
                   <img

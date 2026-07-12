@@ -148,7 +148,7 @@ export function ProductSection() {
       discount: "(25% OFF)",
       rating: "4.6",
       reviews: "450",
-      image: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=400&auto=format&fit=crop", 
+      image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=400&auto=format&fit=crop", 
     },
     {
       title: "Luxury Black Watch",
@@ -158,7 +158,7 @@ export function ProductSection() {
       discount: "(20% OFF)",
       rating: "4.9",
       reviews: "2.1k",
-      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=400&auto=format&fit=crop", 
+      image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=400&auto=format&fit=crop", 
     },
     {
       title: "Leather Weekend Bag",
@@ -168,7 +168,7 @@ export function ProductSection() {
       discount: "(25% OFF)",
       rating: "4.7",
       reviews: "930",
-      image: "https://images.unsplash.com/photo-1547949003-9792a18a2601?q=80&w=400&auto=format&fit=crop", 
+      image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=400&auto=format&fit=crop", 
     }
   ];
 
@@ -188,15 +188,15 @@ export function ProductSection() {
   };
 
   return (
-    <section className="w-full -mt-10 md:-mt-20 py-10 md:py-10 bg-white overflow-hidden">
-      <div className="container mx-auto px-4 md:px-6">
+    <section className="w-full -mt-10 md:-mt-20 py-10 md:py-20 bg-white overflow-hidden">
+      <div className="container mx-auto md:px-6 px-4 ">
         
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-8 md:mb-5"
+          className="text-center mb-8 md:mb-5 px-4 lg:px-0"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4">
             Today's Best Deals For You!

@@ -47,7 +47,7 @@ export function HeroSection() {
           initial="hidden"
           animate="visible"
           /* 🚀 මෙතන තමයි වෙනස් කළේ: min-h-[calc(100dvh-4rem)] දාලා මේ කොටස විතරක් හරියටම Full Screen වෙන විදිහට හැදුවා */
-          className="flex flex-col justify-center space-y-8 min-h-[calc(100dvh-4rem)] lg:min-h-0 py-8 lg:py-0 w-full"
+          className="flex flex-col justify-center space-y-8 min-h-[calc(100dvh-4rem)] lg:min-h-0 py-8 lg:py-0 w-full "
         >
           
           <motion.div variants={smoothItemVariants} className="space-y-3">

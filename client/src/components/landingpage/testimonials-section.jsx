@@ -77,8 +77,8 @@ export function TestimonialsSection() {
   };
 
   return (
-    <section className="w-full py-16 md:py-24 bg-background overflow-hidden relative">
-      <div className="container mx-auto px-4 md:px-6">
+    <section className="w-full py-5 md:py-5 bg-background overflow-hidden relative">
+      <div className="container mx-auto md:px-6 px-4 ">
         
         {/* Heading & Subheading */}
         <motion.div
@@ -86,7 +86,7 @@ export function TestimonialsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-12 max-w-3xl mx-auto"
+          className="text-center mb-12 max-w-3xl mx-auto px-4 lg:px-0"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4">
             Why Fashion Lovers Choose ShopCo
@@ -110,7 +110,7 @@ export function TestimonialsSection() {
               <motion.div 
                 key={index} 
                 variants={itemVariants}
-                className="flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors cursor-default"
+                className="flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors cursor-default "
               >
                 <Icon className="w-6 h-6 md:w-8 md:h-8" />
                 <span className="text-lg md:text-xl font-bold tracking-tight">{brand.name}</span>
@@ -121,7 +121,7 @@ export function TestimonialsSection() {
       </div>
 
       {/* Testimonials Looping Marquee */}
-      <div className="relative w-full overflow-hidden py-4">
+      <div className="relative w-full overflow-hidden py-0 ">
         {/* වම් සහ දකුණු පැතිවල අඳුරු වෙන Gradient Effect එක */}
         <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"></div>
         <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"></div>
@@ -146,9 +146,9 @@ export function TestimonialsSection() {
             >
               <div>
                 {/* Quote Icon */}
-                <Quote className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground/30 mb-6 rotate-180" />
+                <Quote className="w-8 h-8 md:w-10 md:h-10 text-blue-500 mb-6 rotate-180" />
                 {/* Review Text */}
-                <p className="text-muted-foreground text-sm md:text-base leading-relaxed mb-8 line-clamp-4">
+                <p className="text-black text-sm md:text-base leading-relaxed mb-8 line-clamp-4">
                   "{testimonial.quote}"
                 </p>
               </div>
