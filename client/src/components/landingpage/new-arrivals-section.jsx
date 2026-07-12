@@ -1,28 +1,31 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Star, Heart, Copy, Zap, ArrowRight, X, Ruler, ShoppingBag } from "lucide-react";
-import { useState, useRef } from "react"; 
+import { Sparkles, Star, Zap, ArrowRight, X, ShoppingBag, ShoppingCart } from "lucide-react"; 
+import { useState, useRef, useEffect } from "react"; 
 import { useCart } from "../../context/CartContext";
-import { ModernAlert } from "@/components/ui/ModernAlert"; 
+import toast, { Toaster } from "react-hot-toast";
 
 export function NewArrivalsSection() {
   const [showSwipe, setShowSwipe] = useState(true);
 
-  
   const carouselRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
 
-  
   const { addToCart } = useCart();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
-  const [alertConfig, setAlertConfig] = useState({
-    isOpen: false,
-    type: "success",
-    title: "",
-    message: "",
-  });
+
+  useEffect(() => {
+    if (selectedProduct) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedProduct]);
 
   const handleScroll = (e) => {
     if (e.currentTarget.scrollLeft > 10) {
@@ -32,7 +35,6 @@ export function NewArrivalsSection() {
     }
   };
 
-  // Mouse Swipe Functions
   const handleMouseDown = (e) => {
     setIsDragging(true);
     setStartX(e.pageX - carouselRef.current.offsetLeft);
@@ -48,7 +50,6 @@ export function NewArrivalsSection() {
     carouselRef.current.scrollLeft = scrollLeft - walk;
   };
 
-  
   const openModal = (product) => {
     setSelectedProduct(product);
     setSelectedSize("");
@@ -61,23 +62,21 @@ export function NewArrivalsSection() {
 
   const getProductSizes = (title) => {
     if (title.includes('Sunglasses') || title.includes('Backpack')) return ['Standard'];
-    return ['S', 'M', 'L', 'XL', 'XXL'];
+    return ['S', 'M', 'L']; 
   };
 
   const handleAddToCart = (e, product, size = null) => {
-    e.stopPropagation();
+    e.stopPropagation(); 
 
-    if (selectedProduct && !size && getProductSizes(product.title).length > 1) {
-      setAlertConfig({
-        isOpen: true,
-        type: "warning",
-        title: "Wait!",
-        message: "Please select a size first!",
+    if (!size && getProductSizes(product.title).length > 1) {
+      toast.error("Please select a size first!", {
+        id: "size-error", // 👈 මේ id එක නිසා එකපාර ගොඩක් error පේන්නේ නෑ
+        duration: 3000,
+        position: 'top-left',
       });
       return;
     }
 
-    
     const numericPrice = parseFloat(product.price.replace('$', ''));
 
     const productToAdd = {
@@ -92,11 +91,14 @@ export function NewArrivalsSection() {
 
     addToCart(productToAdd);
 
-    setAlertConfig({
-      isOpen: true,
-      type: "success",
-      title: "Success!",
-      message: `${product.title} Added to Cart!`,
+    toast.success(`${product.title} Added to Cart!`, {
+      id: "cart-success", // 👈 මේ id එක නිසා එකපාර ගොඩක් success පේන්නේ නෑ
+      duration: 3000,
+      position: 'top-left',
+      iconTheme: {
+        primary: '#22c55e', // 👈 කළු පාට වෙනුවට Tailwind Green (කොළ පාට) දැම්මා
+        secondary: '#fff',
+      },
     });
 
     if (selectedProduct) {
@@ -104,7 +106,6 @@ export function NewArrivalsSection() {
     }
   };
 
-  
   const products = [
     {
       badge: "New",
@@ -184,7 +185,7 @@ export function NewArrivalsSection() {
   };
 
   return (
-    <section id="new-arrivals"  className="w-full py-10 md:py-15 bg-muted overflow-hidden scroll-mt-12">
+    <section id="new-arrivals"  className="w-full py-10 md:py-15 bg-white overflow-hidden scroll-mt-12">
       <div className="container mx-auto px-4 md:px-6">
         
         <motion.div
@@ -226,13 +227,11 @@ export function NewArrivalsSection() {
           className="grid grid-cols-2 gap-4 lg:flex lg:flex-nowrap lg:overflow-x-auto lg:snap-x lg:snap-mandatory lg:gap-6 pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing"
         >
           {products.map((product, index) => {
-            const Icon = product.badgeIcon;
-            
             return (
               <motion.div
                 key={index}
                 variants={itemVariants}
-                onClick={() => openModal(product)} // 👈 කාඩ් එක Click කරාම Modal එක ඕපන් වෙන්න දැම්මා
+                onClick={() => openModal(product)} 
                 className="group flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all p-2.5 sm:p-3 w-full flex-none lg:w-[280px] xl:w-[300px] lg:snap-start cursor-pointer"
               >
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-muted mb-3 sm:mb-4">
@@ -243,15 +242,11 @@ export function NewArrivalsSection() {
                     className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 select-none"
                   />
                   
-                  {product.badge && (
-                    <div className="absolute top-2 left-2 bg-black text-white px-2 py-1 sm:px-2.5 sm:py-1 rounded-full flex items-center gap-1 sm:gap-1.5 shadow-sm z-10">
-                      {Icon && <Icon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />}
-                      <span className="text-[9px] sm:text-[10px] font-semibold tracking-wide">{product.badge}</span>
-                    </div>
-                  )}
-
-                  <button className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full text-zinc-500 hover:text-red-500 transition-colors shadow-sm z-10">
-                    <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <button 
+                    onClick={(e) => handleAddToCart(e, product)}
+                    className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full text-zinc-500 hover:text-black transition-colors shadow-sm z-10"
+                  >
+                    <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
 
                   <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-1.5 py-1 sm:px-2 sm:py-1 rounded-md flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-foreground shadow-sm z-10">
@@ -259,10 +254,6 @@ export function NewArrivalsSection() {
                     {product.rating}
                     <span className="text-muted-foreground font-normal ml-0.5">| {product.reviews}</span>
                   </div>
-
-                  <button className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm p-1 sm:p-1.5 rounded-md text-foreground shadow-sm z-10 hover:bg-zinc-100 transition-colors">
-                    <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </button>
                 </div>
                 
                 <div className="flex flex-col px-1 flex-1">
@@ -286,7 +277,6 @@ export function NewArrivalsSection() {
 
       </div>
 
-     
       <AnimatePresence>
         {selectedProduct && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
@@ -301,16 +291,16 @@ export function NewArrivalsSection() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2 }}
-              className="relative w-full max-w-4xl bg-white rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
+              className="relative w-full max-w-3xl bg-white rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
             >
               <button 
                 onClick={closeModal}
-                className="absolute top-4 right-4 z-10 p-2 bg-white/80 md:bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                className="absolute top-3 right-3 md:top-4 md:right-4 z-10 p-2 bg-white/90 md:bg-gray-100 rounded-full hover:bg-gray-200 transition-colors shadow-sm md:shadow-none"
               >
                 <X size={20} className="text-gray-900" />
               </button>
 
-              <div className="w-full md:w-1/2 h-64 md:h-auto bg-gray-100 relative">
+              <div className="w-full md:w-1/2 h-52 sm:h-64 md:h-auto bg-gray-100 relative shrink-0">
                 <img 
                   src={selectedProduct.image} 
                   alt={selectedProduct.title} 
@@ -319,29 +309,26 @@ export function NewArrivalsSection() {
                 />
               </div>
 
-              <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col overflow-y-auto">
-                <div className="mb-2">
+              <div className="w-full md:w-1/2 p-5 md:p-8 flex flex-col overflow-y-auto">
+                <div className="mb-2 shrink-0">
                   <span className="text-xs font-bold tracking-widest uppercase text-gray-400">
                     {selectedProduct.badge || "New Arrival"}
                   </span>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 leading-tight">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 leading-tight shrink-0">
                   {selectedProduct.title}
                 </h2>
-                <div className="text-2xl font-black text-gray-900 mb-6">
+                <div className="text-2xl font-black text-gray-900 mb-4 md:mb-6 shrink-0">
                   {selectedProduct.price}
                 </div>
                 
-                <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-8">
+                <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6 md:mb-8 shrink-0">
                   {selectedProduct.description}. This premium item is crafted for comfort and style. Elevate your wardrobe with this carefully designed piece.
                 </p>
 
-                <div className="mb-8">
+                <div className="mb-6 md:mb-8 shrink-0">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Size</span>
-                    <button className="text-xs font-medium text-gray-500 hover:text-black flex items-center gap-1">
-                      <Ruler size={14} /> Size Guide
-                    </button>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {getProductSizes(selectedProduct.title).map((size) => (
@@ -360,15 +347,12 @@ export function NewArrivalsSection() {
                   </div>
                 </div>
 
-                <div className="mt-auto pt-4 flex gap-4">
+                <div className="mt-auto pt-2 md:pt-4 flex gap-4 shrink-0">
                   <button 
                     onClick={(e) => handleAddToCart(e, selectedProduct, selectedSize)}
                     className="flex-1 bg-black text-white h-14 rounded-xl font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
                   >
                     <ShoppingBag size={18} /> Add to Cart
-                  </button>
-                  <button className="h-14 w-14 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-colors">
-                    <Heart size={20} />
                   </button>
                 </div>
               </div>
@@ -377,14 +361,8 @@ export function NewArrivalsSection() {
         )}
       </AnimatePresence>
 
-      <ModernAlert 
-        isOpen={alertConfig.isOpen}
-        onClose={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
-        onConfirm={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
-        title={alertConfig.title}
-        message={alertConfig.message}
-        type={alertConfig.type}
-      />
+      {/* Toaster Position එක කලින් top-left දුන්නා වගේම තියෙනවා */}
+      <Toaster position="top-left" />
 
     </section>
   );
