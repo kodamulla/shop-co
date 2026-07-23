@@ -232,11 +232,11 @@ export default function CartPage() {
                       className="pl-9 h-11 bg-muted/50 border-transparent focus:border-primary"
                     />
                   </div>
-                  <Button variant="secondary" className="h-11 px-6" onClick={handleApplyPromo}>Apply</Button> {/* 👈 Apply Function එක සම්බන්ද කළා */}
+                  <Button variant="secondary" className="h-11 px-5 " onClick={handleApplyPromo}>Apply</Button>
                 </div>
 
                 {/* Checkout Button */}
-                <Button onClick={() => window.location.href = "/checkout"} className="w-full h-14 mt-6 text-base font-semibold gap-2 rounded-xl">
+                <Button onClick={() => window.location.href = "/checkout"} className="w-full bg-black hover:bg-white hover:text-black hover:border hover:border-black h-14 mt-6 text-base font-semibold gap-2 rounded-xl">
                   Go to Checkout <ArrowRight className="h-5 w-5" />
                 </Button>
               </div>
