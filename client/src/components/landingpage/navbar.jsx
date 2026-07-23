@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "../../context/CartContext";
+import toast from "react-hot-toast"; // 👈 මෙතනින් Toaster එක අයින් කළා, toast විතරක් තියාගත්තා
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -39,14 +40,19 @@ export function Navbar() {
     };
   }, [isMobileMenuOpen, isUserDropdownOpen]);
 
-  // Logout Function එක
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setIsLoggedIn(false);
-    setIsUserDropdownOpen(false);
-    setIsMobileMenuOpen(false);
-    window.location.href = "/"; // මුල් පිටුවට යවනවා
+    toast.success("Logging out...", { 
+      id: "logout-toast" 
+    });
+
+    setTimeout(() => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setIsLoggedIn(false);
+      setIsUserDropdownOpen(false);
+      setIsMobileMenuOpen(false);
+      window.location.href = "/"; 
+    }, 1000);
   };
 
   const handleNavClick = (e, href) => {
@@ -73,14 +79,13 @@ export function Navbar() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="sticky top-0 z-50 w-full  bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 relative">
         
-        {/* Left Section: Mobile Menu Toggle & Logo */}
         <div className="flex items-center gap-3">
           <button 
-            className="lg:hidden p-2 -ml-2  hover:bg-muted text-foreground rounded-md transition-colors"
+            className="lg:hidden p-2 -ml-2 hover:bg-muted text-foreground rounded-md transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? (
@@ -90,14 +95,12 @@ export function Navbar() {
             )}
           </button>
 
-          {/* 👇 අලුත් කොටස: Logo එක Click කරාම Home යන්න <a> tag එකක් දැම්මා */}
           <a href="/" className="flex items-center gap-2 font-bold text-xl lg:ml-20">
             <img src="/Logoicon.png" alt="ShopCo Logo" className="h-8 w-8" />
             <span>ShopCo</span>
           </a>
         </div>
 
-        {/* Center Navigation */}
         <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-black">
           {navLinks.map((link, index) => (
             <a 
@@ -111,7 +114,6 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Right Section (Cart & Auth) */}
         <div className="flex items-center gap-5 lg:mr-20 relative">
           <a href="/cart" className="text-muted-foreground hover:text-foreground transition-colors relative">
             <ShoppingCart className="h-5 w-5" />
@@ -139,7 +141,6 @@ export function Navbar() {
                 <User className="h-5 w-5 text-foreground pr-2" />
               </button>
 
-              {/* Desktop User Dropdown */}
               <AnimatePresence>
                 {isUserDropdownOpen && (
                   <motion.div 
@@ -175,7 +176,6 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
@@ -203,12 +203,11 @@ export function Navbar() {
                 </a>
               ))}
               
-              {/* Mobile Menu Conditional Rendering */}
               {!isLoggedIn ? (
                 <a
                   href="/signin"
                   onClick={() => setIsMobileMenuOpen(false)} 
-                  className="flex items-center justify-center gap-2 rounded-sm px-4 py-2 mt-2 text-sm font-medium bg-black text-white border  hover:bg-white hover:text-black hover:border-black transition-all duration-300 shadow-sm"
+                  className="flex items-center justify-center gap-2 rounded-sm px-4 py-2 mt-2 text-sm font-medium bg-black text-white border hover:bg-white hover:text-black hover:border-black transition-all duration-300 shadow-sm"
                 >
                   Sign In
                 </a>

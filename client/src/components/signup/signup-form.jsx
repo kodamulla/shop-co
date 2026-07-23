@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import toast from "react-hot-toast"; 
+import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,20 +31,21 @@ export function SignupForm({ className, ...props }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 👇 හැම Toast එකකටම position: "top-left" එකතු කළා 👇
     if (!formData.email.includes("@")) {
-      return toast.error("Please enter a valid email address!", { id: "signup-error" });
+      return toast.error("Please enter a valid email address!", { id: "signup-error", position: "top-left" });
     }
 
     if (!/^\d+$/.test(formData.phoneNumber)) {
-      return toast.error("Contact Number must contain only numbers!", { id: "signup-error" });
+      return toast.error("Contact Number must contain only numbers!", { id: "signup-error", position: "top-left" });
     }
 
     if (formData.password.length < 8) {
-      return toast.error("Password must be at least 8 characters long!", { id: "signup-error" });
+      return toast.error("Password must be at least 8 characters long!", { id: "signup-error", position: "top-left" });
     }
 
     if (formData.password !== formData.confirmPassword) {
-      return toast.error("Passwords do not match!", { id: "signup-error" });
+      return toast.error("Passwords do not match!", { id: "signup-error", position: "top-left" });
     }
 
     setLoading(true);
@@ -58,16 +59,16 @@ export function SignupForm({ className, ...props }) {
       });
 
       if (response.status === 201) {
-        // 👇 සාමාන්‍ය alert එක අයින් කරලා toast.success එක දැම්මා 👇
-        toast.success("Account created successfully!", { id: "signup-success" });
+        // 👇 Success එකත් වම් පැත්තේ උඩින් එන්න හැදුවා 👇
+        toast.success("Account created successfully!", { id: "signup-success", position: "top-left" });
         
-        // 👇 Toast එක පේන්න තත්පර 1.5ක් ඉඳලා Login එකට යන්න හැදුවා 👇
         setTimeout(() => {
           window.location.href = "/signin"; 
         }, 1500);
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Something went wrong. Please try again.", { id: "signup-error" });
+      // 👇 Error එකත් වම් පැත්තේ උඩින් එන්න හැදුවා 👇
+      toast.error(err.response?.data?.message || "Something went wrong. Please try again.", { id: "signup-error", position: "top-left" });
     } finally {
       setLoading(false);
     }

@@ -30,11 +30,13 @@ export function LoginForm({ className, ...props }) {
 
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
-      
-      // 👇 සාර්ථක වුණාම Success Toast එක පෙන්නනවා 👇
-      toast.success("Login successful!", { id: "login-success" });
 
-      // 👇 Toast එක පේන්න තත්පර 1ක් ඉඳලා Page එක මාරු කරනවා 👇
+      // 👇 සාර්ථක වුණාමත් වම් පැත්තේ උඩින් එන්න position එක දුන්නා 👇
+      toast.success("Login successful!", { 
+        id: "login-success",
+        position: "top-left" 
+      });
+
       setTimeout(() => {
         const userRole = response.data.user.role; 
 
@@ -48,7 +50,11 @@ export function LoginForm({ className, ...props }) {
       }, 1000);
       
     } catch (err) {
-      toast.error("Invalid email or password", { id: "login-error" });
+      // 👇 Error එක අනිවාර්යයෙන්ම වම් පැත්තේ උඩින් එන්න position එක දුන්නා 👇
+      toast.error("Invalid email or password", { 
+        id: "login-error",
+        position: "top-left" 
+      });
     } finally {
       setLoading(false);
     }
@@ -162,7 +168,7 @@ export function LoginForm({ className, ...props }) {
               Don&apos;t have an account?{" "}
               <a 
                 href="/signup" 
-                className="underline underline-offset-4 text-black hover:bg-black hover:!text-white px-2 py-0.5 rounded transition-colors duration-200"
+                className="underline underline-offset-4 text-black hover:bg-black hover:!text-white"
               >
                 Sign up 
               </a>
