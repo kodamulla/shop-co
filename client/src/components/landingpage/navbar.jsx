@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "../../context/CartContext";
-import toast from "react-hot-toast"; // 👈 මෙතනින් Toaster එක අයින් කළා, toast විතරක් තියාගත්තා
+import toast from "react-hot-toast"; 
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -57,12 +57,33 @@ export function Navbar() {
 
   const handleNavClick = (e, href) => {
     if (href.startsWith("/#")) {
+      const currentPath = window.location.pathname;
       const targetId = href.substring(2); 
+
+      if (currentPath !== "/") {
+        window.location.href = href;
+        return;
+      }
+
+      // 👇 මුල් පිටුවේ ඉන්නවා නම් විතරක් මේ Smooth Scroll එක වැඩ කරනවා 👇
+      e.preventDefault(); 
+
+      if (targetId === "home") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+
       const element = document.getElementById(targetId);
       
       if (element) {
-        e.preventDefault(); 
-        element.scrollIntoView({ behavior: "smooth" }); 
+        let offset = 80; 
+        
+        if (targetId === "new-arrivals") {
+          offset = 20; 
+        }
+
+        const y = element.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: y, behavior: "smooth" });
       }
     }
   };

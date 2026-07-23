@@ -4,9 +4,18 @@ import { Star } from "lucide-react";
 export function Heroo() {
   const brands = ["PREMIUM QUALITY", "EVERYDAY ESSENTIALS", "PERFECT FIT", "STREET STYLE", "COMFORT WEAR", "PREMIUM QUALITY", "EVERYDAY ESSENTIALS", "PERFECT FIT", "STREET STYLE", "COMFORT WEAR"];
 
+  // 👇 අලුතින් එකතු කළ Scroll Function එක 👇
+  const handleScrollToShop = () => {
+    const section = document.getElementById('shop-section');
+    if (section) {
+      // උඩින් 100px ඉඩක් තියලා scroll වෙනවා (Navbar එකට යට වෙන්නේ නෑ)
+      const y = section.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
   return (
     <>
-      {/* 👇 මෙතන 100dvh වෙනුවට 100svh යොදා ඇත. එතකොට Mobile එකේ Scroll කරද්දී පනින්නේ නැත. */}
       <section className="relative w-full h-[calc(100svh-64px)] bg-white overflow-hidden">
         
         <div className="max-w-7xl mx-auto px-4 md:px-6 w-full h-full flex flex-col lg:flex-row">
@@ -54,7 +63,8 @@ export function Heroo() {
               transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
             >
               <button 
-                onClick={() => document.getElementById('shop-section')?.scrollIntoView({ behavior: 'smooth' })}
+                // 👇 මෙතනට අර අලුත් Function එක දැම්මා 👇
+                onClick={handleScrollToShop}
                 className="px-6 py-4 lg:px-8 lg:py-4 bg-black text-white font-bold rounded-md hover:bg-gray-800 transition-all shadow-lg active:scale-95 text-xs lg:text-base"
               >
                 Shop New Arrivals
