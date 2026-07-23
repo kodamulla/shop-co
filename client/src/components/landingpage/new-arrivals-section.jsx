@@ -61,7 +61,7 @@ export function NewArrivalsSection() {
   };
 
   const getProductSizes = (title) => {
-    if (title.includes('Sunglasses') || title.includes('Backpack')) return ['Standard'];
+    if (title.includes('Sunglasses') || title.includes('Backpack') || title.includes('Watch') || title.includes('Sneakers')) return ['Standard'];
     return ['S', 'M', 'L']; 
   };
 
@@ -70,7 +70,7 @@ export function NewArrivalsSection() {
 
     if (!size && getProductSizes(product.title).length > 1) {
       toast.error("Please select a size first!", {
-        id: "size-error", // 👈 මේ id එක නිසා එකපාර ගොඩක් error පේන්නේ නෑ
+        id: "size-error", 
         duration: 3000,
         position: 'top-left',
       });
@@ -92,11 +92,11 @@ export function NewArrivalsSection() {
     addToCart(productToAdd);
 
     toast.success(`${product.title} Added to Cart!`, {
-      id: "cart-success", // 👈 මේ id එක නිසා එකපාර ගොඩක් success පේන්නේ නෑ
+      id: "cart-success", 
       duration: 3000,
       position: 'top-left',
       iconTheme: {
-        primary: '#22c55e', // 👈 කළු පාට වෙනුවට Tailwind Green (කොළ පාට) දැම්මා
+        primary: '#22c55e', 
         secondary: '#fff',
       },
     });
@@ -166,6 +166,30 @@ export function NewArrivalsSection() {
       rating: "4.5",
       reviews: "560",
       image: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=400&auto=format&fit=crop", 
+    },
+    {
+      badge: "Popular",
+      badgeIcon: Star,
+      title: "Classic White Sneakers",
+      description: "Comfortable everyday footwear",
+      price: "$85",
+      originalPrice: "$120",
+      discount: "(29% OFF)",
+      rating: "4.8",
+      reviews: "820",
+      image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=400&auto=format&fit=crop",
+    },
+    {
+      badge: "Limited",
+      badgeIcon: Sparkles,
+      title: "Vintage Leather Watch",
+      description: "Elegant and timeless design",
+      price: "$120",
+      originalPrice: "$180",
+      discount: "(33% OFF)",
+      rating: "4.9",
+      reviews: "1.2k",
+      image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=400&auto=format&fit=crop",
     }
   ];
 
@@ -224,7 +248,7 @@ export function NewArrivalsSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
-          className="grid grid-cols-2 lg:flex lg:flex-nowrap gap-4 lg:gap-6 overflow-x-auto lg:snap-x lg:snap-mandatory pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing"
+          className="grid grid-cols-2 lg:flex lg:flex-nowrap gap-3 md:gap-6 overflow-x-auto lg:snap-x lg:snap-mandatory pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing px-1"
         >
           {products.map((product, index) => {
             return (
@@ -232,42 +256,58 @@ export function NewArrivalsSection() {
                 key={index}
                 variants={itemVariants}
                 onClick={() => openModal(product)} 
-                className="group flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all p-2.5 sm:p-3 cursor-pointer w-full flex-none lg:w-[280px] xl:w-[300px] lg:snap-start"
+                className="group relative flex flex-col w-full flex-none lg:w-[240px] xl:w-[260px] lg:snap-start cursor-pointer"
               >
-                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-muted mb-3 sm:mb-4">
+                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-zinc-100 mb-3 md:mb-4 shadow-sm">
                   <img
                     src={product.image}
                     alt={product.title}
                     draggable={false} 
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 select-none"
+                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 select-none"
                   />
                   
-                  <button 
-                    onClick={(e) => handleAddToCart(e, product)}
-                    className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full text-zinc-500 hover:text-black transition-colors shadow-sm z-10"
-                  >
-                    <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </button>
+                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors duration-500" />
+                  
+                  {product.badge && (
+                    <div className="absolute top-2 left-2 md:top-3 md:left-3 bg-white/95 backdrop-blur-sm px-2 md:px-3 py-1 md:py-1.5 rounded-full flex items-center gap-1 md:gap-1.5 text-[9px] md:text-[10px] font-bold text-black shadow-sm z-10">
+                      {product.badgeIcon && <product.badgeIcon className="w-3 h-3 md:w-3.5 md:h-3.5" />}
+                      {product.badge}
+                    </div>
+                  )}
 
-                  <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-1.5 py-1 sm:px-2 sm:py-1 rounded-md flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-foreground shadow-sm z-10">
-                    <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-black text-black" />
-                    {product.rating}
-                    <span className="text-muted-foreground font-normal ml-0.5">| {product.reviews}</span>
+                  <div className="absolute bottom-3 left-0 right-0 px-3 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out z-20">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openModal(product);
+                      }}
+                      className="w-full bg-black/95 backdrop-blur-md text-white py-2.5 rounded-xl flex items-center justify-center gap-2 font-semibold text-xs md:text-sm shadow-xl hover:bg-black transition-colors"
+                    >
+                      <ShoppingCart className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                      Quick Add
+                    </button>
                   </div>
                 </div>
                 
                 <div className="flex flex-col px-1 flex-1">
-                  <h3 className="font-semibold text-sm md:text-base text-foreground line-clamp-1 select-none">
-                    {product.title}
-                  </h3>
-                  <p className="text-[11px] sm:text-xs md:text-sm text-muted-foreground mt-0.5 sm:mt-1 line-clamp-1 select-none">
+                  <div className="flex justify-between items-start gap-2 mb-1">
+                    <h3 className="font-bold text-sm md:text-base text-foreground line-clamp-1 select-none">
+                      {product.title}
+                    </h3>
+                    <div className="flex items-center gap-1 bg-zinc-100 px-1.5 py-0.5 rounded-md text-[10px] md:text-xs font-bold text-foreground shrink-0">
+                      <Star className="w-2.5 h-2.5 md:w-3 md:h-3 fill-yellow-400 text-yellow-400" />
+                      {product.rating}
+                    </div>
+                  </div>
+                  
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-2 md:mb-3 line-clamp-1 select-none">
                     {product.description}
                   </p>
                   
-                  <div className="mt-2 sm:mt-2.5 flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2 sm:mb-0 select-none">
-                    <span className="font-bold text-sm sm:text-base text-foreground">{product.price}</span>
-                    <span className="text-[10px] sm:text-xs text-muted-foreground line-through">{product.originalPrice}</span>
-                    <span className="text-[10px] sm:text-xs font-semibold text-foreground">{product.discount}</span>
+                  <div className="flex items-end gap-1.5 md:gap-2 select-none mt-auto">
+                    <span className="font-extrabold text-base md:text-lg text-foreground leading-none">{product.price}</span>
+                    <span className="text-[10px] md:text-xs text-muted-foreground line-through mb-0.5">{product.originalPrice}</span>
+                    <span className="text-[9px] md:text-[10px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded-md ml-auto mb-0.5">{product.discount}</span>
                   </div>
                 </div>
               </motion.div>
@@ -279,28 +319,31 @@ export function NewArrivalsSection() {
 
       <AnimatePresence>
         {selectedProduct && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-12">
+            
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={closeModal}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             />
             
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.2 }}
-              className="relative w-full max-w-3xl bg-white rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="relative w-full max-w-4xl bg-white rounded-2xl md:rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[95vh] md:max-h-[85vh]"
             >
+              
               <button 
                 onClick={closeModal}
-                className="absolute top-3 right-3 md:top-4 md:right-4 z-10 p-2 bg-white/90 md:bg-gray-100 rounded-full hover:bg-gray-200 transition-colors shadow-sm md:shadow-none"
+                className="absolute top-3 right-3 md:top-6 md:right-6 z-20 p-2 md:p-2.5 bg-white/80 backdrop-blur-md text-gray-900 rounded-full hover:bg-gray-100 transition-colors shadow-sm"
               >
-                <X size={20} className="text-gray-900" />
+                <X size={18} strokeWidth={2.5} className="md:w-5 md:h-5" />
               </button>
 
-              <div className="w-full md:w-1/2 h-52 sm:h-64 md:h-auto bg-gray-100 relative shrink-0">
+              {/* 👇 Image height එක Mobile එකේදි අඩුවෙන් පේන්න හැදුවා */}
+              <div className="w-full md:w-1/2 h-[220px] sm:h-[280px] md:h-auto bg-gray-50 relative shrink-0">
                 <img 
                   src={selectedProduct.image} 
                   alt={selectedProduct.title} 
@@ -309,36 +352,41 @@ export function NewArrivalsSection() {
                 />
               </div>
 
-              <div className="w-full md:w-1/2 p-5 md:p-8 flex flex-col overflow-y-auto">
-                <div className="mb-2 shrink-0">
-                  <span className="text-xs font-bold tracking-widest uppercase text-gray-400">
-                    {selectedProduct.badge || "New Arrival"}
+              {/* 👇 Mobile paddings අඩු කරලා ගානට හැදුවා */}
+              <div className="w-full md:w-1/2 p-5 sm:p-6 md:p-10 lg:p-12 flex flex-col overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                
+                <div className="mb-2 md:mb-3 shrink-0">
+                  <span className="text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase text-gray-400">
+                    {selectedProduct.badge || "NEW ARRIVAL"}
                   </span>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 leading-tight shrink-0">
+                
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-1 md:mb-2 leading-tight tracking-tight shrink-0">
                   {selectedProduct.title}
                 </h2>
-                <div className="text-2xl font-black text-gray-900 mb-4 md:mb-6 shrink-0">
+                <div className="text-xl sm:text-2xl md:text-3xl font-black text-gray-900 mb-3 md:mb-6 shrink-0">
                   {selectedProduct.price}
                 </div>
                 
-                <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6 md:mb-8 shrink-0">
+                {/* 👇 Mobile එකේදි පේළි 2කට විතරක් සීමා කලා (line-clamp-2) */}
+                <p className="text-gray-500 text-xs md:text-base leading-relaxed mb-4 md:mb-8 shrink-0 line-clamp-2 md:line-clamp-none">
                   {selectedProduct.description}. This premium item is crafted for comfort and style. Elevate your wardrobe with this carefully designed piece.
                 </p>
 
-                <div className="mb-6 md:mb-8 shrink-0">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Size</span>
+                <div className="mb-4 md:mb-8 mt-auto shrink-0">
+                  <div className="flex items-center justify-between mb-3 md:mb-4">
+                    <span className="text-[11px] md:text-sm font-bold text-gray-900 uppercase tracking-widest">Select Size</span>
                   </div>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2 md:gap-3">
                     {getProductSizes(selectedProduct.title).map((size) => (
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`min-w-[3rem] h-12 px-4 rounded-xl border text-sm font-bold transition-all duration-200 flex items-center justify-center
+                        // 👇 Mobile එකේදි Buttons පොඩි කලා (h-10 px-3)
+                        className={`h-10 md:h-14 px-3 md:px-5 min-w-[2.5rem] md:min-w-[3rem] rounded-lg md:rounded-xl border-2 text-xs md:text-sm font-bold transition-all duration-200 flex items-center justify-center
                           ${selectedSize === size 
-                            ? 'border-black bg-black text-white shadow-md' 
-                            : 'border-gray-200 bg-white text-gray-600 hover:border-gray-400'
+                            ? 'border-black bg-black text-white shadow-md scale-105' 
+                            : 'border-gray-200 bg-white text-gray-600 hover:border-gray-900 hover:text-gray-900'
                           }`}
                       >
                         {size}
@@ -347,23 +395,23 @@ export function NewArrivalsSection() {
                   </div>
                 </div>
 
-                <div className="mt-auto pt-2 md:pt-4 flex gap-4 shrink-0">
+                <div className="pt-1 md:pt-2 flex gap-4 shrink-0">
                   <button 
                     onClick={(e) => handleAddToCart(e, selectedProduct, selectedSize)}
-                    className="flex-1 bg-black text-white h-14 rounded-xl font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+                    // 👇 Mobile එකේදි Add to Cart button එක පොඩි කලා (h-12)
+                    className="w-full bg-black text-white h-12 md:h-16 rounded-lg md:rounded-xl font-bold uppercase tracking-widest text-xs md:text-sm hover:bg-gray-800 active:scale-[0.98] transition-all flex items-center justify-center gap-2 md:gap-3 shadow-lg hover:shadow-xl"
                   >
-                    <ShoppingBag size={18} /> Add to Cart
+                    <ShoppingBag size={18} className="md:w-5 md:h-5" /> Add to Cart
                   </button>
                 </div>
+
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
 
-      {/* Toaster Position එක කලින් top-left දුන්නා වගේම තියෙනවා */}
       <Toaster position="top-left" />
-
     </section>
   );
 }

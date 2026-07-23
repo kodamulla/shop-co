@@ -15,10 +15,10 @@ const productSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        required: true, // e.g., T-Shirts, Jeans, Dresses
+        required: true,
     },
     sizes: {
-        type: [String], // e.g., ['S', 'M', 'L', 'XL']
+        type: [String],
         required: true,
     },
     imageUrl: {
@@ -31,7 +31,7 @@ const productSchema = new mongoose.Schema({
         default: 0,
     }
 }, {
-    timestamps: true // Item eka add karapu/update karapu welawa auto save wenawa
+    timestamps: true
 });
 
 const Product = mongoose.model('Product', productSchema);

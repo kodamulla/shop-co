@@ -12,11 +12,14 @@ import {
   Home
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCart } from "../../context/CartContext";
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false); 
   
+  const { cart } = useCart(); 
+
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return !!localStorage.getItem("token"); 
   });
@@ -46,15 +49,14 @@ export function Navbar() {
     window.location.href = "/"; // මුල් පිටුවට යවනවා
   };
 
-  // 🚀 අලුත් කොටස: Smooth Scroll වෙන Function එක
   const handleNavClick = (e, href) => {
     if (href.startsWith("/#")) {
-      const targetId = href.substring(2); // "/#new-arrivals" එකෙන් "new-arrivals" ගන්නවා
+      const targetId = href.substring(2); 
       const element = document.getElementById(targetId);
       
       if (element) {
-        e.preventDefault(); // එක පාරටම පනින එක නවත්වනවා
-        element.scrollIntoView({ behavior: "smooth" }); // ලස්සනට පල්ලෙහාට යනවා
+        e.preventDefault(); 
+        element.scrollIntoView({ behavior: "smooth" }); 
       }
     }
   };
@@ -88,10 +90,11 @@ export function Navbar() {
             )}
           </button>
 
-          <div className="flex items-center gap-2 font-bold text-xl lg:ml-20">
+          {/* 👇 අලුත් කොටස: Logo එක Click කරාම Home යන්න <a> tag එකක් දැම්මා */}
+          <a href="/" className="flex items-center gap-2 font-bold text-xl lg:ml-20">
             <img src="/Logoicon.png" alt="ShopCo Logo" className="h-8 w-8" />
             <span>ShopCo</span>
-          </div>
+          </a>
         </div>
 
         {/* Center Navigation */}
@@ -112,9 +115,13 @@ export function Navbar() {
         <div className="flex items-center gap-5 lg:mr-20 relative">
           <a href="/cart" className="text-muted-foreground hover:text-foreground transition-colors relative">
             <ShoppingCart className="h-5 w-5" />
-            <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[10px] font-bold text-primary-foreground">
-              3
-            </span>
+            
+            {cart && cart.length > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[10px] font-bold text-primary-foreground">
+                {cart.length}
+              </span>
+            )}
+            
           </a>     
           {!isLoggedIn ? (
             <a 
@@ -198,7 +205,6 @@ export function Navbar() {
               
               {/* Mobile Menu Conditional Rendering */}
               {!isLoggedIn ? (
-                // 👇 Mobile Sign In Button එකත් ඒ විදිහටම වෙනස් කළා
                 <a
                   href="/signin"
                   onClick={() => setIsMobileMenuOpen(false)} 
