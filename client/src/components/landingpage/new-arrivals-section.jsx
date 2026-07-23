@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Star, Zap, ArrowRight, X, ShoppingBag, ShoppingCart } from "lucide-react"; 
+import { Star, ArrowRight, X, ShoppingBag, ShoppingCart } from "lucide-react"; 
 import { useState, useRef, useEffect } from "react"; 
 import { useCart } from "../../context/CartContext";
 import toast, { Toaster } from "react-hot-toast";
@@ -24,7 +24,7 @@ export function NewArrivalsSection() {
     }
     return () => {
       document.body.style.overflow = "unset";
-    };
+    }
   }, [selectedProduct]);
 
   const handleScroll = (e) => {
@@ -40,8 +40,10 @@ export function NewArrivalsSection() {
     setStartX(e.pageX - carouselRef.current.offsetLeft);
     setScrollLeft(carouselRef.current.scrollLeft);
   };
+  
   const handleMouseLeave = () => setIsDragging(false);
   const handleMouseUp = () => setIsDragging(false);
+  
   const handleMouseMove = (e) => {
     if (!isDragging) return;
     e.preventDefault();
@@ -108,44 +110,36 @@ export function NewArrivalsSection() {
 
   const products = [
     {
-      badge: "New",
-      badgeIcon: Sparkles,
-      title: "Classic Denim Jacket",
+      title: "Classic T-Shirt",
       description: "Timeless style & durable",
-      price: "$59",
-      originalPrice: "$85",
-      discount: "(30% OFF)",
+      price: "$21",
+      originalPrice: "$65",
+      discount: "(68% OFF)",
       rating: "4.7",
       reviews: "120",
       image: "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?q=80&w=400&auto=format&fit=crop", 
     },
     {
-      badge: "Trending",
-      badgeIcon: Zap,
       title: "Retro Sunglasses",
       description: "UV protection & vintage look",
-      price: "$19",
+      price: "$12",
       originalPrice: "$35",
-      discount: "(45% OFF)",
+      discount: "(66% OFF)",
       rating: "4.9",
       reviews: "340",
       image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=400&auto=format&fit=crop", 
     },
     {
-      badge: null,
-      badgeIcon: null,
       title: "Leather Backpack",
       description: "Spacious & premium quality",
       price: "$75",
       originalPrice: "$110",
-      discount: "(31% OFF)",
+      discount: "(32% OFF)",
       rating: "4.8",
       reviews: "210",
       image: "https://images.unsplash.com/photo-1622560480654-d96214fdc887?q=80&w=400&auto=format&fit=crop", 
     },
     {
-      badge: "New",
-      badgeIcon: Sparkles,
       title: "Minimalist Beanie",
       description: "Soft & cozy for winter",
       price: "$14",
@@ -156,20 +150,16 @@ export function NewArrivalsSection() {
       image: "https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?q=80&w=400&auto=format&fit=crop", 
     },
     {
-      badge: "Hot",
-      badgeIcon: Zap,
       title: "Oversized Cotton T-Shirt",
       description: "Breathable everyday comfort",
-      price: "$22",
-      originalPrice: "$30",
-      discount: "(26% OFF)",
+      price: "$13",
+      originalPrice: "$20",
+      discount: "(35% OFF)", 
       rating: "4.5",
       reviews: "560",
       image: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=400&auto=format&fit=crop", 
     },
     {
-      badge: "Popular",
-      badgeIcon: Star,
       title: "Classic White Sneakers",
       description: "Comfortable everyday footwear",
       price: "$85",
@@ -180,13 +170,11 @@ export function NewArrivalsSection() {
       image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=400&auto=format&fit=crop",
     },
     {
-      badge: "Limited",
-      badgeIcon: Sparkles,
       title: "Vintage Leather Watch",
       description: "Elegant and timeless design",
-      price: "$120",
-      originalPrice: "$180",
-      discount: "(33% OFF)",
+      price: "$60",
+      originalPrice: "$110",
+      discount: "(45% OFF)", 
       rating: "4.9",
       reviews: "1.2k",
       image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=400&auto=format&fit=crop",
@@ -248,7 +236,8 @@ export function NewArrivalsSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
-          className="grid grid-cols-2 lg:flex lg:flex-nowrap gap-3 md:gap-6 overflow-x-auto lg:snap-x lg:snap-mandatory pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing px-1"
+          style={{ scrollBehavior: isDragging ? "auto" : "smooth" }} 
+          className="grid grid-cols-2 lg:flex lg:flex-nowrap gap-3 md:gap-6 overflow-x-auto pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing px-1"
         >
           {products.map((product, index) => {
             return (
@@ -256,7 +245,7 @@ export function NewArrivalsSection() {
                 key={index}
                 variants={itemVariants}
                 onClick={() => openModal(product)} 
-                className="group relative flex flex-col w-full flex-none lg:w-[240px] xl:w-[260px] lg:snap-start cursor-pointer"
+                className="group relative flex flex-col w-full flex-none lg:w-[240px] xl:w-[260px] cursor-pointer"
               >
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-zinc-100 mb-3 md:mb-4 shadow-sm">
                   <img
@@ -342,7 +331,6 @@ export function NewArrivalsSection() {
                 <X size={18} strokeWidth={2.5} className="md:w-5 md:h-5" />
               </button>
 
-              {/* 👇 Image height එක Mobile එකේදි අඩුවෙන් පේන්න හැදුවා */}
               <div className="w-full md:w-1/2 h-[220px] sm:h-[280px] md:h-auto bg-gray-50 relative shrink-0">
                 <img 
                   src={selectedProduct.image} 
@@ -352,7 +340,6 @@ export function NewArrivalsSection() {
                 />
               </div>
 
-              {/* 👇 Mobile paddings අඩු කරලා ගානට හැදුවා */}
               <div className="w-full md:w-1/2 p-5 sm:p-6 md:p-10 lg:p-12 flex flex-col overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 
                 <div className="mb-2 md:mb-3 shrink-0">
@@ -364,11 +351,24 @@ export function NewArrivalsSection() {
                 <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-1 md:mb-2 leading-tight tracking-tight shrink-0">
                   {selectedProduct.title}
                 </h2>
-                <div className="text-xl sm:text-2xl md:text-3xl font-black text-gray-900 mb-3 md:mb-6 shrink-0">
-                  {selectedProduct.price}
+                
+                {/* 👇 මෙතනින් තමයි Modal එකේ Price එකට Discount එකයි Original Price එකයි දැම්මේ 👇 */}
+                <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-6 shrink-0">
+                  <span className="text-xl sm:text-2xl md:text-3xl font-black text-gray-900">
+                    {selectedProduct.price}
+                  </span>
+                  {selectedProduct.originalPrice && (
+                    <span className="text-sm md:text-lg text-gray-400 line-through font-medium">
+                      {selectedProduct.originalPrice}
+                    </span>
+                  )}
+                  {selectedProduct.discount && (
+                    <span className="text-[10px] md:text-xs font-bold text-red-500 bg-red-50 px-2 py-1 rounded-md">
+                      {selectedProduct.discount}
+                    </span>
+                  )}
                 </div>
                 
-                {/* 👇 Mobile එකේදි පේළි 2කට විතරක් සීමා කලා (line-clamp-2) */}
                 <p className="text-gray-500 text-xs md:text-base leading-relaxed mb-4 md:mb-8 shrink-0 line-clamp-2 md:line-clamp-none">
                   {selectedProduct.description}. This premium item is crafted for comfort and style. Elevate your wardrobe with this carefully designed piece.
                 </p>
@@ -382,7 +382,6 @@ export function NewArrivalsSection() {
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        // 👇 Mobile එකේදි Buttons පොඩි කලා (h-10 px-3)
                         className={`h-10 md:h-14 px-3 md:px-5 min-w-[2.5rem] md:min-w-[3rem] rounded-lg md:rounded-xl border-2 text-xs md:text-sm font-bold transition-all duration-200 flex items-center justify-center
                           ${selectedSize === size 
                             ? 'border-black bg-black text-white shadow-md scale-105' 
@@ -398,7 +397,6 @@ export function NewArrivalsSection() {
                 <div className="pt-1 md:pt-2 flex gap-4 shrink-0">
                   <button 
                     onClick={(e) => handleAddToCart(e, selectedProduct, selectedSize)}
-                    // 👇 Mobile එකේදි Add to Cart button එක පොඩි කලා (h-12)
                     className="w-full bg-black text-white h-12 md:h-16 rounded-lg md:rounded-xl font-bold uppercase tracking-widest text-xs md:text-sm hover:bg-gray-800 active:scale-[0.98] transition-all flex items-center justify-center gap-2 md:gap-3 shadow-lg hover:shadow-xl"
                   >
                     <ShoppingBag size={18} className="md:w-5 md:h-5" /> Add to Cart

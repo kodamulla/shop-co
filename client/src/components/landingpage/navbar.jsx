@@ -126,7 +126,7 @@ export function Navbar() {
           {!isLoggedIn ? (
             <a 
               href="/signin" 
-              className="hidden lg:flex items-center gap-1.5 text-sm font-medium px-5 py-2 rounded-sm bg-black text-white hover:bg-white border hover:border-black hover:text-black transition-all duration-300 ml-2 shadow-sm"
+              className="hidden lg:flex items-center gap-1.5 text-sm font-medium px-5 py-2 rounded-sm bg-black text-white hover:bg-white border border-transparent hover:border-black hover:text-black transition-all duration-300 ml-2 shadow-sm"
             >
               Sign In
             </a>

@@ -27,7 +27,7 @@ export function ProductSection() {
     }
     return () => {
       document.body.style.overflow = "unset";
-    };
+    }
   }, [selectedProduct]);
 
   const handleScroll = (e) => {
@@ -115,7 +115,7 @@ export function ProductSection() {
       description: "Comfortable everyday wear",
       price: "$29",
       originalPrice: "$49",
-      discount: "(50% OFF)",
+      discount: "(41% OFF)",
       rating: "4.5",
       reviews: "1.2k",
       image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=400&auto=format&fit=crop", 
@@ -135,7 +135,7 @@ export function ProductSection() {
       description: "100% cotton comfort",
       price: "$23",
       originalPrice: "$35",
-      discount: "(33% OFF)",
+      discount: "(34% OFF)",
       rating: "4.3",
       reviews: "620",
       image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=400&auto=format&fit=crop", 
@@ -145,7 +145,7 @@ export function ProductSection() {
       description: "Warm & stylish design",
       price: "$52",
       originalPrice: "$70",
-      discount: "(25% OFF)",
+      discount: "(26% OFF)",
       rating: "4.6",
       reviews: "450",
       image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=400&auto=format&fit=crop", 
@@ -165,7 +165,7 @@ export function ProductSection() {
       description: "Premium travel companion",
       price: "$89",
       originalPrice: "$120",
-      discount: "(25% OFF)",
+      discount: "(26% OFF)",
       rating: "4.7",
       reviews: "930",
       image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=400&auto=format&fit=crop", 
@@ -227,7 +227,8 @@ export function ProductSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
-          className="grid grid-cols-2 lg:flex lg:flex-nowrap gap-3 md:gap-6 overflow-x-auto lg:snap-x lg:snap-mandatory pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing px-1"
+          style={{ scrollBehavior: isDragging ? "auto" : "smooth" }}
+          className="grid grid-cols-2 lg:flex lg:flex-nowrap gap-3 md:gap-6 overflow-x-auto pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing px-1"
         >
           {products.map((product, index) => {
             return (
@@ -235,7 +236,7 @@ export function ProductSection() {
                 key={index}
                 variants={itemVariants}
                 onClick={() => openModal(product)} 
-                className="group relative flex flex-col w-full flex-none lg:w-[240px] xl:w-[260px] lg:snap-start cursor-pointer"
+                className="group relative flex flex-col w-full flex-none lg:w-[240px] xl:w-[260px] cursor-pointer"
               >
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-zinc-100 mb-3 md:mb-4 shadow-sm">
                   <img
@@ -287,7 +288,6 @@ export function ProductSection() {
           })}
         </motion.div>
 
-        {/* 👇 අලුතින් Description එක එකතු කරපු තැන */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -355,8 +355,21 @@ export function ProductSection() {
                 <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-1 md:mb-2 leading-tight tracking-tight shrink-0">
                   {selectedProduct.title}
                 </h2>
-                <div className="text-xl sm:text-2xl md:text-3xl font-black text-gray-900 mb-3 md:mb-6 shrink-0">
-                  {selectedProduct.price}
+
+                <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-6 shrink-0">
+                  <span className="text-xl sm:text-2xl md:text-3xl font-black text-gray-900">
+                    {selectedProduct.price}
+                  </span>
+                  {selectedProduct.originalPrice && (
+                    <span className="text-sm md:text-lg text-gray-400 line-through font-medium">
+                      {selectedProduct.originalPrice}
+                    </span>
+                  )}
+                  {selectedProduct.discount && (
+                    <span className="text-[10px] md:text-xs font-bold text-red-500 bg-red-50 px-2 py-1 rounded-md">
+                      {selectedProduct.discount}
+                    </span>
+                  )}
                 </div>
                 
                 <p className="text-gray-500 text-xs md:text-base leading-relaxed mb-4 md:mb-8 shrink-0 line-clamp-2 md:line-clamp-none">
